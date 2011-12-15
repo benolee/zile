@@ -49,36 +49,6 @@ local KBD_F10 = 281
 local KBD_F11 = 282
 local KBD_F12 = 283
 
-local codetoname = {
-  [27]        = "\\e",
-  [KBD_PGUP]  = "<prior>",
-  [KBD_PGDN]  = "<next>",
-  [KBD_HOME]  = "<home>",
-  [KBD_END]   = "<end>",
-  [KBD_DEL]   = "<delete>",
-  [KBD_BS]    = "<backspace>",
-  [KBD_INS]   = "<insert>",
-  [KBD_LEFT]  = "<left>",
-  [KBD_RIGHT] = "<right>",
-  [KBD_UP]    = "<up>",
-  [KBD_DOWN]  = "<down>",
-  [KBD_RET]   = "<RET>",
-  [KBD_TAB]   = "<TAB>",
-  [KBD_F1]    = "<f1>",
-  [KBD_F2]    = "<f2>",
-  [KBD_F3]    = "<f3>",
-  [KBD_F4]    = "<f4>",
-  [KBD_F5]    = "<f5>",
-  [KBD_F6]    = "<f6>",
-  [KBD_F7]    = "<f7>",
-  [KBD_F8]    = "<f8>",
-  [KBD_F9]    = "<f9>",
-  [KBD_F10]   = "<f10>",
-  [KBD_F11]   = "<f11>",
-  [KBD_F12]   = "<f12>",
-  [string.byte(' ')] = "SPC",
-}
-
 -- Modifiers
 local modifier = {
   ["C"]         = KBD_CTRL,
@@ -156,6 +126,9 @@ local keyreadsyntax_map = table.invert (keynametocode_map)
 local function toreadsyntax (key)
   return mapkey (keyreadsyntax_map, key, {C = "\\C-", A = "\\A-"})
 end
+
+-- For quick reverse lookups:
+local codetoname = table.invert (keynametocode_map)
 
 -- A key code has one `keypress' and some optional modifiers.
 -- For comparisons to work, keycodes are immutable atoms.
