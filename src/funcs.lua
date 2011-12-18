@@ -169,8 +169,8 @@ by 4 each time.
         ok = zi.keyboard_quit()
         break
       -- Digit pressed.
-      elseif string.match (string.char (key.key), "%d") then
-        local digit = key.key - string.byte ('0')
+      elseif string.match (key.key, "%d") then
+        local digit = tonumber (key.key)
         thisflag.uniarg_empty = false
 
         if key.ALT then

@@ -17,118 +17,55 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
--- Key modifiers.
-local KBD_CTRL = 512
-local KBD_ALT = 1024
-
--- Common non-alphanumeric keys.
-local KBD_CANCEL = 257
-local KBD_TAB = 258
-local KBD_RET = 259
-local KBD_PGUP = 260
-local KBD_PGDN = 261
-local KBD_HOME = 262
-local KBD_END = 263
-local KBD_DEL = 264
-local KBD_BS = 265
-local KBD_INS = 266
-local KBD_LEFT = 267
-local KBD_RIGHT = 268
-local KBD_UP = 269
-local KBD_DOWN = 270
-local KBD_F1 = 272
-local KBD_F2 = 273
-local KBD_F3 = 274
-local KBD_F4 = 275
-local KBD_F5 = 276
-local KBD_F6 = 277
-local KBD_F7 = 278
-local KBD_F8 = 279
-local KBD_F9 = 280
-local KBD_F10 = 281
-local KBD_F11 = 282
-local KBD_F12 = 283
-
 -- Modifiers
 local modifier = {
-  ["C"]         = KBD_CTRL,
-  ["A"]         = KBD_ALT,
+  ["C"]         = true,
+  ["A"]         = true,
 }
 
 -- Array of key names
 local keynametocode_map = {
-  ["backslash"] = string.byte ('\\'),
-  ["backspace"] = KBD_BS,
-  ["cancel"]    = string.byte ('\a'),
-  ["delete"]    = KBD_DEL,
-  ["down"]      = KBD_DOWN,
-  ["end"]       = KBD_END,
-  ["enter"]     = string.byte ('\n'),
-  ["escape"]    = 27,
-  ["f1"]        = KBD_F1,
-  ["f10"]       = KBD_F10,
-  ["f11"]       = KBD_F11,
-  ["f12"]       = KBD_F12,
-  ["f2"]        = KBD_F2,
-  ["f3"]        = KBD_F3,
-  ["f4"]        = KBD_F4,
-  ["f5"]        = KBD_F5,
-  ["f6"]        = KBD_F6,
-  ["f7"]        = KBD_F7,
-  ["f8"]        = KBD_F8,
-  ["f9"]        = KBD_F9,
-  ["formfeed"]  = string.byte ('\f'),
-  ["home"]      = KBD_HOME,
-  ["insert"]    = KBD_INS,
-  ["left"]      = KBD_LEFT,
-  ["pgdn"]      = KBD_PGDN,
-  ["pgup"]      = KBD_PGUP,
-  ["return"]    = KBD_RET,
-  ["right"]     = KBD_RIGHT,
-  ["space"]     = string.byte (' '),
-  ["tab"]       = KBD_TAB,
-  ["up"]        = KBD_UP,
-  ["vtab"]      = string.byte ('\v'),
+  ["backslash"] = true,
+  ["backspace"] = true,
+  ["cancel"]    = true,
+  ["delete"]    = true,
+  ["down"]      = true,
+  ["end"]       = true,
+  ["enter"]     = true,
+  ["escape"]    = true,
+  ["f1"]        = true,
+  ["f10"]       = true,
+  ["f11"]       = true,
+  ["f12"]       = true,
+  ["f2"]        = true,
+  ["f3"]        = true,
+  ["f4"]        = true,
+  ["f5"]        = true,
+  ["f6"]        = true,
+  ["f7"]        = true,
+  ["f8"]        = true,
+  ["f9"]        = true,
+  ["formfeed"]  = true,
+  ["home"]      = true,
+  ["insert"]    = true,
+  ["left"]      = true,
+  ["pgdn"]      = true,
+  ["pgup"]      = true,
+  ["return"]    = true,
+  ["right"]     = true,
+  ["space"]     = true,
+  ["tab"]       = true,
+  ["up"]        = true,
+  ["vtab"]      = true,
 }
 
 -- Insert printable characters in the ASCII range.
 for i=0x0,0x7f do
   if posix.isprint (string.char (i)) and i ~= string.byte ('\\') and i ~= string.byte (' ') then
-    keynametocode_map[string.char (i)] = i
+    keynametocode_map[string.char (i)] = true
   end
 end
 
-local function mapkey (map, key, mod)
-  if not key then
-    return "invalid keycode: nil"
-  end
-
-  local s = (key.CTRL and mod.C or "") .. (key.ALT and mod.A or "")
-
-  if not key.key then
-    return "invalid keycode: " .. s .. "nil"
-  end
-
-  if map[key.key] then
-    s = s .. map[key.key]
-  elseif key.key <= 0xff and posix.isgraph (string.char (key.key)) then
-    s = s .. string.char (key.key)
-  else
-    s = s .. string.format ("<%x>", key.key)
-  end
-
-  return s
-end
-
-local keyreadsyntax_map = table.invert (keynametocode_map)
-
--- Convert an internal format key chord back to its read syntax
-local function toreadsyntax (key)
-  return mapkey (keyreadsyntax_map, key, {C = "\\C-", A = "\\A-"})
-end
-
--- For quick reverse lookups:
-local codetoname = table.invert (keynametocode_map)
 
 -- A key code has one `keypress' and some optional modifiers.
 -- For comparisons to work, keycodes are immutable atoms.
@@ -144,15 +81,7 @@ local keycode_mt = {
                 if self[e] then s = s .. e end
               end, { "C-", "A-" })
 
-    if codetoname[self.key] then
-      s = s .. codetoname[self.key]
-    elseif self.key <= 0xff and posix.isgraph (string.char (self.key)) then
-      s = s .. string.char (self.key)
-    else
-      s = s .. string.format ("<%x>", self.key)
-    end
-
-    return s
+    return s .. self.key
   end,
 
   -- Normalise modifier lookups to uppercase, sans `-' suffix.
@@ -194,12 +123,10 @@ keycode = memoize (function (chord)
   end
 
   local key = setmetatable ({}, keycode_mt)
-  key.key = keynametocode_map[chord]
-
-  if not key.key then
+  if chord ~= nil then
     -- Extract the keypress proper from the end of the string.
-    key.key = keynametocode_map[chord:match ("[^%s%-]*%-?$")]
-    if not key.key then return nil end
+    key.key = chord:match ("[^%s%-]*%-?$")
+    if not keynametocode_map[key.key] then return nil end
 
     -- Extract "-" suffixed modifiers from the beginning of the string.
     for e in chord:gmatch ("([^%s%-]+)%-") do

@@ -175,7 +175,7 @@ function get_function_by_keys (keys)
   -- Detect Alt-digit
   if #keys == 1 then
     local key = keys[1]
-    if key.ALT and key.key < 255 and string.match (string.char (key.key), "[%d%-]") then
+    if key.ALT and string.match (key.key, "[%d%-]") then
       return zi.universal_argument
     end
   end
