@@ -18,51 +18,48 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -- Modifiers
-local modifier = {
-  ["C"]         = true,
-  ["A"]         = true,
-}
+local modifier_names = { "A", "C" }
 
 -- Array of key names
-local keynametocode_map = {
-  ["backslash"] = true,
-  ["backspace"] = true,
-  ["cancel"]    = true,
-  ["delete"]    = true,
-  ["down"]      = true,
-  ["end"]       = true,
-  ["enter"]     = true,
-  ["escape"]    = true,
-  ["f1"]        = true,
-  ["f10"]       = true,
-  ["f11"]       = true,
-  ["f12"]       = true,
-  ["f2"]        = true,
-  ["f3"]        = true,
-  ["f4"]        = true,
-  ["f5"]        = true,
-  ["f6"]        = true,
-  ["f7"]        = true,
-  ["f8"]        = true,
-  ["f9"]        = true,
-  ["formfeed"]  = true,
-  ["home"]      = true,
-  ["insert"]    = true,
-  ["left"]      = true,
-  ["pgdn"]      = true,
-  ["pgup"]      = true,
-  ["return"]    = true,
-  ["right"]     = true,
-  ["space"]     = true,
-  ["tab"]       = true,
-  ["up"]        = true,
-  ["vtab"]      = true,
-}
+local is_key = set.new ({
+  "backslash",
+  "backspace",
+  "cancel",
+  "delete",
+  "down",
+  "end",
+  "enter",
+  "escape",
+  "f1",
+  "f10",
+  "f11",
+  "f12",
+  "f2",
+  "f3",
+  "f4",
+  "f5",
+  "f6",
+  "f7",
+  "f8",
+  "f9",
+  "formfeed",
+  "home",
+  "insert",
+  "left",
+  "pgdn",
+  "pgup",
+  "return",
+  "right",
+  "space",
+  "tab",
+  "up",
+  "vtab",
+})
 
 -- Insert printable characters in the ASCII range.
 for i=0x0,0x7f do
-  if posix.isprint (string.char (i)) and i ~= string.byte ('\\') and i ~= string.byte (' ') then
-    keynametocode_map[string.char (i)] = true
+  if posix.isprint (string.char (i)) then
+    set.insert (is_key, string.char (i))
   end
 end
 
@@ -78,8 +75,8 @@ local keycode_mt = {
 
     local s = ""
     list.map (function (e)
-                if self[e] then s = s .. e end
-              end, { "C-", "A-" })
+                if self[e] then s = s .. e .. "-" end
+              end, modifier_names)
 
     return s .. self.key
   end,
@@ -111,6 +108,8 @@ local keycode_mt = {
 }
 
 
+local is_modifier = set.new (modifier_names)
+
 -- Convert a single keychord string to its key code.
 keycode = memoize (function (chord)
   -- Normalise modifiers to upper case before creating an atom.
@@ -126,11 +125,11 @@ keycode = memoize (function (chord)
   if chord ~= nil then
     -- Extract the keypress proper from the end of the string.
     key.key = chord:match ("[^%s%-]*%-?$")
-    if not keynametocode_map[key.key] then return nil end
+    if not is_key[key.key] then return nil end
 
     -- Extract "-" suffixed modifiers from the beginning of the string.
     for e in chord:gmatch ("([^%s%-]+)%-") do
-      if modifier[e] then
+      if is_modifier[e] then
         if key[e] then
           return nil, chord .. ": " .. e .. " specified more than once"
 	end
