@@ -24,8 +24,6 @@ local attr_map, codetokey, keytocode, key_buf
 local ESC      = 0x1b
 local ESCDELAY = 500
 
-local resumed = true
-
 local function keypad (on)
   local capstr = curses.tigetstr (on and "smkx" or "rmkx")
   if capstr then
@@ -33,6 +31,17 @@ local function keypad (on)
     io.stdout:flush ()
   end
 end
+
+
+local saved_handler = nil
+
+local function suspend_signal_handler (signo)
+  keypad (false)
+  posix.signal (posix.SIGTSTP, saved_handler)
+  saved_handler = nil
+  posix.raise (posix.SIGTSTP)
+end
+
 
 function term_init ()
   curses.initscr ()
@@ -141,8 +150,6 @@ function term_init ()
   curses.stdscr ():meta (true)
   curses.stdscr ():intrflush (false)
   curses.stdscr ():keypad (false)
-
-  posix.signal (posix.SIGCONT, function () resumed = true end)
 end
 
 function term_close ()
@@ -162,12 +169,12 @@ end
 function term_getkey_unfiltered (delay)
   if #key_buf > 0 then
     return table.remove (key_buf)
-  end
-
-  -- Put terminal in application mode if necessary.
-  if resumed then
-    keypad (true)
-    resumed = nil
+  else
+    -- Put terminal in application mode if necessary.
+    if nil == saved_handler then
+      keypad (true)
+      saved_handler = posix.signal (posix.SIGTSTP, suspend_signal_handler)
+    end
   end
 
   curses.stdscr ():timeout (delay)
