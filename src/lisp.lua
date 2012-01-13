@@ -21,17 +21,23 @@
 
 
 -- User commands
-usercmd = {}
+zi = {}
+
+-- User command introspection.
+local introspect = setmetatable ({}, {__mode = "k"})
+
+-- Introspect table entry:
+-- {
+--   doc: command docstring.
+--   interactive: if it can be called by `execute_extended_command'.
+-- }
 
 -- Initialise prefix arg
 prefix_arg = false -- Not nil, so it is picked up in environment table
 current_prefix_arg = false
 
 function Defun (name, argtypes, doc, interactive, func)
-  usercmd[name] = {
-    doc = texi (doc),
-    interactive = interactive,
-    func = function (arglist)
+  local cmd = function (arglist)
              local args = {}
              local i = 1
              while arglist and arglist.next do
@@ -56,16 +62,24 @@ function Defun (name, argtypes, doc, interactive, func)
              end
              return ret
            end
+  zi[name] = cmd
+  introspect[cmd] = {
+    doc = texi (doc),
+    interactive = interactive,
   }
 end
 
 -- Return function's interactive field, or nil if not found.
 function get_function_interactive (name)
-  return usercmd[name] and usercmd[name].interactive or nil
+  if zi[name] and introspect[zi[name]] then
+    return introspect[zi[name]].interactive
+  end
 end
 
 function get_function_doc (name)
-  return usercmd[name] and usercmd[name].doc or nil
+  if zi[name] and introspect[zi[name]] then
+    return introspect[zi[name]].doc
+  end
 end
 
 function read_char (s, pos)
@@ -170,7 +184,7 @@ function execute_function (name, uniarg)
   if uniarg ~= nil and type (uniarg) ~= "table" then
     uniarg = {next = {data = uniarg and tostring (uniarg) or nil}}
   end
-  return usercmd[name] and usercmd[name].func and usercmd[name].func (uniarg)
+  return zi[name] and zi[name] (uniarg)
 end
 
 function leEval (list)
@@ -247,7 +261,7 @@ The values val are expressions; they are evaluated.
 )
 
 function function_exists (f)
-  return usercmd[f] ~= nil
+  return zi[f] ~= nil
 end
 
 function execute_with_uniarg (undo, uniarg, forward, backward)
@@ -314,8 +328,8 @@ local functions_history = history_new ()
 function minibuf_read_function_name (fmt)
   local cp = completion_new ()
 
-  for name, func in pairs (usercmd) do
-    if func.interactive then
+  for name, func in pairs (zi) do
+    if introspect[func] and introspect[func].interactive then
       table.insert (cp.completions, name)
     end
   end
