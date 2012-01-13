@@ -82,7 +82,7 @@ local function search (o, s, forward, regexp)
   local noteol = not forward and o <= get_buffer_size (cur_bp)
   local from = forward and o or 1
   local to = forward and get_buffer_size (cur_bp) + 1 or o - 1
-  local downcase = get_variable_bool ("case-fold-search") and no_upper (s, regexp)
+  local downcase = get_variable_bool ("case_fold_search") and no_upper (s, regexp)
   local pos = find_substr (get_buffer_pre_point (cur_bp), get_buffer_post_point (cur_bp), s, from, to, forward, notbol, noteol, regexp, downcase)
   if not pos then
     return false
@@ -105,7 +105,7 @@ function do_search (forward, regexp, pattern)
   end
 
   if not pattern then
-    return execute_function ("keyboard-quit")
+    return execute_function ("keyboard_quit")
   end
   if #pattern > 0 then
     last_search = pattern
@@ -120,7 +120,7 @@ function do_search (forward, regexp, pattern)
   return ok
 end
 
-Defun ("search-forward",
+Defun ("search_forward",
        {"string"},
 [[
 Search forward from point for the user specified text.
@@ -131,7 +131,7 @@ Search forward from point for the user specified text.
   end
 )
 
-Defun ("search-backward",
+Defun ("search_backward",
        {"string"},
 [[
 Search backward from point for the user specified text.
@@ -142,7 +142,7 @@ Search backward from point for the user specified text.
   end
 )
 
-Defun ("search-forward-regexp",
+Defun ("search_forward_regexp",
        {"string"},
 [[
 Search forward from point for regular expression REGEXP.
@@ -153,7 +153,7 @@ Search forward from point for regular expression REGEXP.
   end
 )
 
-Defun ("search-backward-regexp",
+Defun ("search_backward_regexp",
        {"string"},
 [[
 Search backward from point for match for regular expression REGEXP.
@@ -207,7 +207,7 @@ local function isearch (forward, regexp)
       thisflag.need_resync = true
 
       -- Quit.
-      execute_function ("keyboard-quit")
+      execute_function ("keyboard_quit")
 
       -- Restore old mark position.
       if cur_bp.mark then
@@ -285,7 +285,7 @@ local function isearch (forward, regexp)
   return true
 end
 
-Defun ("isearch-forward",
+Defun ("isearch_forward",
        {},
 [[
 Do incremental search forward.
@@ -301,7 +301,7 @@ Type @kbd{C-s} to search again forward, @kbd{C-r} to search again backward.
   end
 )
 
-Defun ("isearch-backward",
+Defun ("isearch_backward",
        {},
 [[
 Do incremental search backward.
@@ -317,13 +317,13 @@ Type @kbd{C-r} to search again backward, @kbd{C-s} to search again forward.
   end
 )
 
-Defun ("isearch-forward-regexp",
+Defun ("isearch_forward_regexp",
        {},
 [[
 Do incremental search forward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-forward} for more info.
+is treated as a regexp.  See @kbd{M-x isearch_forward} for more info.
 ]],
   true,
   function ()
@@ -331,13 +331,13 @@ is treated as a regexp.  See @kbd{M-x isearch-forward} for more info.
   end
 )
 
-Defun ("isearch-backward-regexp",
+Defun ("isearch_backward_regexp",
        {},
 [[
 Do incremental search backward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-backward} for more info.
+is treated as a regexp.  See @kbd{M-x isearch_backward} for more info.
 ]],
   true,
   function ()
@@ -356,7 +356,7 @@ local function check_case (s)
   end
 end
 
-Defun ("query-replace",
+Defun ("query_replace",
        {},
 [[
 Replace occurrences of a string with other text.
@@ -367,7 +367,7 @@ what to do with it.
   function ()
     local find = minibuf_read ("Query replace string: ", "")
     if not find then
-      return execute_function ("keyboard-quit")
+      return execute_function ("keyboard_quit")
     end
     if find == "" then
       return false
@@ -376,7 +376,7 @@ what to do with it.
 
     local repl = minibuf_read (string.format ("Query replace `%s' with: ", find), "")
     if not repl then
-      execute_function ("keyboard-quit")
+      execute_function ("keyboard_quit")
     end
 
     local noask = false
@@ -396,7 +396,7 @@ what to do with it.
         if c == keycode "q" then -- Quit immediately.
           break
         elseif c == keycode "\\C-g" then
-          ok = execute_function ("keyboard-quit")
+          ok = execute_function ("keyboard_quit")
           break
         elseif c == keycode "!" then -- Replace all without asking.
           noask = true
@@ -408,7 +408,7 @@ what to do with it.
         count = count + 1
         local case_repl = repl
         local r = region_new (get_buffer_pt (cur_bp) - #find, get_buffer_pt (cur_bp))
-        if find_no_upper and get_variable_bool ("case-replace") then
+        if find_no_upper and get_variable_bool ("case_replace") then
           local case_type = check_case (tostring (get_buffer_region (cur_bp, r)))
           if case_type then
             case_repl = recase (repl, case_type)

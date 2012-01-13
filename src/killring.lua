@@ -20,7 +20,7 @@
 local kill_ring_text
 
 local function maybe_free_kill_ring ()
-  if _last_command ~= "kill-region" then
+  if _last_command ~= "kill_region" then
     kill_ring_text = nil
   end
 end
@@ -40,7 +40,7 @@ local function copy_or_kill_region (kill, rp)
     end
   end
 
-  _this_command = "kill-region"
+  _this_command = "kill_region"
   deactivate_mark ()
 
   return true
@@ -68,16 +68,16 @@ local function kill_text (uniarg, mark_func)
   push_mark ()
   undo_start_sequence ()
   execute_function (mark_func, uniarg)
-  execute_function ("kill-region")
+  execute_function ("kill_region")
   undo_end_sequence ()
   pop_mark ()
 
-  _this_command = "kill-region"
+  _this_command = "kill_region"
   minibuf_write ("") -- Erase "Set mark" message.
   return true
 end
 
-Defun ("kill-word",
+Defun ("kill_word",
        {"number"},
 [[
 Kill characters forward until encountering the end of a word.
@@ -85,11 +85,11 @@ With argument @i{arg}, do this that many times.
 ]],
   true,
   function (arg)
-    return kill_text (arg, "mark-word")
+    return kill_text (arg, "mark_word")
   end
 )
 
-Defun ("backward-kill-word",
+Defun ("backward_kill_word",
        {"number"},
 [[
 Kill characters backward until encountering the end of a word.
@@ -97,11 +97,11 @@ With argument @i{arg}, do this that many times.
 ]],
   true,
   function (arg)
-    return kill_text (-(arg or 1), "mark-word")
+    return kill_text (-(arg or 1), "mark_word")
   end
 )
 
-Defun ("kill-sexp",
+Defun ("kill_sexp",
        {"number"},
 [[
 Kill the sexp (balanced expression) following the cursor.
@@ -110,7 +110,7 @@ Negative arg -N means kill N sexps before the cursor.
 ]],
   true,
   function (arg)
-    return kill_text (arg, "mark-sexp")
+    return kill_text (arg, "mark_sexp")
   end
 )
 
@@ -132,13 +132,13 @@ killed @i{or} yanked.  Put point at end, and set mark at beginning.
       return false
     end
 
-    execute_function ("set-mark-command")
+    execute_function ("set_mark_command")
     insert_estr (kill_ring_text)
     deactivate_mark ()
   end
 )
 
-Defun ("kill-region",
+Defun ("kill_region",
        {},
 [[
 Kill between point and mark.
@@ -157,7 +157,7 @@ to make one entry in the kill ring.
   end
 )
 
-Defun ("copy-region-as-kill",
+Defun ("copy_region_as_kill",
        {},
 [[
 Save the region as if killed, but don't kill it.
@@ -199,12 +199,12 @@ local function kill_line (whole_line)
   end
 
   if ok and (whole_line or only_blanks_to_end_of_line) and not eobp () then
-    if not execute_function ("delete-char") then
+    if not execute_function ("delete_char") then
       return false
     end
 
     kill_ring_push (EStr ("\n"))
-    _this_command = "kill-region"
+    _this_command = "kill_region"
   end
 
   undo_end_sequence ()
@@ -220,7 +220,7 @@ local function kill_line_backward ()
   return previous_line () and kill_whole_line ()
 end
 
-Defun ("kill-line",
+Defun ("kill_line",
        {"number"},
 [[
 Kill the rest of the current line; if no nonblanks there, kill thru newline.
@@ -228,7 +228,7 @@ With prefix argument @i{arg}, kill that many lines from point.
 Negative arguments kill lines backward.
 With zero argument, kills the text before point on the current line.
 
-If @samp{kill-whole-line} is non-nil, then this command kills the whole line
+If @samp{kill_whole_line} is non-nil, then this command kills the whole line
 including its terminating newline, when used at the beginning of a line
 with no argument.
 ]],
@@ -239,7 +239,7 @@ with no argument.
     maybe_free_kill_ring ()
 
     if not arg then
-      ok = kill_line (bolp () and get_variable_bool ("kill-whole-line"))
+      ok = kill_line (bolp () and get_variable_bool ("kill_whole_line"))
     else
       undo_start_sequence ()
       if arg <= 0 then

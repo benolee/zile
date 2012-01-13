@@ -231,7 +231,7 @@ end
 
 -- Initialise a buffer
 function init_buffer (bp)
-  if get_variable_bool ("auto-fill-mode") then
+  if get_variable_bool ("auto_fill_mode") then
     bp.autofill = true
   end
 end
@@ -377,7 +377,7 @@ end
 
 -- Return a safe tab width for the given buffer.
 function tab_width (bp)
-  return math.max (get_variable_number_bp (bp, "tab-width"), 1)
+  return math.max (get_variable_number_bp (bp, "tab_width"), 1)
 end
 
 function create_auto_buffer (name)
@@ -436,7 +436,7 @@ function kill_buffer (kill_bp)
   end
 end
 
-Defun ("kill-buffer",
+Defun ("kill_buffer",
        {"string"},
 [[
 Kill buffer BUFFER.
@@ -451,7 +451,7 @@ With a nil argument, kill the current buffer.
       buffer = minibuf_read (string.format ("Kill buffer (default %s): ", cur_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = execute_function ("keyboard-quit")
+        ok = execute_function ("keyboard_quit")
       end
     end
 
@@ -495,7 +495,7 @@ function check_modified_buffer (bp)
     while true do
       local ans = minibuf_read_yesno (string.format ("Buffer %s modified; kill anyway? (yes or no) ", bp.name))
       if ans == nil then
-        execute_function ("keyboard-quit")
+        execute_function ("keyboard_quit")
         return false
       elseif not ans then
         return false
@@ -513,9 +513,9 @@ end
 function move_char (offset)
   local dir, ltest, btest, lmove
   if offset >= 0 then
-    dir, ltest, btest, lmove = 1, eolp, eobp, "beginning-of-line"
+    dir, ltest, btest, lmove = 1, eolp, eobp, "beginning_of_line"
   else
-    dir, ltest, btest, lmove = -1, bolp, bobp, "end-of-line"
+    dir, ltest, btest, lmove = -1, bolp, bobp, "end_of_line"
   end
   for i = 1, math.abs (offset) do
     if not ltest () then
@@ -565,7 +565,7 @@ function move_line (n)
     func = buffer_prev_line
   end
 
-  if _last_command ~= "next-line" and _last_command ~= "previous-line" then
+  if _last_command ~= "next_line" and _last_command ~= "previous_line" then
     cur_bp.goalc = get_goalc ()
   end
 
@@ -617,7 +617,7 @@ local function buffer_next (this_bp)
   end
 end
 
-Defun ("switch-to-buffer",
+Defun ("switch_to_buffer",
        {"string"},
 [[
 Select buffer @i{buffer} in the current window.
@@ -633,7 +633,7 @@ Select buffer @i{buffer} in the current window.
                              "", cp, buffer_name_history)
 
       if not buffer then
-        ok = execute_function ("keyboard-quit")
+        ok = execute_function ("keyboard_quit")
       end
     end
 

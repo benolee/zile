@@ -106,8 +106,8 @@ local options = {
   {"doc", ""},
   {"doc", "Action options:"},
   {"doc", ""},
-  {"act", "FILE", "visit FILE using find-file"},
-  {"act", "+LINE FILE", "visit FILE using find-file, then go to line LINE"},
+  {"act", "FILE", "visit FILE using find_file"},
+  {"act", "+LINE FILE", "visit FILE using find_file, then go to line LINE"},
 }
 
 -- Options table
@@ -245,12 +245,12 @@ function main ()
   -- Create the splash buffer & message only if no files, function or
   -- load file is specified on the command line, and there has been no
   -- error.
-  if #zarg == 0 and not minibuf_contents and not get_variable_bool ("inhibit-splash-screen") then
+  if #zarg == 0 and not minibuf_contents and not get_variable_bool ("inhibit_splash_screen") then
     local bp = create_auto_buffer ("*GNU " .. PACKAGE_NAME .. "*")
     switch_to_buffer (bp)
     insert_string (splash_str)
     cur_bp.readonly = true
-    execute_function ("beginning-of-buffer")
+    execute_function ("beginning_of_buffer")
   end
 
   -- Load files and load files and run functions given on the command line.
@@ -271,7 +271,7 @@ function main ()
     elseif type == "file" then
       ok = find_file (arg)
       if ok then
-        execute_function ("goto-line", line)
+        execute_function ("goto_line", line)
       end
     end
     if thisflag.quit then
@@ -284,11 +284,11 @@ function main ()
   -- Set up screen according to number of files loaded.
   if #buffers == 3 then
     -- *scratch* and two files.
-    execute_function ("split-window")
+    execute_function ("split_window")
     switch_to_buffer (buffers[#buffers -1])
-    execute_function ("other-window")
+    execute_function ("other_window")
   elseif #buffers > 3 then
-    execute_function ("list-buffers")
+    execute_function ("list_buffers")
   end
 
   -- Reinitialise the scratch buffer to catch settings

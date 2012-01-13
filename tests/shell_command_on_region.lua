@@ -1,0 +1,5 @@
+(set_mark (point))
+(forward_line 4)
+(shell_command_on_region (mark) (point) "sort" t)
+(save_buffer)
+(save_buffers_kill_zi)

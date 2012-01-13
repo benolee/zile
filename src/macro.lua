@@ -39,7 +39,7 @@ function cancel_kbd_macro ()
   thisflag.defining_macro = false
 end
 
-Defun ("start-kbd-macro",
+Defun ("start_kbd_macro",
        {},
 [[
 Record subsequent keyboard input, defining a keyboard macro.
@@ -64,7 +64,7 @@ Use @kbd{C-x )} to finish recording and make the macro available.
   end
 )
 
-Defun ("end-kbd-macro",
+Defun ("end_kbd_macro",
        {},
 [[
 Finish defining a keyboard macro.
@@ -103,7 +103,7 @@ local function call_macro ()
   return true
 end
 
-Defun ("call-last-kbd-macro",
+Defun ("call_last_kbd_macro",
        {},
 [[
 Call the last keyboard macro that you defined with @kbd{C-x (}.
@@ -116,13 +116,13 @@ A prefix argument serves as a repeat count.
       return false
     end
 
-    -- FIXME: Call execute-kbd-macro (needs a way to reverse keystrtovec)
+    -- FIXME: Call execute_kbd_macro (needs a way to reverse keystrtovec)
     macro_keys = cur_mp
     execute_with_uniarg (true, current_prefix_arg, call_macro)
   end
 )
 
-Defun ("execute-kbd-macro",
+Defun ("execute_kbd_macro",
   {"string"},
 [[
 Execute macro as string of editor command characters.

@@ -22,7 +22,7 @@ local function get_region ()
   return get_buffer_region (cur_bp, calculate_the_region ())
 end
 
-Defun ("keyboard-quit",
+Defun ("keyboard_quit",
        {},
 [[
 Cancel current command.
@@ -34,7 +34,7 @@ Cancel current command.
   end
 )
 
-Defun ("suspend-zi",
+Defun ("suspend_zi",
        {},
 [[
 Stop Zi and return to superior process.
@@ -45,7 +45,7 @@ Stop Zi and return to superior process.
   end
 )
 
-Defun ("toggle-read-only",
+Defun ("toggle_read_only",
        {},
 [[
 Change whether this buffer is visiting its file read-only.
@@ -56,11 +56,11 @@ Change whether this buffer is visiting its file read-only.
   end
 )
 
-Defun ("auto-fill-mode",
+Defun ("auto_fill_mode",
        {},
 [[
 Toggle Auto Fill mode.
-In Auto Fill mode, inserting a space at a column beyond `fill-column'
+In Auto Fill mode, inserting a space at a column beyond `fill_column'
 automatically breaks the line at a previous space.
 ]],
   true,
@@ -69,7 +69,7 @@ automatically breaks the line at a previous space.
   end
 )
 
-Defun ("exchange-point-and-mark",
+Defun ("exchange_point_and_mark",
        {},
 [[
 Put the mark where point is now, and point where the mark is now.
@@ -124,7 +124,7 @@ function write_temp_buffer (name, show, func, ...)
   -- Use the "callback" routine.
   func (...)
 
-  execute_function ("beginning-of-buffer")
+  execute_function ("beginning_of_buffer")
   cur_bp.readonly = true
   cur_bp.modified = false
 
@@ -137,7 +137,7 @@ function write_temp_buffer (name, show, func, ...)
   end
 end
 
-Defun ("universal-argument",
+Defun ("universal_argument",
        {},
 [[
 Begin a numeric argument for the following command.
@@ -151,7 +151,7 @@ by 4 each time.
   function ()
     local ok = true
 
-    -- Need to process key used to invoke universal-argument.
+    -- Need to process key used to invoke universal_argument.
     pushkey (lastkey ())
 
     thisflag.uniarg_empty = true
@@ -166,7 +166,7 @@ by 4 each time.
 
       -- Cancelled.
       if key == keycode "\\C-g" then
-        ok = execute_function ("keyboard-quit")
+        ok = execute_function ("keyboard_quit")
         break
       -- Digit pressed.
       elseif string.match (string.char (key.key), "%d") then
@@ -251,7 +251,7 @@ local function write_buffers_list (old_wp)
   end
 end
 
-Defun ("list-buffers",
+Defun ("list_buffers",
        {},
 [[
 Display a list of names of existing buffers.
@@ -269,7 +269,7 @@ its major mode, and the visited file name (if any).
   end
 )
 
-Defun ("set-mark",
+Defun ("set_mark",
        {},
 [[
 Set this buffer's mark to point.
@@ -281,22 +281,22 @@ Set this buffer's mark to point.
   end
 )
 
-Defun ("set-mark-command",
+Defun ("set_mark_command",
        {},
 [[
 Set the mark where point is.
 ]],
   true,
   function ()
-    execute_function ("set-mark")
+    execute_function ("set_mark")
     minibuf_write ("Mark set")
   end
 )
 
-Defun ("set-fill-column",
+Defun ("set_fill_column",
        {"number"},
 [[
-Set `fill-column' to specified argument.
+Set `fill_column' to specified argument.
 Use C-u followed by a number to specify a column.
 Just C-u as argument means to use the current column.
 ]],
@@ -307,7 +307,7 @@ Just C-u as argument means to use the current column.
       if lastflag.set_uniarg then
         n = current_prefix_arg
       else
-        n = minibuf_read_number (string.format ("Set fill-column to (default %d): ", o))
+        n = minibuf_read_number (string.format ("Set fill_column to (default %d): ", o))
         if not n then -- cancelled
           return false
         elseif n == "" then
@@ -317,16 +317,16 @@ Just C-u as argument means to use the current column.
     end
 
     if not n then
-      return minibuf_error ("set-fill-column requires an explicit argument")
+      return minibuf_error ("set_fill_column requires an explicit argument")
     end
 
-    minibuf_write (string.format ("Fill column set to %d (was %d)", n, get_variable_number ("fill-column")))
-    set_variable ("fill-column", tostring (n))
+    minibuf_write (string.format ("Fill column set to %d (was %d)", n, get_variable_number ("fill_column")))
+    set_variable ("fill_column", tostring (n))
     return true
   end
 )
 
-Defun ("quoted-insert",
+Defun ("quoted_insert",
        {},
 [[
 Read next input character and insert it.
@@ -340,7 +340,7 @@ This is useful for inserting control characters.
   end
 )
 
-Defun ("fill-paragraph",
+Defun ("fill_paragraph",
        {},
 [[
 Fill paragraph at or after point.
@@ -351,26 +351,26 @@ Fill paragraph at or after point.
 
     undo_start_sequence ()
 
-    execute_function ("forward-paragraph")
+    execute_function ("forward_paragraph")
     if is_empty_line () then
       previous_line ()
     end
     local m_end = point_marker ()
 
-    execute_function ("backward-paragraph")
+    execute_function ("backward_paragraph")
     if is_empty_line () then -- Move to next line if between two paragraphs.
       next_line ()
     end
 
     while buffer_end_of_line (cur_bp, get_buffer_pt (cur_bp)) < m_end.o do
-      execute_function ("end-of-line")
+      execute_function ("end_of_line")
       delete_char ()
-      execute_function ("just-one-space")
+      execute_function ("just_one_space")
     end
     unchain_marker (m_end)
 
-    execute_function ("end-of-line")
-    while get_goalc () > get_variable_number ("fill-column") + 1 and fill_break_line () do end
+    execute_function ("end_of_line")
+    while get_goalc () > get_variable_number ("fill_column") + 1 and fill_break_line () do end
 
     goto_offset (m.o)
     unchain_marker (m)
@@ -417,7 +417,7 @@ local function minibuf_read_shell_command ()
   local ms = minibuf_read ("Shell command: ", "")
 
   if not ms then
-    execute_function ("keyboard-quit")
+    execute_function ("keyboard_quit")
     return
   end
   if ms == "" then
@@ -427,7 +427,7 @@ local function minibuf_read_shell_command ()
   return ms
 end
 
-Defun ("shell-command",
+Defun ("shell_command",
        {"string", "boolean"},
 [[
 Execute string @i{command} in inferior shell; display output, if any.
@@ -439,7 +439,7 @@ in the echo area, it is shown there, but it is nonetheless available
 in buffer `*Shell Command Output*' even though that buffer is not
 automatically displayed.
 
-The optional second argument @i{output-buffer}, if non-nil,
+The optional second argument @i{output_buffer}, if non-nil,
 says to insert the output in the current buffer.
 ]],
   true,
@@ -462,7 +462,7 @@ says to insert the output in the current buffer.
 
 -- The `start' and `end' arguments are fake, hence their string type,
 -- so they can be ignored.
-Defun ("shell-command-on-region",
+Defun ("shell_command_on_region",
        {"string", "string", "string", "boolean"},
 [[
 Execute string command in inferior shell with region as input.
@@ -516,7 +516,7 @@ The output is available in that buffer in both cases.
   end
 )
 
-Defun ("delete-region",
+Defun ("delete_region",
        {},
 [[
 Delete the text between point and mark.
@@ -533,7 +533,7 @@ Delete the text between point and mark.
   end
 )
 
-Defun ("delete-blank-lines",
+Defun ("delete_blank_lines",
        {},
 [[
 On blank line, delete all surrounding blank lines, leaving just one.
@@ -548,11 +548,11 @@ On nonblank line, delete any immediately following blank lines.
     undo_start_sequence ()
 
     -- Find following blank lines.
-    if execute_function ("forward-line") and is_blank_line () then
+    if execute_function ("forward_line") and is_blank_line () then
       r.start = get_buffer_pt (cur_bp)
       repeat
         r.finish = buffer_next_line (cur_bp, get_buffer_pt (cur_bp))
-      until not execute_function ("forward-line") or not is_blank_line ()
+      until not execute_function ("forward_line") or not is_blank_line ()
     end
     goto_offset (m.o)
 
@@ -562,7 +562,7 @@ On nonblank line, delete any immediately following blank lines.
       r.finish = math.max (r.finish, buffer_next_line (cur_bp, get_buffer_pt (cur_bp) or math.huge))
       repeat
         r.start = get_buffer_line_o (cur_bp)
-      until not execute_function ("forward-line", -1) or not is_blank_line ()
+      until not execute_function ("forward_line", -1) or not is_blank_line ()
 
       goto_offset (m.o)
       if r.start ~= get_buffer_line_o (cur_bp) or r.finish > buffer_next_line (cur_bp, get_buffer_pt (cur_bp)) then
@@ -598,7 +598,7 @@ On nonblank line, delete any immediately following blank lines.
   end
 )
 
-Defun ("forward-line",
+Defun ("forward_line",
        {"number"},
 [[
 Move N lines forward (backward if N is negative).
@@ -608,7 +608,7 @@ Precisely, if point is on line I, move to the start of line I + N.
   function (n)
     n = n or current_prefix_arg or 1
     if n ~= 0 then
-      execute_function ("beginning-of-line")
+      execute_function ("beginning_of_line")
       return move_line (n)
     end
     return false
@@ -627,32 +627,32 @@ local function move_paragraph (uniarg, forward, backward, line_extremum)
   end
 
   if is_empty_line () then
-    execute_function ("beginning-of-line")
+    execute_function ("beginning_of_line")
   else
     execute_function (line_extremum)
   end
   return true
 end
 
-Defun ("backward-paragraph",
+Defun ("backward_paragraph",
        {"number"},
 [[
 Move backward to start of paragraph.  With argument N, do it N times.
 ]],
   true,
   function (n)
-    return move_paragraph (n or 1, previous_line, next_line, "beginning-of-line")
+    return move_paragraph (n or 1, previous_line, next_line, "beginning_of_line")
   end
 )
 
-Defun ("forward-paragraph",
+Defun ("forward_paragraph",
        {"number"},
 [[
 Move forward to end of paragraph.  With argument N, do it N times.
 ]],
   true,
   function (n)
-    return move_paragraph (n or 1, next_line, previous_line, "end-of-line")
+    return move_paragraph (n or 1, next_line, previous_line, "end_of_line")
   end
 )
 
@@ -735,15 +735,15 @@ local function move_sexp (dir)
       return false
     end
     if dir > 0 then
-      execute_function ("beginning-of-line")
+      execute_function ("beginning_of_line")
     else
-      execute_function ("end-of-line")
+      execute_function ("end_of_line")
     end
   end
   return false
 end
 
-Defun ("forward-sexp",
+Defun ("forward_sexp",
        {"number"},
 [[
 Move forward across one balanced expression (sexp).
@@ -756,7 +756,7 @@ move backward across N balanced expressions.
   end
 )
 
-Defun ("backward-sexp",
+Defun ("backward_sexp",
        {"number"},
 [[
 Move backward across one balanced expression (sexp).
@@ -770,26 +770,26 @@ move forward across N balanced expressions.
 )
 
 local function mark (uniarg, func)
-  execute_function ("set-mark")
+  execute_function ("set_mark")
   local ret = execute_function (func, uniarg)
   if ret then
-    execute_function ("exchange-point-and-mark")
+    execute_function ("exchange_point_and_mark")
   end
   return ret
 end
 
-Defun ("mark-word",
+Defun ("mark_word",
        {"number"},
 [[
 Set mark argument words away from point.
 ]],
   true,
   function (n)
-    return mark (n, "forward-word")
+    return mark (n, "forward_word")
   end
 )
 
-Defun ("mark-sexp",
+Defun ("mark_sexp",
        {"number"},
 [[
 Set mark @i{arg} sexps from point.
@@ -798,11 +798,11 @@ move to with the same argument.
 ]],
   true,
   function (n)
-    return mark (n, "forward-sexp")
+    return mark (n, "forward_sexp")
   end
 )
 
-Defun ("mark-paragraph",
+Defun ("mark_paragraph",
        {},
 [[
 Put point at beginning of this paragraph, mark at end.
@@ -810,32 +810,32 @@ The paragraph marked is the one that contains point or follows point.
 ]],
   true,
   function ()
-    if _last_command == "mark-paragraph" then
-      execute_function ("exchange-point-and-mark")
-      execute_function ("forward-paragraph")
-      execute_function ("exchange-point-and-mark")
+    if _last_command == "mark_paragraph" then
+      execute_function ("exchange_point_and_mark")
+      execute_function ("forward_paragraph")
+      execute_function ("exchange_point_and_mark")
     else
-      execute_function ("forward-paragraph")
-      execute_function ("set-mark")
-      execute_function ("backward-paragraph")
+      execute_function ("forward_paragraph")
+      execute_function ("set_mark")
+      execute_function ("backward_paragraph")
     end
   end
 )
 
-Defun ("mark-whole-buffer",
+Defun ("mark_whole_buffer",
        {},
 [[
 Put point at beginning and mark at end of buffer.
 ]],
   true,
   function ()
-    execute_function ("end-of-buffer")
-    execute_function ("set-mark-command")
-    execute_function ("beginning-of-buffer")
+    execute_function ("end_of_buffer")
+    execute_function ("set_mark_command")
+    execute_function ("beginning_of_buffer")
   end
 )
 
-Defun ("back-to-indentation",
+Defun ("back_to_indentation",
        {},
 [[
 Move point to the first non-whitespace character on this line.
@@ -870,7 +870,7 @@ local function move_word (dir)
   return gotword
 end
 
-Defun ("forward-word",
+Defun ("forward_word",
        {"number"},
 [[
 Move point forward one word (backward if the argument is negative).
@@ -882,7 +882,7 @@ With argument, do this that many times.
   end
 )
 
-Defun ("backward-word",
+Defun ("backward_word",
        {"number"},
 [[
 Move backward until encountering the end of a word (forward if the
@@ -921,7 +921,7 @@ local function setcase_word (rcase)
   return true
 end
 
-Defun ("downcase-word",
+Defun ("downcase_word",
        {"number"},
 [[
 Convert following word (or @i{arg} words) to lower case, moving over.
@@ -932,7 +932,7 @@ Convert following word (or @i{arg} words) to lower case, moving over.
   end
 )
 
-Defun ("upcase-word",
+Defun ("upcase_word",
        {"number"},
 [[
 Convert following word (or @i{arg} words) to upper case, moving over.
@@ -943,7 +943,7 @@ Convert following word (or @i{arg} words) to upper case, moving over.
   end
 )
 
-Defun ("capitalize-word",
+Defun ("capitalize_word",
        {"number"},
 [[
 Capitalize the following word (or @i{arg} words), moving over.
@@ -982,7 +982,7 @@ local function setcase_region (func)
   return true
 end
 
-Defun ("upcase-region",
+Defun ("upcase_region",
        {},
 [[
 Convert the region to upper case.
@@ -993,7 +993,7 @@ Convert the region to upper case.
   end
 )
 
-Defun ("downcase-region",
+Defun ("downcase_region",
        {},
 [[
 Convert the region to lower case.
@@ -1029,7 +1029,7 @@ local function transpose_subr (move_func)
   if not move_func (1) or not move_func (1) then
     if move_func == move_line then
       -- Add an empty line.
-      execute_function ("end-of-line")
+      execute_function ("end_of_line")
       execute_function ("newline")
     else
       pop_mark ()
@@ -1049,7 +1049,7 @@ local function transpose_subr (move_func)
   -- Save and delete 1st marked region.
   local as1 = tostring (get_region ())
 
-  execute_function ("delete-region")
+  execute_function ("delete_region")
 
   -- Forward.
   move_func (1)
@@ -1068,7 +1068,7 @@ local function transpose_subr (move_func)
 
     -- Save and delete 2nd marked region.
     as2 = tostring (get_region ())
-    execute_function ("delete-region")
+    execute_function ("delete_region")
   end
 
   -- Insert the first string.
@@ -1113,7 +1113,7 @@ local function transpose (uniarg, move)
   return ret
 end
 
-Defun ("transpose-chars",
+Defun ("transpose_chars",
        {"number"},
 [[
 Interchange characters around point, moving forward one character.
@@ -1127,7 +1127,7 @@ If no argument and at end of line, the previous two chars are exchanged.
   end
 )
 
-Defun ("transpose-words",
+Defun ("transpose_words",
        {"number"},
 [[
 Interchange words around point, leaving point at end of them.
@@ -1142,10 +1142,10 @@ are interchanged.
   end
 )
 
-Defun ("transpose-sexps",
+Defun ("transpose_sexps",
        {"number"},
 [[
-Like @kbd{M-x transpose-words} but applies to sexps.
+Like @kbd{M-x transpose_words} but applies to sexps.
 ]],
   true,
   function (n)
@@ -1153,7 +1153,7 @@ Like @kbd{M-x transpose-words} but applies to sexps.
   end
 )
 
-Defun ("transpose-lines",
+Defun ("transpose_lines",
        {"number"},
 [[
 Exchange current line and previous line, leaving point after both.

@@ -37,7 +37,7 @@ h:write (
 ;;;; .]] .. os.getenv ("PACKAGE") .. [[ configuration
 
 ;; Rebind keys with:
-;; (global-set-key "key" 'func)
+;; (global_set_key "key" 'func)
 
 ]])
 

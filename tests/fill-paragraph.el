@@ -1,5 +1,0 @@
-(end-of-line)
-(insert " I am now going to make the line sufficiently long that I can wrap it.")
-(fill-paragraph)
-(save-buffer)
-(save-buffers-kill-zi)

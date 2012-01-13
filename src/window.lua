@@ -132,7 +132,7 @@ function delete_window (del_wp)
   end
 end
 
-Defun ("delete-window",
+Defun ("delete_window",
        {},
 [[
 Remove the current window from the screen.
@@ -148,7 +148,7 @@ Remove the current window from the screen.
   end
 )
 
-Defun ("enlarge-window",
+Defun ("enlarge_window",
        {},
 [[
 Make current window one line bigger.
@@ -185,7 +185,7 @@ Make current window one line bigger.
   end
 )
 
-Defun ("shrink-window",
+Defun ("shrink_window",
        {},
 [[
 Make current window one line smaller.
@@ -207,7 +207,7 @@ Make current window one line smaller.
   end
 )
 
-Defun ("delete-other-windows",
+Defun ("delete_other_windows",
        {},
 [[
 Make the selected window fill the screen.
@@ -222,7 +222,7 @@ Make the selected window fill the screen.
   end
 )
 
-Defun ("other-window",
+Defun ("other_window",
        {},
 [[
 Select the first different window on the screen.
@@ -242,8 +242,8 @@ function completion_scroll_up ()
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not execute_function ("scroll-up") then
-    execute_function ("beginning-of-buffer")
+  if not execute_function ("scroll_up") then
+    execute_function ("beginning_of_buffer")
   end
   set_current_window (old_wp)
 
@@ -257,7 +257,7 @@ function completion_scroll_down ()
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not execute_function ("scroll-down") then
+  if not execute_function ("scroll_down") then
     gotoeob ()
     window_resync (cur_wp)
   end
@@ -277,13 +277,13 @@ end
 function popup_window ()
   if #windows == 1 then
     -- There is only one window on the screen, so split it.
-    execute_function ("split-window")
+    execute_function ("split_window")
   end
 
   return window_next (cur_wp)
 end
 
-Defun ("split-window",
+Defun ("split_window",
        {},
 [[
 Split current window into two windows, one above the other.

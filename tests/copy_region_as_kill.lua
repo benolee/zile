@@ -1,0 +1,6 @@
+(set_mark (point))
+(forward_char 4)
+(copy_region_as_kill (mark) (point))
+(yank)
+(save_buffer)
+(save_buffers_kill_zi)

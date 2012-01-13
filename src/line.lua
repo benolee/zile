@@ -21,19 +21,19 @@ function insert_string (s, eol)
   return insert_estr (EStr (s, eol or coding_eol_lf))
 end
 
--- If point is greater than fill-column, then split the line at the
--- right-most space character at or before fill-column, if there is
--- one, or at the left-most at or after fill-column, if not. If the
+-- If point is greater than fill_column, then split the line at the
+-- right-most space character at or before fill_column, if there is
+-- one, or at the left-most at or after fill_column, if not. If the
 -- line contains no spaces, no break is made.
 --
 -- Return flag indicating whether break was made.
 function fill_break_line ()
   local i, old_col
   local break_col = 0
-  local fillcol = get_variable_number ("fill-column")
+  local fillcol = get_variable_number ("fill_column")
   local break_made = false
 
-  -- Only break if we're beyond fill-column.
+  -- Only break if we're beyond fill_column.
   if get_goalc () > fillcol then
     -- Save point.
     local m = point_marker ()
@@ -44,7 +44,7 @@ function fill_break_line ()
       move_char (-1)
     end
 
-    -- Find break point moving left from fill-column.
+    -- Find break point moving left from fill_column.
     for i = get_buffer_pt (cur_bp) - get_buffer_line_o (cur_bp), 1, -1 do
       if get_buffer_char (cur_bp, get_buffer_line_o (cur_bp) + i - 1):match ("%s") then
         break_col = i
@@ -52,7 +52,7 @@ function fill_break_line ()
       end
     end
 
-    -- If no break point moving left from fill-column, find first
+    -- If no break point moving left from fill_column, find first
     -- possible moving right.
     if break_col == 0 then
       for i = get_buffer_pt (cur_bp) + 1, buffer_end_of_line (cur_bp, get_buffer_line_o (cur_bp)) do
@@ -65,7 +65,7 @@ function fill_break_line ()
 
     if break_col >= 1 then -- Break line.
       goto_offset (get_buffer_line_o (cur_bp) + break_col)
-      execute_function ("delete-horizontal-space")
+      execute_function ("delete_horizontal_space")
       insert_newline ()
       goto_offset (m.o)
       break_made = true
@@ -98,7 +98,7 @@ local function insert_tab ()
     return false
   end
 
-  if get_variable_bool ("indent-tabs-mode") then
+  if get_variable_bool ("indent_tabs_mode") then
     insert_char ('\t')
   else
     insert_expanded_tab ()
@@ -125,7 +125,7 @@ local function previous_nonblank_goalc ()
   local cur_goalc = get_goalc ()
 
   -- Find previous non-blank line.
-  while execute_function ("forward-line", -1) and is_blank_line () do
+  while execute_function ("forward_line", -1) and is_blank_line () do
   end
 
   -- Go to `cur_goalc' in that non-blank line.
@@ -138,8 +138,8 @@ local function previous_line_indent ()
   local cur_indent
   local m = point_marker ()
 
-  execute_function ("previous-line")
-  execute_function ("beginning-of-line")
+  execute_function ("previous_line")
+  execute_function ("beginning_of_line")
 
   -- Find first non-blank char.
   while not eolp () and following_char ():match ("%s") do
@@ -155,25 +155,25 @@ local function previous_line_indent ()
   return cur_indent
 end
 
-Defun ("indent-for-tab-command",
+Defun ("indent_for_tab_command",
        {},
 [[
 Indent line or insert a tab.
-Depending on `tab-always-indent', either insert a tab or indent.
+Depending on `tab_always_indent', either insert a tab or indent.
 If initial point was within line's indentation, position after
 the indentation.  Else stay at same point in text.
 ]],
   true,
   function ()
-    if get_variable_bool ("tab-always-indent") then
+    if get_variable_bool ("tab_always_indent") then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
-      return execute_function ("indent-relative")
+      return execute_function ("indent_relative")
     end
   end
 )
 
-Defun ("indent-relative",
+Defun ("indent_relative",
        {},
 [[
 Space out to under next indent point in previous nonblank line.
@@ -181,7 +181,7 @@ An indent point is a non-whitespace character following whitespace.
 The following line shows the indentation points in this line.
     ^         ^    ^     ^   ^           ^      ^  ^    ^
 If the previous nonblank line has no indent points beyond the
-column point starts at, `tab-to-tab-stop' is done instead, unless
+column point starts at, `tab_to_tab_stop' is done instead, unless
 this command is invoked with a numeric argument, in which case it
 does nothing.
 ]],
@@ -254,11 +254,11 @@ does nothing.
   end
 )
 
-Defun ("newline-and-indent",
+Defun ("newline_and_indent",
        {},
 [[
 Insert a newline, then indent.
-Indentation is done using the `indent-for-tab-command' function.
+Indentation is done using the `indent_for_tab_command' function.
 ]],
   true,
   function ()
@@ -284,7 +284,7 @@ Indentation is done using the `indent-for-tab-command' function.
       -- Only indent if we're in column > 0 or we're in column 0 and
       -- there is a space character there in the last non-blank line.
       if indent then
-        execute_function ("indent-for-tab-command")
+        execute_function ("indent_for_tab_command")
       end
       ok = true
     end
@@ -295,7 +295,7 @@ Indentation is done using the `indent-for-tab-command' function.
 )
 
 
-Defun ("delete-char",
+Defun ("delete_char",
        {"number"},
 [[
 Delete the following @i{n} characters (previous if @i{n} is negative).
@@ -306,7 +306,7 @@ Delete the following @i{n} characters (previous if @i{n} is negative).
   end
 )
 
-Defun ("backward-delete-char",
+Defun ("backward_delete_char",
        {"number"},
 [[
 Delete the previous @i{n} characters (following if @i{n} is negative).
@@ -317,7 +317,7 @@ Delete the previous @i{n} characters (following if @i{n} is negative).
   end
 )
 
-Defun ("delete-horizontal-space",
+Defun ("delete_horizontal_space",
        {},
 [[
 Delete all spaces and tabs around point.
@@ -338,7 +338,7 @@ Delete all spaces and tabs around point.
   end
 )
 
-Defun ("just-one-space",
+Defun ("just_one_space",
        {},
 [[
 Delete all spaces and tabs around point, leaving one space.
@@ -346,13 +346,13 @@ Delete all spaces and tabs around point, leaving one space.
   true,
   function ()
     undo_start_sequence ()
-    execute_function ("delete-horizontal-space")
+    execute_function ("delete_horizontal_space")
     insert_char (' ')
     undo_end_sequence ()
   end
 )
 
-Defun ("tab-to-tab-stop",
+Defun ("tab_to_tab_stop",
        {"number"},
 [[
 Insert a tabulation at the current point position into the current
@@ -365,7 +365,7 @@ buffer.
 )
 
 local function newline ()
-  if cur_bp.autofill and get_goalc () > get_variable_number ("fill-column") then
+  if cur_bp.autofill and get_goalc () > get_variable_number ("fill_column") then
     fill_break_line ()
   end
   return insert_newline ()
@@ -383,7 +383,7 @@ the current buffer.
   end
 )
 
-Defun ("open-line",
+Defun ("open_line",
        {"number"},
 [[
 Insert a newline and leave point before it.

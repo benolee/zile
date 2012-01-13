@@ -22,12 +22,12 @@ RUNLISPTESTS = $(LUA) $(srcdir)/tests/run-lisp-tests.lua
 TERM ?= vt100
 
 LISP_TESTS =						\
-	$(srcdir)/tests/*.el				\
-	$(srcdir)/tests/regression/*.el			\
-	$(srcdir)/tests/interactive/*.el
+	$(srcdir)/tests/*.lua				\
+	$(srcdir)/tests/regression/*.lua		\
+	$(srcdir)/tests/interactive/*.lua
 
 LISP_TESTS_FIXED_SCREEN =				\
-	$(srcdir)/tests/fixed-screen/*.el
+	$(srcdir)/tests/fixed-screen/*.lua
 
 LISP_TESTS_OUTPUTS =					\
 	$(srcdir)/tests/*.output			\
@@ -54,4 +54,4 @@ EXTRA_DIST +=						\
 check-local: $(builddir)/src/zi
 	echo $(LISP_TESTS) | $(LUA_ENV) $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
 	echo $(LISP_TESTS_FIXED_SCREEN) | COLUMNS=80 LINES=24 $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
-	$(LISP_TESTS_ENVIRONMENT) $(builddir)/src/zi --unknown-flag --load $(srcdir)/tests/quit.el
+	$(LISP_TESTS_ENVIRONMENT) $(builddir)/src/zi --unknown-flag --load $(srcdir)/tests/quit.lua

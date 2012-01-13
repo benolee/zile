@@ -19,7 +19,7 @@
 
 local regs = {}
 
-Defun ("copy-to-register",
+Defun ("copy_to_register",
        {"number"},
 [[
 Copy region into register @i{register}.
@@ -32,7 +32,7 @@ Copy region into register @i{register}.
     end
 
     if reg == 7 then
-      return execute_function ("keyboard-quit")
+      return execute_function ("keyboard_quit")
     else
       minibuf_clear ()
       local rp = calculate_the_region ()
@@ -54,7 +54,7 @@ local function insert_register ()
   return true
 end
 
-Defun ("insert-register",
+Defun ("insert_register",
        {"number"},
 [[
 Insert contents of the user specified register.
@@ -74,14 +74,14 @@ Puts point before and mark after the inserted text.
     end
 
     if reg == 7 then
-      ok = execute_function ("keyboard-quit")
+      ok = execute_function ("keyboard_quit")
     else
       minibuf_clear ()
       if not regs[term_bytetokey (reg)] then
         minibuf_error ("Register does not contain text")
         ok = false
       else
-        execute_function ("set-mark-command")
+        execute_function ("set_mark_command")
         regnum = reg
         execute_with_uniarg (true, current_prefix_arg, insert_register)
         execute_function ("exchange_point_and_mark")
@@ -111,7 +111,7 @@ local function write_registers_list (i)
   end
 end
 
-Defun ("list-registers",
+Defun ("list_registers",
        {},
 [[
 List defined registers.

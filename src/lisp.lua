@@ -286,7 +286,7 @@ function move_with_uniarg (uniarg, move)
 end
 
 
-Defun ("execute-extended-command",
+Defun ("execute_extended_command",
        {"number"},
 [[
 Read function name, then read its arguments and call it.
@@ -326,7 +326,7 @@ function minibuf_read_function_name (fmt)
 end
 
 
-Defun ("eval-buffer",
+Defun ("eval_buffer",
        {"string"},
 [[
 Execute the current buffer as Lisp code.

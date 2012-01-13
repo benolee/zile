@@ -26,7 +26,7 @@ local function write_function_description (name, doc)
                                 doc))
 end
 
-Defun ("describe-function",
+Defun ("describe_function",
        {"string"},
 [[
 Display the full documentation of a function.
@@ -62,7 +62,7 @@ local function write_key_description (name, doc, binding)
                               doc))
 end
 
-Defun ("describe-key",
+Defun ("describe_key",
        {"string"},
 [[
 Display documentation of the command invoked by a key sequence.
@@ -106,7 +106,7 @@ local function write_variable_description (name, curval, doc)
                               name, curval, doc))
 end
 
-Defun ("describe-variable",
+Defun ("describe_variable",
        {"string"},
 [[
 Display the full documentation of a variable.

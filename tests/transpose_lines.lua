@@ -1,0 +1,5 @@
+(transpose_lines 1)
+(transpose_lines 1)
+(transpose_lines 1)
+(save_buffer)
+(save_buffers_kill_zi)

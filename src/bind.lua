@@ -35,7 +35,7 @@ function self_insert_command ()
   return true
 end
 
-Defun ("self-insert-command",
+Defun ("self_insert_command",
        {},
 [[
 Insert the character you type.
@@ -62,7 +62,7 @@ function call_command (f, branch)
   _last_command = _this_command
 
   -- Only add keystrokes if we were already in macro defining mode
-  -- before the function call, to cope with start-kbd-macro.
+  -- before the function call, to cope with start_kbd_macro.
   if lastflag.defining_macro and thisflag.defining_macro then
     add_cmd_to_macro ()
   end
@@ -94,13 +94,13 @@ function init_default_bindings ()
   -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
     if posix.isprint (string.char (i)) then
-      root_bindings[{keycode (string.char (i))}] = "self-insert-command"
+      root_bindings[{keycode (string.char (i))}] = "self_insert_command"
     end
   end
 
-  -- Bind special key names to self-insert-command
+  -- Bind special key names to self_insert_command
   list.map (function (e)
-              root_bindings[{keycode (e)}] = "self-insert-command"
+              root_bindings[{keycode (e)}] = "self_insert_command"
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 
@@ -175,7 +175,7 @@ function get_function_by_keys (keys)
   if #keys == 1 then
     local key = keys[1]
     if key.META and key.key < 255 and string.match (string.char (key.key), "[%d%-]") then
-      return "universal-argument"
+      return "universal_argument"
     end
   end
 
@@ -198,7 +198,7 @@ function gather_bindings (key, p, g)
   end
 end
 
-Defun ("where-is",
+Defun ("where_is",
        {},
 [[
 Print message listing key sequences that invoke the command DEFINITION.
@@ -238,7 +238,7 @@ local function write_bindings_list (key, binding)
   walk_bindings (root_bindings, print_binding)
 end
 
-Defun ("describe-bindings",
+Defun ("describe_bindings",
        {},
 [[
 Show a list of all defined keys, and their definitions.
@@ -251,7 +251,7 @@ Show a list of all defined keys, and their definitions.
 )
 
 
-Defun ("global-set-key",
+Defun ("global_set_key",
        {"string", "string"},
 [[
 Bind a command to a key sequence.

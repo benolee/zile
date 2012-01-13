@@ -1,0 +1,6 @@
+(set_mark (point))
+(forward_char 4)
+(copy_to_register 97 (mark) (point))
+(insert_register 97)
+(save_buffer)
+(save_buffers_kill_zi)

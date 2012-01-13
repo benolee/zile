@@ -94,7 +94,7 @@ function compact_path (path)
   return (string.gsub (path, "^" .. home, "~"))
 end
 
-Defun ("find-file",
+Defun ("find_file",
        {"string"},
 [[
 Edit file @i{filename}.
@@ -110,7 +110,7 @@ creating one if none already exists.
     end
 
     if not filename then
-      ok = execute_function ("keyboard-quit")
+      ok = execute_function ("keyboard_quit")
     elseif filename ~= "" then
       ok = find_file (filename)
     end
@@ -119,23 +119,23 @@ creating one if none already exists.
   end
 )
 
-Defun ("find-file-read-only",
+Defun ("find_file_read_only",
        {"string"},
 [[
 Edit file @i{filename} but don't allow changes.
-Like `find-file' but marks buffer as read-only.
-Use @kbd{M-x toggle-read-only} to permit editing.
+Like `find_file' but marks buffer as read-only.
+Use @kbd{M-x toggle_read_only} to permit editing.
 ]],
   true,
   function (filename)
-    local ok = execute_function ("find-file", filename)
+    local ok = execute_function ("find_file", filename)
     if ok then
       cur_bp.readonly = true
     end
   end
 )
 
-Defun ("find-alternate-file",
+Defun ("find_alternate_file",
        {},
 [[
 Find the file specified by the user, select its buffer, kill previous buffer.
@@ -156,7 +156,7 @@ If the current buffer now contains an empty file that you just visited
 
     local ok = false
     if not ms then
-      ok = execute_function ("keyboard-quit")
+      ok = execute_function ("keyboard_quit")
     elseif ms ~= "" and check_modified_buffer (cur_bp ()) then
       kill_buffer (cur_bp)
       ok = find_file (ms)
@@ -166,7 +166,7 @@ If the current buffer now contains an empty file that you just visited
   end
 )
 
-Defun ("insert-file",
+Defun ("insert_file",
        {"string"},
 [[
 Insert contents of file FILENAME into buffer after point.
@@ -183,7 +183,7 @@ Set mark after the inserted text.
     if not file then
       file = minibuf_read_filename ("Insert file: ", cur_bp.dir)
       if not file then
-        ok = execute_function ("keyboard-quit")
+        ok = execute_function ("keyboard_quit")
       end
     end
 
@@ -195,7 +195,7 @@ Set mark after the inserted text.
       local s = io.slurp (file)
       if s then
         insert_estr (EStr (s))
-        execute_function ("set-mark-command")
+        execute_function ("set_mark_command")
       else
         ok = minibuf_error ("%s: %s", file, posix.errno ())
       end
@@ -307,13 +307,13 @@ end
 -- Create a backup file if specified by the user variables.
 local function backup_and_write (bp, filename)
   -- Make backup of original file.
-  local backup = get_variable_bool ("make-backup-files")
+  local backup = get_variable_bool ("make_backup_files")
   if not bp.backup and backup then
     local h = io.open (filename, "r+")
     if h then
       h:close ()
 
-      local backupdir = get_variable_bool ("backup-directory") and get_variable ("backup-directory")
+      local backupdir = get_variable_bool ("backup_directory") and get_variable ("backup_directory")
       local bfilename = create_backup_filename (filename, backupdir)
       if bfilename and copy_file (filename, bfilename) then
         bp.backup = true
@@ -342,7 +342,7 @@ local function write_buffer (bp, needname, confirm, name, prompt)
   if needname then
     name = minibuf_read_filename (prompt, "")
     if not name then
-      return execute_function ("keyboard-quit")
+      return execute_function ("keyboard_quit")
     end
     if name == "" then
       return false
@@ -353,7 +353,7 @@ local function write_buffer (bp, needname, confirm, name, prompt)
   if confirm and exist_file (name) then
     ans = minibuf_read_yn (string.format ("File `%s' exists; overwrite? (y or n) ", name))
     if ans == -1 then
-      execute_function ("keyboard-quit")
+      execute_function ("keyboard_quit")
     elseif ans == false then
       minibuf_error ("Canceled")
     end
@@ -390,7 +390,7 @@ local function save_buffer (bp)
   return true
 end
 
-Defun ("save-buffer",
+Defun ("save_buffer",
        {},
 [[
 Save current buffer in visited file if modified.  By default, makes the
@@ -402,7 +402,7 @@ previous version into a backup file if this is the first save.
   end
 )
 
-Defun ("write-file",
+Defun ("write_file",
        {},
 [[
 Write current buffer into file @i{filename}.
@@ -437,7 +437,7 @@ local function save_some_buffers ()
           minibuf_clear ()
 
           if c == keycode "\\C-g" then
-            execute_function ("keyboard-quit")
+            execute_function ("keyboard_quit")
             return false
           elseif c == keycode "q" then
             bp = nil
@@ -469,7 +469,7 @@ local function save_some_buffers ()
   return true
 end
 
-Defun ("save-some-buffers",
+Defun ("save_some_buffers",
        {},
 [[
 Save some modified file-visiting buffers.  Asks user about each one.
@@ -480,7 +480,7 @@ Save some modified file-visiting buffers.  Asks user about each one.
   end
 )
 
-Defun ("save-buffers-kill-zi",
+Defun ("save_buffers_kill_zi",
        {},
 [[
 Offer to save each buffer, then kill this Zi process.
@@ -496,7 +496,7 @@ Offer to save each buffer, then kill this Zi process.
         while true do
           local ans = minibuf_read_yesno ("Modified buffers exist; exit anyway? (yes or no) ")
           if ans == nil then
-            return execute_function ("keyboard-quit")
+            return execute_function ("keyboard_quit")
           elseif not ans then
             return false
           end
@@ -521,7 +521,7 @@ Make DIR become the current buffer's default directory.
     end
 
     if not dir then
-      return execute_function ("keyboard-quit")
+      return execute_function ("keyboard_quit")
     end
 
     if dir ~= "" then
@@ -538,7 +538,7 @@ Make DIR become the current buffer's default directory.
   end
 )
 
-Defun ("insert-buffer",
+Defun ("insert_buffer",
        {"string"},
 [[
 Insert after point the contents of BUFFER.
@@ -565,7 +565,7 @@ Puts mark after the inserted text.
       buffer = minibuf_read (string.format ("Insert buffer (default %s): ", def_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = execute_function ("keyboard-quit")
+        ok = execute_function ("keyboard_quit")
       end
     end
 
@@ -583,7 +583,7 @@ Puts mark after the inserted text.
 
       if ok then
         insert_buffer (bp)
-        execute_function ("set-mark-command")
+        execute_function ("set_mark_command")
       end
     end
 

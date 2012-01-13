@@ -51,11 +51,11 @@ function run_test (test, name, editor_name, edit_file, cmd, args)
 end
 
 for _, name in ipairs (arg) do
-  local test = name:gsub ("%.el$", "")
+  local test = name:gsub ("%.lua$", "")
   if io.open (test .. ".output") ~= nil then
     name = test:gsub (io.catfile (srcdir, "tests/"), "")
     local edit_file = test:gsub ("^" .. srcdir_pat, builddir) .. ".input"
-    local args = {"--no-init-file", edit_file, "--load", test:gsub ("^" .. srcdir_pat, abs_srcdir) .. ".el"}
+    local args = {"--no-init-file", edit_file, "--load", test:gsub ("^" .. srcdir_pat, abs_srcdir) .. ".lua"}
 
     posix.system ("mkdir", "-p", posix.dirname (edit_file))
 

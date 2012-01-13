@@ -1,0 +1,5 @@
+(mark_whole_buffer)
+(copy_region_as_kill (point) (mark))
+(yank)
+(save_buffer)
+(save_buffers_kill_zi)

@@ -1,0 +1,5 @@
+(set_mark (point))
+(forward_line 2)
+(upcase_region (point) (mark))
+(save_buffer)
+(save_buffers_kill_zi)

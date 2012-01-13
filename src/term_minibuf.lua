@@ -49,7 +49,7 @@ function maybe_close_popup (cp)
   if cp and cp.poppedup and wp then
     set_current_window (wp)
     if cp.close then
-      execute_function ("delete-window")
+      execute_function ("delete_window")
     elseif cp.old_bp then
       switch_to_buffer (cp.old_bp)
     end
@@ -90,7 +90,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     local c = getkeystroke (GETKEY_DEFAULT)
     if c == nil or c == keycode "\\RET" then
     elseif c == keycode "\\C-z" then
-      execute_function ("suspend-zi")
+      execute_function ("suspend_zi")
     elseif c == keycode "\\C-g" then
       as = nil
       break
@@ -111,7 +111,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
         ding ()
       end
     elseif c == keycode "\\C-k" then
-      -- FIXME: do kill-register save.
+      -- FIXME: do kill_register save.
       if pos < #as then
         as = string.sub (as, pos + 1)
       else

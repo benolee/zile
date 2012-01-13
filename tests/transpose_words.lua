@@ -1,0 +1,8 @@
+(forward_word)
+(transpose_words 1)
+(transpose_words 1)
+(transpose_words 1)
+(transpose_words 1)
+(transpose_words 1)
+(save_buffer)
+(save_buffers_kill_zi)
