@@ -1,0 +1,10 @@
+describe_variable "ring_bell"
+other_window (1)
+set_mark (point)
+forward_line (1)
+forward_word (-4)
+copy_region_as_kill (mark, point)
+other_window (-1)
+yank ()
+save_buffer ()
+save_buffers_kill_zi ()

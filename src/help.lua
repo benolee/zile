@@ -103,7 +103,7 @@ Display documentation of the command invoked by a key sequence.
 local function write_variable_description (name, curval, doc)
   insert_string (string.format ("%s is a variable defined in `Lua source code'.\n\n" ..
                                 "Its value is %s\n\n%s",
-                              name, curval, doc))
+                              name, tostring (curval), doc))
 end
 
 Defun ("describe_variable",
