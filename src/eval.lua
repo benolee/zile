@@ -30,6 +30,7 @@ local introspect = setmetatable ({}, {__mode = "k"})
 -- {
 --   doc: command docstring.
 --   interactive: if it can be called by `execute_extended_command'.
+--   name: command name.
 -- }
 
 -- Initialise prefix arg
@@ -81,6 +82,24 @@ end
 function get_function_doc (name)
   if zi[name] and introspect[zi[name]] then
     return introspect[zi[name]].doc
+  end
+end
+
+function get_function_name (func)
+  if func and introspect[func] then
+    local name = introspect[func].name
+
+    -- Return the name if we found in already, and it wasn't rebound yet.
+    if name and zi[name] == func then return name end
+
+    -- Otherwise look it up the hard way, updating any others we find
+    -- as we go.
+    for n,f in pairs (zi) do
+      if introspect[f] then
+        introspect[f].name = n
+	if f == func then return n end
+      end
+    end
   end
 end
 

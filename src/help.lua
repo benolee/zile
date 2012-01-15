@@ -32,19 +32,19 @@ Defun ("describe_function",
 Display the full documentation of a function.
 ]],
   true,
-  function (func)
-    if not func then
-      func = minibuf_read_function_name ("Describe function: ")
-      if not func then
+  function (name)
+    if not name then
+      name = minibuf_read_function_name ("Describe function: ")
+      if not name then
         return false
       end
     end
 
-    local doc = get_function_doc (func)
+    local doc = get_function_doc (name)
     if not doc then
       return false
     else
-      write_temp_buffer ("*Help*", true, write_function_description, func, doc)
+      write_temp_buffer ("*Help*", true, write_function_description, name, doc)
     end
 
     return true
@@ -75,12 +75,12 @@ Display documentation of the command invoked by a key sequence.
       if not keys then
         return false
       end
-      name = get_function_by_keys (keys)
+      name = get_function_name_by_keys (keys)
       binding = tostring (keys)
     else
       minibuf_write ("Describe key:")
       keys = get_key_sequence ()
-      name = get_function_by_keys (keys)
+      name = get_function_name_by_keys (keys)
       binding = tostring (keys)
 
       if not name then

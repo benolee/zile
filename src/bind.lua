@@ -73,15 +73,16 @@ end
 
 function get_and_run_command ()
   local keys = get_key_sequence ()
-  local name = get_function_by_keys (keys)
+  local func = get_function_by_keys (keys)
+
   minibuf_clear ()
 
-  if function_exists (name) then
+  if func then
     -- Each function in the zi table calls it's own functionality
     -- via call_command () above.
 
     thisflag = {defining_macro = lastflag.defining_macro}
-    zi[name] (lastflag.set_uniarg and (prefix_arg or 1 ))
+    func (lastflag.set_uniarg and (prefix_arg or 1 ))
     lastflag = thisflag
   else
     minibuf_error (tostring (keys) .. " is undefined")
@@ -94,13 +95,13 @@ function init_default_bindings ()
   -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
     if posix.isprint (string.char (i)) then
-      root_bindings[{keycode (string.char (i))}] = "self_insert_command"
+      root_bindings[{keycode (string.char (i))}] = zi.self_insert_command
     end
   end
 
   -- Bind special key names to self_insert_command
   list.map (function (e)
-              root_bindings[{keycode (e)}] = "self_insert_command"
+              root_bindings[{keycode (e)}] = zi.self_insert_command
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 
@@ -134,7 +135,7 @@ local function walk_bindings (tree, process, st)
   local function walk_bindings_tree (tree, keys, process, st)
     for key, node in pairs (tree) do
       table.insert (keys, tostring (key))
-      if type (node) == "string" then
+      if type (node) == "function" then
         process (table.concat (keys, " "), node, st)
       else
         walk_bindings_tree (node, keys, process, st)
@@ -175,12 +176,17 @@ function get_function_by_keys (keys)
   if #keys == 1 then
     local key = keys[1]
     if key.META and key.key < 255 and string.match (string.char (key.key), "[%d%-]") then
-      return "universal_argument"
+      return zi.universal_argument
     end
   end
 
   local func = root_bindings[keys]
-  return type (func) == "string" and func or nil
+  return type (func) == "function" and func or nil
+end
+
+function get_function_name_by_keys (keys)
+  local func = get_function_by_keys (keys)
+  return get_function_name (func)
 end
 
 -- gather_bindings_state:
@@ -227,7 +233,7 @@ Argument is a command name.
 )
 
 local function print_binding (key, func)
-  insert_string (string.format ("%-15s %s\n", key, func))
+  insert_string (string.format ("%-15s %s\n", key, get_function_name (func)))
 end
 
 local function write_bindings_list (key, binding)
@@ -252,14 +258,14 @@ Show a list of all defined keys, and their definitions.
 
 
 Defun ("global_set_key",
-       {"string", "string"},
+       {"string", "function"},
 [[
 Bind a command to a key sequence.
 Read key sequence and function name, and bind the function to the key
 sequence.
 ]],
   true,
-  function (keystr, name)
+  function (keystr, func)
     local keys
 
     if keystr then
@@ -274,19 +280,15 @@ sequence.
       keystr = tostring (keys)
     end
 
-    if not name then
-      name = minibuf_read_function_name (string.format ("Set key %s to command: ", keystr))
+    if not func then
+      local name = minibuf_read_function_name (string.format ("Set key %s to command: ", keystr))
       if not name then
         return
       end
+      func = zi[name]
     end
 
-    if not function_exists (name) then -- Possible if called non-interactively
-      minibuf_error (string.format ("No such function `%s'", name))
-      return
-    end
-
-    root_bindings[keys] = name
+    root_bindings[keys] = func
 
     return true
   end
