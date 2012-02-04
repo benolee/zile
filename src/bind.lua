@@ -94,16 +94,16 @@ root_bindings = tree.new ()
 function init_default_bindings ()
   -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
-    if posix.isprint (string.char (i)) then
+    if posix.isgraph (string.char (i)) and i ~= string.byte ('\\') then
       root_bindings[{keycode (string.char (i))}] = zi.self_insert_command
     end
   end
 
   -- Bind special key names to self_insert_command
   list.map (function (e)
-              root_bindings[{keycode (e)}] = zi.self_insert_command
-            end,
-            {"\\SPC", "\\TAB", "\\RET", "\\\\"})
+	      root_bindings[{keycode (e)}] = zi.self_insert_command
+	    end,
+	    {"space", "tab", "return", "backslash"})
 
   evaluate_file (PATH_DATA .. "/default-bindings.lua")
 end

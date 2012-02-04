@@ -88,63 +88,63 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     thistab = -1
 
     local c = getkeystroke (GETKEY_DEFAULT)
-    if c == nil or c == keycode "\\RET" then
-    elseif c == keycode "\\C-z" then
+    if c == nil or c == keycode "return" then
+    elseif c == keycode "c-z" then
       zi.suspend_zi ()
-    elseif c == keycode "\\C-g" then
+    elseif c == keycode "c-g" then
       as = nil
       break
-    elseif c == keycode "\\C-a" or c == keycode "\\HOME" then
+    elseif c == keycode "c-a" or c == keycode "home" then
       pos = 0
-    elseif c == keycode "\\C-e" or c == keycode "\\END" then
+    elseif c == keycode "c-e" or c == keycode "end" then
       pos = #as
-    elseif c == keycode "\\C-b" or c == keycode "\\LEFT" then
+    elseif c == keycode "c-b" or c == keycode "left" then
       if pos > 0 then
         pos = pos - 1
       else
         ding ()
       end
-    elseif c == keycode "\\C-f" or c == keycode "\\RIGHT" then
+    elseif c == keycode "c-f" or c == keycode "right" then
       if pos < #as then
         pos = pos + 1
       else
         ding ()
       end
-    elseif c == keycode "\\C-k" then
+    elseif c == keycode "c-k" then
       -- FIXME: do kill_register save.
       if pos < #as then
         as = string.sub (as, pos + 1)
       else
         ding ()
       end
-    elseif c == keycode "\\BACKSPACE" then
+    elseif c == keycode "backspace" then
       if pos > 0 then
         as = string.sub (as, 1, pos - 1) .. string.sub (as, pos + 1)
         pos = pos - 1
       else
         ding ()
       end
-    elseif c == keycode "\\C-d" or c == keycode "\\DELETE" then
+    elseif c == keycode "c-d" or c == keycode "delete" then
       if pos < #as then
         as = string.sub (as, 1, pos) .. string.sub (as, pos + 2)
       else
         ding ()
       end
-    elseif c == keycode "\\A-v" or c == keycode "\\PAGEUP" then
+    elseif c == keycode "a-v" or c == keycode "pgup" then
       if cp == nil then
         ding ()
       elseif cp.poppedup then
         completion_scroll_down ()
         thistab = lasttab
       end
-    elseif c == keycode "\\C-v" or c == keycode "\\PAGEDOWN" then
+    elseif c == keycode "c-v" or c == keycode "pgdn" then
       if cp == nil then
         ding ()
       elseif cp.poppedup then
         completion_scroll_up ()
         thistab = lasttab
       end
-    elseif c == keycode "\\A-p" or c == keycode "\\UP" then
+    elseif c == keycode "a-p" or c == keycode "up" then
       if hp then
         local elem = previous_history_element (hp)
         if elem then
@@ -154,7 +154,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
           as = elem
         end
       end
-    elseif c == keycode "\\A-n" or c == keycode "\\DOWN" then
+    elseif c == keycode "a-n" or c == keycode "down" then
       if hp then
         local elem = next_history_element (hp)
         if elem then
@@ -164,7 +164,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
           saved = nil
         end
       end
-    elseif c == keycode "\\TAB" or (c == keycode " " and cp) then
+    elseif c == keycode "tab" or (c == keycode "space" and cp) then
       if not cp then
         ding ()
       else
@@ -203,7 +203,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     end
 
     lasttab = thistab
-  until c == keycode "\\RET" or c == keycode "\\C-g"
+  until c == keycode "return" or c == keycode "c-g"
 
   minibuf_clear ()
   maybe_close_popup (cp)

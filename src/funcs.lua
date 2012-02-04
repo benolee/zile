@@ -165,7 +165,7 @@ by 4 each time.
       local key = do_binding_completion (table.concat (keys, " "))
 
       -- Cancelled.
-      if key == keycode "\\C-g" then
+      if key == keycode "c-g" then
         ok = zi.keyboard_quit()
         break
       -- Digit pressed.
@@ -186,14 +186,14 @@ by 4 each time.
         end
 
         i = i + 1
-      elseif key == keycode "\\C-u" then
+      elseif key == keycode "c-u" then
         as = as .. "C-u"
         if i == 0 then
           arg = arg * 4
         else
           break
         end
-      elseif key == keycode "\\A--" and i == 0 then
+      elseif key == keycode "a--" and i == 0 then
         if sgn > 0 then
           sgn = -sgn
           as = as .. "-"

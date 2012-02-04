@@ -202,7 +202,7 @@ local function isearch (forward, regexp)
 
     local c = getkey (GETKEY_DEFAULT)
 
-    if c == keycode "\\C-g" then
+    if c == keycode "c-g" then
       goto_offset (start)
       thisflag.need_resync = true
 
@@ -215,7 +215,7 @@ local function isearch (forward, regexp)
       end
       cur_bp.mark = old_mark
       break
-    elseif c == keycode "\\BACKSPACE" then
+    elseif c == keycode "backspace" then
       if #pattern > 0 then
         pattern = string.sub (pattern, 1, -2)
         cur = start
@@ -224,14 +224,14 @@ local function isearch (forward, regexp)
       else
         ding ()
       end
-    elseif c == keycode "\\C-q" then
+    elseif c == keycode "c-q" then
       minibuf_write (string.format ("%s^Q-", buf))
       pattern = pattern .. string.char (getkey_unfiltered (GETKEY_DEFAULT))
-    elseif c == keycode "\\C-r" or c == keycode "\\C-s" then
+    elseif c == keycode "c-r" or c == keycode "c-s" then
       -- Invert direction.
-      if c == keycode "\\C-r" then
+      if c == keycode "c-r" then
         forward = false
-      elseif c == keycode "\\C-s" then
+      elseif c == keycode "c-s" then
         forward = true
       end
       if #pattern > 0 then
@@ -242,8 +242,8 @@ local function isearch (forward, regexp)
       elseif last_search then
         pattern = last_search
       end
-    elseif c.ALT or c.CTRL or c == keycode "\\RET" or term_keytobyte (c) == nil then
-      if c == keycode "\\RET" and #pattern == 0 then
+    elseif c.ALT or c.CTRL or c == keycode "return" or term_keytobyte (c) == nil then
+      if c == keycode "return" and #pattern == 0 then
         do_search (forward, regexp)
       else
         if #pattern > 0 then
@@ -258,7 +258,7 @@ local function isearch (forward, regexp)
         else
           minibuf_clear ()
         end
-        if c ~= keycode "\\RET" then
+        if c ~= keycode "return" then
           ungetkey (c)
         end
       end
@@ -395,7 +395,7 @@ what to do with it.
 
         if c == keycode "q" then -- Quit immediately.
           break
-        elseif c == keycode "\\C-g" then
+        elseif c == keycode "c-g" then
           ok = zi.keyboard_quit ()
           break
         elseif c == keycode "!" then -- Replace all without asking.
@@ -423,7 +423,7 @@ what to do with it.
         if c == keycode "." then -- Replace and quit.
           break
         end
-      elseif c ~= keycode "n" and c ~= keycode "\\RET" and c ~= keycode "\\DELETE" then
+      elseif c ~= keycode "n" and c ~= keycode "return" and c ~= keycode "delete" then
         ungetkey (c)
         ok = false
         break

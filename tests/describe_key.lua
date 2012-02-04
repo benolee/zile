@@ -1,4 +1,4 @@
-describe_key "\\C-f"
+describe_key "c-f"
 other_window (1)
 set_mark (point)
 forward_line ()

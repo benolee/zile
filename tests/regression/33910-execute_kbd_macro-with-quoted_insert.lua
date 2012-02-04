@@ -3,4 +3,4 @@
 
 -- quoted_insert F1 RETURN
 -- save_buffer save_buffers_kill_zi
-execute_kbd_macro "\\C-q\\F1\\RET\\C-x\\C-s\\C-x\\C-c"
+execute_kbd_macro "c-q f1 return c-x c-s c-x c-c"

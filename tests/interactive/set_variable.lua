@@ -1,3 +1,3 @@
 -- set_variable "kill_whole_line" RET t RET
 -- kill_line save_buffer save_buffers_kill_zi
-execute_kbd_macro "\\A-xset_variable\\rkill_whole_line\\rt\\r\\C-k\\C-x\\C-s\\C-x\\C-c"
+execute_kbd_macro "a-x s e t _ v a r i a b l e return k i l l _ w h o l e _ l i n e return t return c-k c-x c-s c-x c-c"

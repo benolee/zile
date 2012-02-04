@@ -79,39 +79,46 @@ local codetoname = {
   [string.byte(' ')] = "SPC",
 }
 
+-- Modifiers
+local modifier = {
+  ["C"]         = KBD_CTRL,
+  ["A"]         = KBD_ALT,
+}
 
 -- Array of key names
 local keynametocode_map = {
-  ["\\BACKSPACE"] = KBD_BS,
-  ["\\C-"] = KBD_CTRL,
-  ["\\DELETE"] = KBD_DEL,
-  ["\\DOWN"] = KBD_DOWN,
-  ["\\e"] = 27, -- Escape or ^[
-  ["\\END"] = KBD_END,
-  ["\\F1"] = KBD_F1,
-  ["\\F10"] = KBD_F10,
-  ["\\F11"] = KBD_F11,
-  ["\\F12"] = KBD_F12,
-  ["\\F2"] = KBD_F2,
-  ["\\F3"] = KBD_F3,
-  ["\\F4"] = KBD_F4,
-  ["\\F5"] = KBD_F5,
-  ["\\F6"] = KBD_F6,
-  ["\\F7"] = KBD_F7,
-  ["\\F8"] = KBD_F8,
-  ["\\F9"] = KBD_F9,
-  ["\\HOME"] = KBD_HOME,
-  ["\\INSERT"] = KBD_INS,
-  ["\\LEFT"] = KBD_LEFT,
-  ["\\A-"] = KBD_ALT,
-  ["\\PAGEDOWN"] = KBD_PGDN,
-  ["\\PAGEUP"] = KBD_PGUP,
-  ["\\RET"] = KBD_RET,
-  ["\\RIGHT"] = KBD_RIGHT,
-  ["\\SPC"] = string.byte (' '),
-  ["\\TAB"] = KBD_TAB,
-  ["\\UP"] = KBD_UP,
-  ["\\\\"] = string.byte ('\\'),
+  ["backslash"] = string.byte ('\\'),
+  ["backspace"] = KBD_BS,
+  ["cancel"]    = string.byte ('\a'),
+  ["delete"]    = KBD_DEL,
+  ["down"]      = KBD_DOWN,
+  ["end"]       = KBD_END,
+  ["enter"]     = string.byte ('\n'),
+  ["escape"]    = 27,
+  ["f1"]        = KBD_F1,
+  ["f10"]       = KBD_F10,
+  ["f11"]       = KBD_F11,
+  ["f12"]       = KBD_F12,
+  ["f2"]        = KBD_F2,
+  ["f3"]        = KBD_F3,
+  ["f4"]        = KBD_F4,
+  ["f5"]        = KBD_F5,
+  ["f6"]        = KBD_F6,
+  ["f7"]        = KBD_F7,
+  ["f8"]        = KBD_F8,
+  ["f9"]        = KBD_F9,
+  ["formfeed"]  = string.byte ('\f'),
+  ["home"]      = KBD_HOME,
+  ["insert"]    = KBD_INS,
+  ["left"]      = KBD_LEFT,
+  ["pgdn"]      = KBD_PGDN,
+  ["pgup"]      = KBD_PGUP,
+  ["return"]    = KBD_RET,
+  ["right"]     = KBD_RIGHT,
+  ["space"]     = string.byte (' '),
+  ["tab"]       = KBD_TAB,
+  ["up"]        = KBD_UP,
+  ["vtab"]      = string.byte ('\v'),
 }
 
 -- Insert printable characters in the ASCII range.
@@ -155,7 +162,24 @@ end
 local keycode_mt = {
   -- Output the write syntax for this keycode (e.g. C-A-<f1>).
   __tostring = function (self)
-    return mapkey (codetoname, self, {C = "C-", A = "A-"})
+    if not self or not self.key then
+      return "invalid keycode: nil"
+    end
+
+    local s = ""
+    list.map (function (e)
+                if self[e] then s = s .. e end
+              end, { "C-", "A-" })
+
+    if codetoname[self.key] then
+      s = s .. codetoname[self.key]
+    elseif self.key <= 0xff and posix.isgraph (string.char (self.key)) then
+      s = s .. string.char (self.key)
+    else
+      s = s .. string.format ("<%x>", self.key)
+    end
+
+    return s
   end,
 
   -- Normalise modifier lookups to uppercase, sans `-' suffix.
@@ -166,123 +190,64 @@ local keycode_mt = {
   end,
 
   -- Return the immutable atom for this keycode with modifier added.
-  --   ctrlkey = "\\C-" + key
+  --   ctrlkey = "c-" + key
   __add = function (self, mod)
     if type (self) == "string" then mod, self = self, mod end
-    mod = string.upper (string.sub (mod, 2, 2))
+    mod = string.upper (string.sub (mod, 1, 1))
     if self[mod] then return self end
-    return keycode ("\\" .. mod .. "-" .. toreadsyntax (self))
+    return keycode (mod .. "-" .. tostring (self))
   end,
 
   -- Return the immutable atom for this keycode with modifier removed.
-  --   withoutalt = key - "\\A-"
+  --   withoutalt = key - "a-"
   __sub = function (self, mod)
     if type (self) == "string" then mod, self = self, mod end
-    mod = string.upper (string.sub (mod, 2, 2))
-    local keystr = string.gsub (toreadsyntax (self), "\\" .. mod .. "%-", "")
+    mod = string.upper (string.sub (mod, 1, 1))
+    local keystr = string.gsub (tostring (self), mod .. "%-", "")
     return keycode (keystr)
   end,
 }
 
-local equivs = {
-  ["\\NEXT"] = "\\PAGEDOWN",
-  ["\\PRIOR"] = "\\PAGEUP",
-  ["\\r"] = "\\RET",
-  ["\\t"] = "\\TAB",
-  ["\t"] = "\\TAB",
-  [" "] = "\\SPC",
-}
 
--- Extract a prefix of a key string.
-local function strtokey (tail)
-  if tail == "\\" then
-    return "\\", ""
-  end
-
-  local head, real_key
-  for match, equiv in pairs (equivs) do
-    if match == tail:sub (1, #match) then
-      head, real_key = match, equiv
-      break
+-- Convert a single keychord string to its key code.
+keycode = memoize (function (chord)
+  -- Normalise modifiers to upper case before creating an atom.
+  if chord:match ("%l%-") then
+    local l = chord:match ("[^%s%-]*%-?$")
+    for e in chord:gmatch ("[^%s%-]+%-") do
+      l = string.upper (e) .. l
     end
+    return keycode (l)
   end
-  if not head then
-    for match in pairs (keynametocode_map) do
-      if match == tail:sub (1, #match) then
-        head, real_key = match, match
-        break
+
+  local key = setmetatable ({}, keycode_mt)
+  key.key = keynametocode_map[chord]
+
+  if not key.key then
+    -- Extract the keypress proper from the end of the string.
+    key.key = keynametocode_map[chord:match ("[^%s%-]*%-?$")]
+    if not key.key then return nil end
+
+    -- Extract "-" suffixed modifiers from the beginning of the string.
+    for e in chord:gmatch ("([^%s%-]+)%-") do
+      if modifier[e] then
+        if key[e] then
+          return nil, chord .. ": " .. e .. " specified more than once"
+	end
+	key[e] = true
+      else
+        return nil, chord .. ": unknown modifier " .. e
       end
     end
   end
-  if head then
-    return real_key, tail:sub (#head + 1)
-  end
 
-  return "", nil
-end
-
-local function string_to_keycode (chord)
-  local key, tail = setmetatable ({}, keycode_mt), chord
-
-  local fragment
-  repeat
-    fragment, tail = strtokey (tail)
-    if fragment == nil then return nil end
-
-    if fragment == "\\C-" then
-      key.CTRL = true
-    elseif fragment == "\\A-" then
-      key.ALT = true
-    elseif fragment == "\\" then
-      key.key = keynametocode_map["\\\\"]
-    else
-      key.key = keynametocode_map[fragment]
-    end
-  until fragment ~= "\\C-" and fragment ~= "\\A-"
-
-  return key, fragment
-end
-
-memoized_keycode = memoize (string_to_keycode)
-
--- Convert a single keychord string to its key code.
--- First normalize the keycode, then call a memoized version so we get
--- an identical table, which can be compared, on each call with the
--- same chord.
-function keycode (chord)
-  local key, fragment = string_to_keycode (chord)
-
-  -- Normalise modifiers so that \\C-\\A-r and \\A-\\C-r are the same
+  -- Normalise modifiers so that C-A-r and A-C-r are the same
   -- atom.
-  local k = (key.CTRL and "\\C-" or "") .. (key.ALT and "\\A-" or "") .. fragment
-  return memoized_keycode (k)
-end
+  local k = (key.CTRL and "C-" or "") .. (key.ALT and "A-" or "") .. chord:match ("[^%s%-]*%-?$")
+  if k ~= chord then return keycode (k) end
 
--- Iterator over a key sequence string, returning the next key chord on
--- each iteration.
-local function keychords (s)
-  local tail = s
-
-  local function strtochord (tail)
-    local head, fragment = ""
-
-    repeat
-      fragment, tail = strtokey (tail)
-      if fragment == nil then return nil end
-      head = head .. fragment
-    until fragment ~= "\\C-" and fragment ~= "\\A-"
-
-    return head, tail
-  end
-
-  return function ()
-    while tail ~= "" do
-      local head
-      head, tail = strtochord (tail)
-      return head
-    end
-  end
-end
+  return key
+end)
 
 -- Convert a key sequence string into a key code sequence, or nil if
 -- it can't be converted.
@@ -293,11 +258,12 @@ function keystrtovec (s)
                  end
   })
 
-  for chord in keychords (s) do
-    if chord == nil then
+  for substr in s:gmatch ("%S+") do
+    local key = keycode (substr)
+    if key == nil then
       return nil
     end
-    table.insert (keys, keycode (chord))
+    table.insert (keys, key)
   end
 
   return keys
