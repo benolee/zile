@@ -34,7 +34,7 @@ Cancel current command.
   end
 )
 
-Defun ("suspend-emacs",
+Defun ("suspend-zi",
        {},
 [[
 Stop Zi and return to superior process.
