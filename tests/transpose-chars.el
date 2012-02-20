@@ -11,4 +11,4 @@
 (transpose-chars 1)
 (transpose-chars 1)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

@@ -2,4 +2,4 @@
 (forward-line 2)
 (kill-region (point) (mark))
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

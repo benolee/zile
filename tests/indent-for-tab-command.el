@@ -7,4 +7,4 @@
 (indent-for-tab-command)
 (forward-line)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

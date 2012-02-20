@@ -1,1 +1,1 @@
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

@@ -2,5 +2,5 @@
 ;;;        when the terminal outputs something else instead.
 
 ;; quoted-insert F1 RETURN
-;; save-buffer save-buffers-kill-emacs
+;; save-buffer save-buffers-kill-zi
 (execute-kbd-macro "\C-q\F1\RET\C-x\C-s\C-x\C-c")

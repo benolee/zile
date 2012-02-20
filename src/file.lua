@@ -480,7 +480,7 @@ Save some modified file-visiting buffers.  Asks user about each one.
   end
 )
 
-Defun ("save-buffers-kill-emacs",
+Defun ("save-buffers-kill-zi",
        {},
 [[
 Offer to save each buffer, then kill this Zi process.

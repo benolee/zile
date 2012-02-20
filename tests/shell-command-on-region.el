@@ -2,4 +2,4 @@
 (forward-line 4)
 (shell-command-on-region (mark) (point) "sort" t)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

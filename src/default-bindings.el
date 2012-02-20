@@ -84,7 +84,7 @@
 (global-set-key "\C-q" 'quoted-insert)
 (global-set-key "\C-l" 'recenter)
 (global-set-key "\C-x\C-s" 'save-buffer)
-(global-set-key "\C-x\C-c" 'save-buffers-kill-emacs)
+(global-set-key "\C-x\C-c" 'save-buffers-kill-zi)
 (global-set-key "\C-xs" 'save-some-buffers)
 (global-set-key "\M-v" 'scroll-down)
 (global-set-key "\PRIOR" 'scroll-down)

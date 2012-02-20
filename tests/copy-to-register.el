@@ -3,4 +3,4 @@
 (copy-to-register 97 (mark) (point))
 (insert-register 97)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

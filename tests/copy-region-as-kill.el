@@ -3,4 +3,4 @@
 (copy-region-as-kill (mark) (point))
 (yank)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

@@ -3,4 +3,4 @@
 (switch-to-buffer "switch-to-buffer.input")
 (insert "This is not.")
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

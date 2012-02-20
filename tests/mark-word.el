@@ -3,4 +3,4 @@
 (end-of-line)
 (yank)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

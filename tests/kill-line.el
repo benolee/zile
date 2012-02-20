@@ -7,4 +7,4 @@
 (end-of-line)
 (kill-line 0)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)

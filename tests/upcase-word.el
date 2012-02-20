@@ -1,3 +1,3 @@
 (upcase-word 4)
 (save-buffer)
-(save-buffers-kill-emacs)
+(save-buffers-kill-zi)
