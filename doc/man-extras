@@ -1,6 +1,8 @@
 [description]
-Zile is a lightweight Emacs clone that provides a subset of Emacs's
-functionality suitable for basic editing.
+GNU Zi is a lightweight text editor descended from GNU Zile with
+suitable functionality for basic editing. Compared to Zile, the
+Lisp Engine has been removed, but since it is implemented entirely
+in Lua, it is easily extended and customized.
 
 /then go to/
 Exit status is 0 if OK, 1 if it cannot start up, for example because
@@ -11,9 +13,9 @@ of memory.
 ~/.zi \(em user's Zi init file
 
 [author]
-Zile was written by Reuben Thomas, based on the C version by Sandro
-Sigala, Reuben Thomas, David A. Capello and Scott Lawrence.
+Zi was written by Reuben Thomas and Gary V. Vaughan, based on the
+Lua version of Zile.
 
 [see also]
-.BR emacs (1),
+.BR zile (1),
 .BR lua (1)
