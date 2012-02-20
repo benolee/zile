@@ -250,7 +250,7 @@ function main ()
     switch_to_buffer (bp)
     insert_string (splash_str)
     cur_bp.readonly = true
-    execute_function ("beginning_of_buffer")
+    zi.beginning_of_buffer ()
   end
 
   -- Load files and load files and run functions given on the command line.
@@ -259,7 +259,7 @@ function main ()
     local type, arg, line = zarg[i][1], zarg[i][2], zarg[i][3]
 
     if type == "function" then
-      ok = execute_function (arg)
+      ok = zi[arg] and zi[arg] ()
       if ok == nil then
         minibuf_error (string.format ("Function `%s' not defined", arg))
       end
@@ -271,7 +271,7 @@ function main ()
     elseif type == "file" then
       ok = find_file (arg)
       if ok then
-        execute_function ("goto_line", line)
+        zi.goto_line (line)
       end
     end
     if thisflag.quit then
@@ -284,11 +284,11 @@ function main ()
   -- Set up screen according to number of files loaded.
   if #buffers == 3 then
     -- *scratch* and two files.
-    execute_function ("split_window")
+    zi.split_window ()
     switch_to_buffer (buffers[#buffers -1])
-    execute_function ("other_window")
+    zi.other_window ()
   elseif #buffers > 3 then
-    execute_function ("list_buffers")
+    zi.list_buffers ()
   end
 
   -- Reinitialise the scratch buffer to catch settings

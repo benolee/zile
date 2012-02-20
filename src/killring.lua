@@ -20,7 +20,7 @@
 local kill_ring_text
 
 local function maybe_free_kill_ring ()
-  if _last_command ~= "kill_region" then
+  if _last_command ~= zi.kill_region then
     kill_ring_text = nil
   end
 end
@@ -40,7 +40,7 @@ local function copy_or_kill_region (kill, rp)
     end
   end
 
-  _this_command = "kill_region"
+  _this_command = zi.kill_region
   deactivate_mark ()
 
   return true
@@ -67,12 +67,12 @@ local function kill_text (uniarg, mark_func)
 
   push_mark ()
   undo_start_sequence ()
-  execute_function (mark_func, uniarg)
-  execute_function ("kill_region")
+  zi[mark_func] (uniarg)
+  zi.kill_region ()
   undo_end_sequence ()
   pop_mark ()
 
-  _this_command = "kill_region"
+  _this_command = zi.kill_region
   minibuf_write ("") -- Erase "Set mark" message.
   return true
 end
@@ -132,7 +132,7 @@ killed @i{or} yanked.  Put point at end, and set mark at beginning.
       return false
     end
 
-    execute_function ("set_mark_command")
+    zi.set_mark_command ()
     insert_estr (kill_ring_text)
     deactivate_mark ()
   end
@@ -199,12 +199,12 @@ local function kill_line (whole_line)
   end
 
   if ok and (whole_line or only_blanks_to_end_of_line) and not eobp () then
-    if not execute_function ("delete_char") then
+    if not zi.delete_char () then
       return false
     end
 
     kill_ring_push (EStr ("\n"))
-    _this_command = "kill_region"
+    _this_command = zi.kill_region
   end
 
   undo_end_sequence ()

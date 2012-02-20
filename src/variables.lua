@@ -96,7 +96,7 @@ Set a variable value to the user-specified value.
       val = minibuf_read (string.format ("Set %s to value: ", var), "")
     end
     if not val then
-      ok = execute_function ("keyboard_quit")
+      ok = zi.keyboard_quit ()
     end
 
     if ok then

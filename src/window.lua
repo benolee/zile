@@ -242,8 +242,8 @@ function completion_scroll_up ()
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not execute_function ("scroll_up") then
-    execute_function ("beginning_of_buffer")
+  if not zi.scroll_up () then
+    zi.beginning_of_buffer ()
   end
   set_current_window (old_wp)
 
@@ -257,7 +257,7 @@ function completion_scroll_down ()
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not execute_function ("scroll_down") then
+  if not zi.scroll_down () then
     gotoeob ()
     window_resync (cur_wp)
   end
@@ -277,7 +277,7 @@ end
 function popup_window ()
   if #windows == 1 then
     -- There is only one window on the screen, so split it.
-    execute_function ("split_window")
+    zi.split_window ()
   end
 
   return window_next (cur_wp)

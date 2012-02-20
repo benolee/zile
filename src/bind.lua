@@ -53,9 +53,8 @@ _interactive = false
 
 function call_command (f, ...)
   -- Execute the command.
-  _this_command = f
   _interactive = true
-  local ok = execute_function (f, branch)
+  local ok = f (...)
   _interactive = false
   _last_command = _this_command
 
@@ -65,7 +64,7 @@ function call_command (f, ...)
     add_cmd_to_macro ()
   end
 
-  if cur_bp and _last_command ~= "undo" then
+  if cur_bp and _last_command ~= zi.undo then
     cur_bp.next_undop = cur_bp.last_undop
   end
 

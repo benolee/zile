@@ -56,7 +56,7 @@ Change whether this buffer is visiting its file read-only.
   end
 )
 
-Defun ("auto_fill_mode",
+Defun ("toggle_auto_fill",
        {},
 [[
 Toggle Auto Fill mode.
@@ -124,7 +124,7 @@ function write_temp_buffer (name, show, func, ...)
   -- Use the "callback" routine.
   func (...)
 
-  execute_function ("beginning_of_buffer")
+  zi.beginning_of_buffer ()
   cur_bp.readonly = true
   cur_bp.modified = false
 
@@ -166,7 +166,7 @@ by 4 each time.
 
       -- Cancelled.
       if key == keycode "\\C-g" then
-        ok = execute_function ("keyboard_quit")
+        ok = zi.keyboard_quit()
         break
       -- Digit pressed.
       elseif string.match (string.char (key.key), "%d") then
@@ -288,7 +288,7 @@ Set the mark where point is.
 ]],
   true,
   function ()
-    execute_function ("set_mark")
+    zi.set_mark ()
     minibuf_write ("Mark set")
   end
 )
@@ -351,25 +351,25 @@ Fill paragraph at or after point.
 
     undo_start_sequence ()
 
-    execute_function ("forward_paragraph")
+    zi.forward_paragraph ()
     if is_empty_line () then
       previous_line ()
     end
     local m_end = point_marker ()
 
-    execute_function ("backward_paragraph")
+    zi.backward_paragraph ()
     if is_empty_line () then -- Move to next line if between two paragraphs.
       next_line ()
     end
 
     while buffer_end_of_line (cur_bp, get_buffer_pt (cur_bp)) < m_end.o do
-      execute_function ("end_of_line")
+      zi.end_of_line ()
       delete_char ()
-      execute_function ("just_one_space")
+      zi.just_one_space ()
     end
     unchain_marker (m_end)
 
-    execute_function ("end_of_line")
+    zi.end_of_line ()
     while get_goalc () > get_variable_number ("fill_column") + 1 and fill_break_line () do end
 
     goto_offset (m.o)
@@ -417,7 +417,7 @@ local function minibuf_read_shell_command ()
   local ms = minibuf_read ("Shell command: ", "")
 
   if not ms then
-    execute_function ("keyboard_quit")
+    zi.keyboard_quit ()
     return
   end
   if ms == "" then
@@ -546,11 +546,11 @@ On nonblank line, delete any immediately following blank lines.
     undo_start_sequence ()
 
     -- Find following blank lines.
-    if execute_function ("forward_line") and is_blank_line () then
+    if zi.forward_line () and is_blank_line () then
       r.start = get_buffer_pt (cur_bp)
       repeat
         r.finish = buffer_next_line (cur_bp, get_buffer_pt (cur_bp))
-      until not execute_function ("forward_line") or not is_blank_line ()
+      until not zi.forward_line () or not is_blank_line ()
     end
     goto_offset (m.o)
 
@@ -560,7 +560,7 @@ On nonblank line, delete any immediately following blank lines.
       r.finish = math.max (r.finish, buffer_next_line (cur_bp, get_buffer_pt (cur_bp) or math.huge))
       repeat
         r.start = get_buffer_line_o (cur_bp)
-      until not execute_function ("forward_line", -1) or not is_blank_line ()
+      until not zi.forward_line (-1) or not is_blank_line ()
 
       goto_offset (m.o)
       if r.start ~= get_buffer_line_o (cur_bp) or r.finish > buffer_next_line (cur_bp, get_buffer_pt (cur_bp)) then
@@ -606,7 +606,7 @@ Precisely, if point is on line I, move to the start of line I + N.
   function (n)
     n = n or current_prefix_arg or 1
     if n ~= 0 then
-      execute_function ("beginning_of_line")
+      zi.beginning_of_line ()
       return move_line (n)
     end
     return false
@@ -625,9 +625,9 @@ local function move_paragraph (uniarg, forward, backward, line_extremum)
   end
 
   if is_empty_line () then
-    execute_function ("beginning_of_line")
+    zi.beginning_of_line ()
   else
-    execute_function (line_extremum)
+    line_extremum ()
   end
   return true
 end
@@ -639,7 +639,7 @@ Move backward to start of paragraph.  With argument N, do it N times.
 ]],
   true,
   function (n)
-    return move_paragraph (n or 1, previous_line, next_line, "beginning_of_line")
+    return move_paragraph (n or 1, previous_line, next_line, zi.beginning_of_line)
   end
 )
 
@@ -650,7 +650,7 @@ Move forward to end of paragraph.  With argument N, do it N times.
 ]],
   true,
   function (n)
-    return move_paragraph (n or 1, next_line, previous_line, "end_of_line")
+    return move_paragraph (n or 1, next_line, previous_line, zi.end_of_line)
   end
 )
 
@@ -733,9 +733,9 @@ local function move_sexp (dir)
       return false
     end
     if dir > 0 then
-      execute_function ("beginning_of_line")
+      zi.beginning_of_line ()
     else
-      execute_function ("end_of_line")
+      zi.end_of_line ()
     end
   end
   return false
@@ -768,10 +768,10 @@ move forward across N balanced expressions.
 )
 
 local function mark (uniarg, func)
-  execute_function ("set_mark")
-  local ret = execute_function (func, uniarg)
+  zi.set_mark ()
+  local ret = zi[func] (uniarg)
   if ret then
-    execute_function ("exchange_point_and_mark")
+    zi.exchange_point_and_mark ()
   end
   return ret
 end
@@ -808,14 +808,14 @@ The paragraph marked is the one that contains point or follows point.
 ]],
   true,
   function ()
-    if _last_command == "mark_paragraph" then
-      execute_function ("exchange_point_and_mark")
-      execute_function ("forward_paragraph")
-      execute_function ("exchange_point_and_mark")
+    if _last_command == zi.mark_paragraph then
+      zi.exchange_point_and_mark ()
+      zi.forward_paragraph ()
+      zi.exchange_point_and_mark ()
     else
-      execute_function ("forward_paragraph")
-      execute_function ("set_mark")
-      execute_function ("backward_paragraph")
+      zi.forward_paragraph ()
+      zi.set_mark ()
+      zi.backward_paragraph ()
     end
   end
 )
@@ -827,9 +827,9 @@ Put point at beginning and mark at end of buffer.
 ]],
   true,
   function ()
-    execute_function ("end_of_buffer")
-    execute_function ("set_mark_command")
-    execute_function ("beginning_of_buffer")
+    zi.end_of_buffer ()
+    zi.set_mark_command ()
+    zi.beginning_of_buffer ()
   end
 )
 
@@ -1027,8 +1027,8 @@ local function transpose_subr (move_func)
   if not move_func (1) or not move_func (1) then
     if move_func == move_line then
       -- Add an empty line.
-      execute_function ("end_of_line")
-      execute_function ("newline")
+      zi.end_of_line ()
+      zi.newline ()
     else
       pop_mark ()
       goto_offset (m1.o)
@@ -1047,7 +1047,7 @@ local function transpose_subr (move_func)
   -- Save and delete 1st marked region.
   local as1 = tostring (get_region ())
 
-  execute_function ("delete_region")
+  zi.delete_region ()
 
   -- Forward.
   move_func (1)
@@ -1066,7 +1066,7 @@ local function transpose_subr (move_func)
 
     -- Save and delete 2nd marked region.
     as2 = tostring (get_region ())
-    execute_function ("delete_region")
+    zi.delete_region ()
   end
 
   -- Insert the first string.

@@ -122,7 +122,7 @@ Goto @i{line}, counting from line 1 at beginning of buffer.
 
     if type (n) == "number" then
       move_line ((math.max (n, 1) - 1) - offset_to_line (cur_bp, get_buffer_pt (cur_bp)))
-      execute_function ("beginning_of_line")
+      zi.beginning_of_line ()
     else
       return false
     end

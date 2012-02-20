@@ -93,5 +93,5 @@ function resize_windows ()
     until decreased == false
   end
 
-  execute_function ("recenter")
+  zi.recenter ()
 end

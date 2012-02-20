@@ -110,7 +110,7 @@ creating one if none already exists.
     end
 
     if not filename then
-      ok = execute_function ("keyboard_quit")
+      ok = zi.keyboard_quit ()
     elseif filename ~= "" then
       ok = find_file (filename)
     end
@@ -128,7 +128,7 @@ Use @kbd{M-x toggle_read_only} to permit editing.
 ]],
   true,
   function (filename)
-    local ok = execute_function ("find_file", filename)
+    local ok = zi.find_file (filename)
     if ok then
       cur_bp.readonly = true
     end
@@ -156,7 +156,7 @@ If the current buffer now contains an empty file that you just visited
 
     local ok = false
     if not ms then
-      ok = execute_function ("keyboard_quit")
+      ok = zi.keyboard_quit ()
     elseif ms ~= "" and check_modified_buffer (cur_bp ()) then
       kill_buffer (cur_bp)
       ok = find_file (ms)
@@ -183,7 +183,7 @@ Set mark after the inserted text.
     if not file then
       file = minibuf_read_filename ("Insert file: ", cur_bp.dir)
       if not file then
-        ok = execute_function ("keyboard_quit")
+        ok = zi.keyboard_quit ()
       end
     end
 
@@ -195,7 +195,7 @@ Set mark after the inserted text.
       local s = io.slurp (file)
       if s then
         insert_estr (EStr (s))
-        execute_function ("set_mark_command")
+        zi.set_mark_command ()
       else
         ok = minibuf_error ("%s: %s", file, posix.errno ())
       end
@@ -342,7 +342,7 @@ local function write_buffer (bp, needname, confirm, name, prompt)
   if needname then
     name = minibuf_read_filename (prompt, "")
     if not name then
-      return execute_function ("keyboard_quit")
+      return zi.keyboard_quit ()
     end
     if name == "" then
       return false
@@ -353,7 +353,7 @@ local function write_buffer (bp, needname, confirm, name, prompt)
   if confirm and exist_file (name) then
     ans = minibuf_read_yn (string.format ("File `%s' exists; overwrite? (y or n) ", name))
     if ans == -1 then
-      execute_function ("keyboard_quit")
+      zi.keyboard_quit ()
     elseif ans == false then
       minibuf_error ("Canceled")
     end
@@ -437,7 +437,7 @@ local function save_some_buffers ()
           minibuf_clear ()
 
           if c == keycode "\\C-g" then
-            execute_function ("keyboard_quit")
+            zi.keyboard_quit ()
             return false
           elseif c == keycode "q" then
             bp = nil
@@ -496,7 +496,7 @@ Offer to save each buffer, then kill this Zi process.
         while true do
           local ans = minibuf_read_yesno ("Modified buffers exist; exit anyway? (yes or no) ")
           if ans == nil then
-            return execute_function ("keyboard_quit")
+            return zi.keyboard_quit ()
           elseif not ans then
             return false
           end
@@ -521,7 +521,7 @@ Make DIR become the current buffer's default directory.
     end
 
     if not dir then
-      return execute_function ("keyboard_quit")
+      return zi.keyboard_quit ()
     end
 
     if dir ~= "" then
@@ -565,7 +565,7 @@ Puts mark after the inserted text.
       buffer = minibuf_read (string.format ("Insert buffer (default %s): ", def_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = execute_function ("keyboard_quit")
+        ok = zi.keyboard_quit ()
       end
     end
 
@@ -583,7 +583,7 @@ Puts mark after the inserted text.
 
       if ok then
         insert_buffer (bp)
-        execute_function ("set_mark_command")
+        zi.set_mark_command ()
       end
     end
 

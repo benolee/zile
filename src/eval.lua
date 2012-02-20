@@ -84,13 +84,6 @@ function get_function_doc (name)
   end
 end
 
-function execute_function (name, uniarg)
-  if uniarg ~= nil and type (uniarg) ~= "table" then
-    uniarg = {next = {data = uniarg and tostring (uniarg) or nil}}
-  end
-  return zi[name] and zi[name] (uniarg)
-end
-
 function evaluate_string (s)
   local f, errmsg = load (s, nil, 't', zi)
   if f == nil then

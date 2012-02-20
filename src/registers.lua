@@ -32,7 +32,7 @@ Copy region into register @i{register}.
     end
 
     if reg == 7 then
-      return execute_function ("keyboard_quit")
+      return zi.keyboard_quit ()
     else
       minibuf_clear ()
       local rp = calculate_the_region ()
@@ -74,17 +74,17 @@ Puts point before and mark after the inserted text.
     end
 
     if reg == 7 then
-      ok = execute_function ("keyboard_quit")
+      ok = zi.keyboard_quit ()
     else
       minibuf_clear ()
       if not regs[term_bytetokey (reg)] then
         minibuf_error ("Register does not contain text")
         ok = false
       else
-        execute_function ("set_mark_command")
+        zi.set_mark_command ()
         regnum = reg
         execute_with_uniarg (true, current_prefix_arg, insert_register)
-        execute_function ("exchange_point_and_mark")
+        zi.exchange_point_and_mark ()
         deactivate_mark ()
       end
     end

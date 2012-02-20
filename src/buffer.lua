@@ -451,7 +451,7 @@ With a nil argument, kill the current buffer.
       buffer = minibuf_read (string.format ("Kill buffer (default %s): ", cur_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = execute_function ("keyboard_quit")
+        ok = zi.keyboard_quit ()
       end
     end
 
@@ -495,7 +495,7 @@ function check_modified_buffer (bp)
     while true do
       local ans = minibuf_read_yesno (string.format ("Buffer %s modified; kill anyway? (yes or no) ", bp.name))
       if ans == nil then
-        execute_function ("keyboard_quit")
+        zi.keyboard_quit ()
         return false
       elseif not ans then
         return false
@@ -513,9 +513,9 @@ end
 function move_char (offset)
   local dir, ltest, btest, lmove
   if offset >= 0 then
-    dir, ltest, btest, lmove = 1, eolp, eobp, "beginning_of_line"
+    dir, ltest, btest, lmove = 1, eolp, eobp, zi.beginning_of_line
   else
-    dir, ltest, btest, lmove = -1, bolp, bobp, "end_of_line"
+    dir, ltest, btest, lmove = -1, bolp, bobp, zi.end_of_line
   end
   for i = 1, math.abs (offset) do
     if not ltest () then
@@ -523,7 +523,7 @@ function move_char (offset)
     elseif not btest () then
       thisflag.need_resync = true
       set_buffer_pt (cur_bp, get_buffer_pt (cur_bp) + #get_buffer_eol (cur_bp) * dir)
-      execute_function (lmove)
+      lmove ()
     else
       return false
     end
@@ -565,7 +565,7 @@ function move_line (n)
     func = buffer_prev_line
   end
 
-  if _last_command ~= "next_line" and _last_command ~= "previous_line" then
+  if _last_command ~= zi.next_line and _last_command ~= zi.previous_line then
     cur_bp.goalc = get_goalc ()
   end
 
@@ -633,7 +633,7 @@ Select buffer @i{buffer} in the current window.
                              "", cp, buffer_name_history)
 
       if not buffer then
-        ok = execute_function ("keyboard_quit")
+        ok = zi.keyboard_quit ()
       end
     end
 

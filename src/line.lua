@@ -65,7 +65,7 @@ function fill_break_line ()
 
     if break_col >= 1 then -- Break line.
       goto_offset (get_buffer_line_o (cur_bp) + break_col)
-      execute_function ("delete_horizontal_space")
+      zi.delete_horizontal_space ()
       insert_newline ()
       goto_offset (m.o)
       break_made = true
@@ -125,7 +125,7 @@ local function previous_nonblank_goalc ()
   local cur_goalc = get_goalc ()
 
   -- Find previous non-blank line.
-  while execute_function ("forward_line", -1) and is_blank_line () do
+  while zi.forward_line (-1) and is_blank_line () do
   end
 
   -- Go to `cur_goalc' in that non-blank line.
@@ -138,8 +138,8 @@ local function previous_line_indent ()
   local cur_indent
   local m = point_marker ()
 
-  execute_function ("previous_line")
-  execute_function ("beginning_of_line")
+  zi.previous_line ()
+  zi.beginning_of_line ()
 
   -- Find first non-blank char.
   while not eolp () and following_char ():match ("%s") do
@@ -168,7 +168,7 @@ the indentation.  Else stay at same point in text.
     if get_variable_bool ("tab_always_indent") then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
-      return execute_function ("indent_relative")
+      return zi.indent_relative ()
     end
   end
 )
@@ -284,7 +284,7 @@ Indentation is done using the `indent_for_tab_command' function.
       -- Only indent if we're in column > 0 or we're in column 0 and
       -- there is a space character there in the last non-blank line.
       if indent then
-        execute_function ("indent_for_tab_command")
+        zi.indent_for_tab_command ()
       end
       ok = true
     end
@@ -346,7 +346,7 @@ Delete all spaces and tabs around point, leaving one space.
   true,
   function ()
     undo_start_sequence ()
-    execute_function ("delete_horizontal_space")
+    zi.delete_horizontal_space ()
     insert_char (' ')
     undo_end_sequence ()
   end
