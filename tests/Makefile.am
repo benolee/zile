@@ -23,28 +23,21 @@ TERM ?= vt100
 
 LISP_TESTS =						\
 	$(srcdir)/tests/*.el				\
+	$(srcdir)/tests/regression/*.el			\
 	$(srcdir)/tests/interactive/*.el
 
-LISP_TESTS_ZILE_ONLY =					\
-	$(srcdir)/tests/regression/*.el			\
-	$(srcdir)/tests/zile-only/*.el			\
-	$(srcdir)/tests/zile-only/interactive/*.el
-
-LISP_TESTS_ZILE_ONLY_FIXED_SCREEN =			\
-	$(srcdir)/tests/zile-only/fixed-screen/*.el
+LISP_TESTS_FIXED_SCREEN =				\
+	$(srcdir)/tests/fixed-screen/*.el
 
 LISP_TESTS_OUTPUTS =					\
 	$(srcdir)/tests/*.output			\
 	$(srcdir)/tests/interactive/*.output		\
 	$(srcdir)/tests/regression/*.output		\
-	$(srcdir)/tests/zile-only/*.output		\
-	$(srcdir)/tests/zile-only/interactive/*.output	\
-	$(srcdir)/tests/zile-only/fixed-screen/*.output
+	$(srcdir)/tests/fixed-screen/*.output
 
 LISP_ALL_TESTS =					\
 	$(LISP_TESTS)					\
-	$(LISP_TESTS_ZILE_ONLY)				\
-	$(LISP_TESTS_ZILE_ONLY_FIXED_SCREEN)
+	$(LISP_TESTS_FIXED_SCREEN)
 
 LISP_TESTS_ENVIRONMENT =				\
 	abs_srcdir=$(abs_srcdir)			\
@@ -60,6 +53,5 @@ EXTRA_DIST +=						\
 
 check-local: $(builddir)/src/zi
 	echo $(LISP_TESTS) | $(LUA_ENV) $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
-	echo $(LISP_TESTS_ZILE_ONLY) | $(LUA_ENV) $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
-	echo $(LISP_TESTS_ZILE_ONLY_FIXED_SCREEN) | COLUMNS=80 LINES=24 $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
+	echo $(LISP_TESTS_FIXED_SCREEN) | COLUMNS=80 LINES=24 $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
 	$(LISP_TESTS_ENVIRONMENT) $(builddir)/src/zi --unknown-flag --load $(srcdir)/tests/quit.el
