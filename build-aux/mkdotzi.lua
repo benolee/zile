@@ -34,10 +34,10 @@ end
 
 h:write (
   [[
-;;;; .]] .. os.getenv ("PACKAGE") .. [[ configuration
+-- .]] .. os.getenv ("PACKAGE") .. [[ configuration
 
-;; Rebind keys with:
-;; (global_set_key "key" 'func)
+-- Rebind keys with:
+-- global_set_key ("key", func)
 
 ]])
 
@@ -45,8 +45,8 @@ h:write (
 -- auto-generated, because it's ugly in a user configuration file.
 
 for i, v in ipairs (vars) do
-  h:writelines ("; " .. v.doc:gsub ("\n", "\n; "),
-                "; Default value is " .. v.val .. ".",
-                "(setq " .. v.name .. " " .. v.val .. ")",
+  h:writelines ("-- " .. v.doc:gsub ("\n", "\n-- "),
+                "-- Default value is " .. tostring (v.val) .. ".",
+                'setq ("' .. v.name .. '", ' .. tostring (v.val) .. ")",
                 "")
 end
