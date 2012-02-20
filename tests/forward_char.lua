@@ -1,4 +1,4 @@
-(forward_char 2)
-(delete_char 1)
-(save_buffer)
-(save_buffers_kill_zi)
+forward_char (2)
+delete_char (1)
+save_buffer ()
+save_buffers_kill_zi ()

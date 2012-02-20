@@ -1,3 +1,3 @@
-(downcase_word 6)
-(save_buffer)
-(save_buffers_kill_zi)
+downcase_word (6)
+save_buffer ()
+save_buffers_kill_zi ()

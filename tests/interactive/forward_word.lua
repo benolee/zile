@@ -1,2 +1,2 @@
-; ESC 4 forward_word a save_buffer save_buffers_kill_zi
-(execute_kbd_macro "\e4\M-fa\C-x\C-s\C-x\C-c")
+-- ESC 4 forward_word a save_buffer save_buffers_kill_zi
+execute_kbd_macro "\\e4\\M-fa\\C-x\\C-s\\C-x\\C-c"

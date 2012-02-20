@@ -1,4 +1,4 @@
-(insert "aa")
-(backward_delete_char 1)
-(save_buffer)
-(save_buffers_kill_zi)
+insert "aa"
+backward_delete_char (1)
+save_buffer ()
+save_buffers_kill_zi ()

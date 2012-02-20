@@ -1,1 +1,1 @@
-(save_buffers_kill_zi)
+save_buffers_kill_zi ()

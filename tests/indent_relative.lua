@@ -1,9 +1,9 @@
-(forward_line 2)
-(indent_relative)
-(insert "f")
-(indent_relative)
-(insert "fffff")
-(indent_relative)
-(insert "aaa")
-(save_buffer)
-(save_buffers_kill_zi)
+forward_line (2)
+indent_relative ()
+insert "f"
+indent_relative ()
+insert "fffff"
+indent_relative ()
+insert "aaa"
+save_buffer ()
+save_buffers_kill_zi ()

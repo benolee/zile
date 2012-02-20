@@ -1,3 +1,3 @@
-(setq unknown_variable t)
-(save_buffer)
-(save_buffers_kill_zi)
+setq ("unknown_variable", true)
+save_buffer ()
+save_buffers_kill_zi ()

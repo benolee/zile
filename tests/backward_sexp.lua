@@ -1,7 +1,7 @@
-(insert "(")
-(end_of_line)
-(insert ")")
-(backward_sexp)
-(delete_char 1)
-(save_buffer)
-(save_buffers_kill_zi)
+insert "("
+end_of_line ()
+insert ")"
+backward_sexp ()
+delete_char (1)
+save_buffer ()
+save_buffers_kill_zi ()
