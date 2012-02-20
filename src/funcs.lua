@@ -1,4 +1,4 @@
--- Miscellaneous Emacs functions
+-- Miscellaneous Zi functions
 --
 -- Copyright (c) 2010-2012 Free Software Foundation, Inc.
 --
