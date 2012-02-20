@@ -1,6 +1,3 @@
-; FIXME: Next line should not be needed
-(setq sentence-end-double-space nil)
-
 ; set-mark goto-line 3 RET kill-region yank yank open-line
 ; goto-line 6 RET yank goto-line 9 RET
 (execute-kbd-macro "\C-@\M-gg3\r\C-w\C-y\C-y\C-o\M-gg6\r\C-y\M-gg9\r")

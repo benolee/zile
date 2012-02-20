@@ -1,5 +1,3 @@
-; FIXME: Next line should not be needed
-(setq sentence-end-double-space nil)
 (set-mark (point))
 (forward-line 2)
 (kill-region (point) (mark))
