@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-RUNLISPTESTS = $(LUA) $(srcdir)/tests/run-lisp-tests.lua
+RUNLISPTESTS = $(LUA) $(srcdir)/tests/run-tests.lua
 
 TERM ?= vt100
 
@@ -49,7 +49,7 @@ EXTRA_DIST +=						\
 	$(LISP_ALL_TESTS)				\
 	$(LISP_TESTS_OUTPUTS)				\
 	tests/test.input				\
-	tests/run-lisp-tests.lua
+	tests/run-tests.lua
 
 check-local: $(builddir)/src/zi
 	echo $(LISP_TESTS) | $(LUA_ENV) $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
