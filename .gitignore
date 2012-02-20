@@ -18,8 +18,8 @@
 /gnulib
 /lib
 /maint.mk
-/zile*.tar.gz
-/zile*.tar.gz.directive*
-/zile*.tar.gz.sig
+/zi*.tar.gz
+/zi*.tar.gz.directive*
+/zi*.tar.gz.sig
 Makefile
 Makefile.in

@@ -2,7 +2,7 @@
 --
 -- Copyright (c) 2010-2012 Free Software Foundation, Inc.
 --
--- This file is part of GNU Zile.
+-- This file is part of GNU Zi.
 --
 -- This program is free software; you can redistribute it and/or modify it
 -- under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ local abs_srcdir = os.getenv ("abs_srcdir") or "."
 local builddir = os.getenv ("builddir") or "."
 local EMACSPROG = os.getenv ("EMACSPROG") or ""
 
-local zile_pass = 0
-local zile_fail = 0
+local zi_pass = 0
+local zi_fail = 0
 local emacs_pass = 0
 local emacs_fail = 0
 
-local zile_cmd = io.catfile (builddir, "src", "zile")
+local zi_cmd = io.catfile (builddir, "src", "zi")
 local srcdir_pat = string.escapePattern (srcdir)
 
 function run_test (test, name, editor_name, edit_file, cmd, args)
@@ -72,15 +72,15 @@ for _, name in ipairs (arg) do
       end
     end
 
-    if run_test (test, name, "Zile", edit_file, zile_cmd, args) then
-      zile_pass = zile_pass + 1
+    if run_test (test, name, "Zi", edit_file, zi_cmd, args) then
+      zi_pass = zi_pass + 1
     else
-      zile_fail = zile_fail + 1
+      zi_fail = zi_fail + 1
     end
   end
 end
 
-print (string.format ("Zile: %d pass(es) and %d failure(s)", zile_pass, zile_fail))
+print (string.format ("Zi: %d pass(es) and %d failure(s)", zi_pass, zi_fail))
 print (string.format ("Emacs: %d pass(es) and %d failure(s)", emacs_pass, emacs_fail))
 
-os.exit (zile_fail + emacs_fail)
+os.exit (zi_fail + emacs_fail)

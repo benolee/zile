@@ -2,7 +2,7 @@
 --
 -- Copyright (c) 2009-2012 Free Software Foundation, Inc.
 --
--- This file is part of GNU Zile.
+-- This file is part of GNU Zi.
 --
 -- This program is free software; you can redistribute it and/or modify it
 -- under the terms of the GNU General Public License as published by
@@ -483,7 +483,7 @@ Save some modified file-visiting buffers.  Asks user about each one.
 Defun ("save-buffers-kill-emacs",
        {},
 [[
-Offer to save each buffer, then kill this Zile process.
+Offer to save each buffer, then kill this Zi process.
 ]],
   true,
   function ()
@@ -629,11 +629,11 @@ function find_file (filename)
   return true
 end
 
--- Function called on unexpected error or Zile crash (SIGSEGV).
+-- Function called on unexpected error or Zi crash (SIGSEGV).
 -- Attempts to save modified buffers.
 -- If doabort is true, aborts to allow core dump generation;
 -- otherwise, exit.
-function zile_exit (doabort)
+function zi_exit (doabort)
   io.stderr:write ("Trying to save modified buffers (if any)...\r\n")
 
   for _, bp in ipairs (buffers) do

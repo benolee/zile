@@ -2,7 +2,7 @@
 #
 # Copyright (c) 1997-2012 Free Software Foundation, Inc.
 #
-# This file is part of GNU Zile.
+# This file is part of GNU Zi.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-doc_DATA += src/dotzile.sample
+doc_DATA += src/dotzi.sample
 
 BUILT_SOURCES = src/loadlua.lua
 
-bin_SCRIPTS = src/zile
+bin_SCRIPTS = src/zi
 
-src_zile_LUA =						\
+src_zi_LUA =						\
 	src/lib.lua					\
 	src/astr.lua					\
 	src/estr.lua					\
@@ -57,13 +57,13 @@ src_zile_LUA =						\
 	src/term_redisplay.lua
 
 dist_pkgdata_DATA =					\
-	$(src_zile_LUA)					\
+	$(src_zi_LUA)					\
 	src/loadlua.lua					\
 	src/default-bindings.el
 
 PRODUCTIONSOURCES =					\
-	$(src_zile_LUA)					\
-	$(top_srcdir)/src/zile.lua			\
+	$(src_zi_LUA)					\
+	$(top_srcdir)/src/zi.lua			\
 	$(top_srcdir)/src/loadlua.lua			\
 	$(top_srcdir)/src/Makefile.am			\
 	$(top_srcdir)/src/*.el				\
@@ -71,32 +71,32 @@ PRODUCTIONSOURCES =					\
 
 src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
 	cp src/loadlua.lua.in $@
-	for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
+	for i in $(src_zi_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
 
-$(top_builddir)/src/zile: $(PRODUCTIONSOURCES) Makefile
+$(top_builddir)/src/zi: $(PRODUCTIONSOURCES) Makefile
 	rm -f $@ $@.tmp
 	$(inplace_edit) '$@.lua' >$@.tmp
 	mv $@.tmp $@
 	chmod +x $@
-	$(top_builddir)/src/zile --version >/dev/null || rm $@
+	$(top_builddir)/src/zi --version >/dev/null || rm $@
 
-src/dotzile.sample: src/tbl_vars.lua build-aux/mkdotzile.lua
-	PACKAGE="$(PACKAGE)" $(LUA_ENV) $(LUA) $(srcdir)/build-aux/mkdotzile.lua $(srcdir)/src/tbl_vars.lua
+src/dotzi.sample: src/tbl_vars.lua build-aux/mkdotzi.lua
+	PACKAGE="$(PACKAGE)" $(LUA_ENV) $(LUA) $(srcdir)/build-aux/mkdotzi.lua $(srcdir)/src/tbl_vars.lua
 
 install-exec-hook:
-	$(install_edit) '$(top_builddir)/src/zile.lua' >$@.tmp
-	$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zile
+	$(install_edit) '$(top_builddir)/src/zi.lua' >$@.tmp
+	$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zi
 	rm -f $@.tmp
 
 EXTRA_DIST +=						\
-	$(src_zile_LUA)					\
-	src/zile.lua.in					\
+	$(src_zi_LUA)					\
+	src/zi.lua.in					\
 	src/loadlua.lua.in				\
-	src/dotzile.sample
+	src/dotzi.sample
 
 CLEANFILES +=						\
-	src/zile					\
-	src/zile.lua
+	src/zi						\
+	src/zi.lua
 
 DISTCLEANFILES +=					\
 	$(BUILT_SOURCES)

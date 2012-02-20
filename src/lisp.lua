@@ -1,8 +1,8 @@
--- Zile Lisp interpreter
+-- Zi Lisp interpreter
 --
 -- Copyright (c) 2009-2012 Free Software Foundation, Inc.
 --
--- This file is part of GNU Zile.
+-- This file is part of GNU Zi.
 --
 -- This program is free software; you can redistribute it and/or modify it
 -- under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 -- General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program; see the file COPYING.  If not, write to the
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- Free Software Foundation, Fifth Floor, 51 Franklin Street, Boston,
 -- MA 02111-1301, USA.
 

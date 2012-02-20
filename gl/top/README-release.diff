@@ -2,8 +2,8 @@
 +++ HACKING	2012-09-13 23:08:17.158262539 +0100
 @@ -1,45 +1,63 @@
 -Here are most of the steps we (maintainers) follow when making a release.
-+                      GNU Zile developers' notes
-+                      --------------------------
++                       GNU Zi developers' notes
++                       ------------------------
  
 -* Start from a clean, up-to-date git directory on "master":
 +     Copyright (c) 2011-2012 Free Software Foundation, Inc.

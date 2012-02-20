@@ -2,7 +2,7 @@
 --
 -- Copyright (c) 2010-2012 Free Software Foundation, Inc.
 --
--- This file is part of GNU Zile.
+-- This file is part of GNU Zi.
 --
 -- This program is free software; you can redistribute it and/or modify it
 -- under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -- Derived constants
-ZILE_VERSION_STRING = "GNU " .. PACKAGE_NAME .. " " .. VERSION
+ZI_VERSION_STRING = "GNU " .. PACKAGE_NAME .. " " .. VERSION
 
 -- Runtime constants
 -- The executable name
@@ -60,12 +60,12 @@ thisflag = {}
 lastflag = {}
 
 
-local ZILE_COPYRIGHT_STRING = "Copyright (C) 2012 Free Software Foundation, Inc."
+local ZI_COPYRIGHT_STRING = "Copyright (C) 2012 Free Software Foundation, Inc."
 
-local ZILE_COPYRIGHT_NOTICE = [[
+local ZI_COPYRIGHT_NOTICE = [[
 GNU ]] .. PACKAGE_NAME .. [[ comes with ABSOLUTELY NO WARRANTY.
-Zile is Free Software--Free as in Freedom--so you can redistribute copies
-of Zile and modify it; see the file COPYING. Otherwise, a copy can be
+Zi is Free Software--Free as in Freedom--so you can redistribute copies
+of Zi and modify it; see the file COPYING. Otherwise, a copy can be
 downloaded from http://www.gnu.org/licenses/gpl.html.
 ]]
 
@@ -78,12 +78,12 @@ Combinations like `C-x u' mean first press `C-x', then `u'.
 
 Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ
 
-]] .. ZILE_VERSION_STRING .. [[
+]] .. ZI_VERSION_STRING .. [[
 
-]] .. ZILE_COPYRIGHT_STRING .. [[
+]] .. ZI_COPYRIGHT_STRING .. [[
 
 
-]] .. ZILE_COPYRIGHT_NOTICE
+]] .. ZI_COPYRIGHT_NOTICE
 
 
 -- Documented options table
@@ -173,8 +173,8 @@ function process_args ()
                 "Report bugs to " .. PACKAGE_BUGREPORT .. ".\n")
       os.exit (0)
     elseif longindex == 4 then
-      io.write (ZILE_VERSION_STRING .. "\n" ..
-                ZILE_COPYRIGHT_STRING .. "\n" ..
+      io.write (ZI_VERSION_STRING .. "\n" ..
+                ZI_COPYRIGHT_STRING .. "\n" ..
                 "GNU " .. PACKAGE_NAME .. " comes with ABSOLUTELY NO WARRANTY.\n" ..
                 "You may redistribute copies of " .. PACKAGE_NAME .. "\n" ..
                 "under the terms of the GNU General Public License.\n" ..
@@ -197,13 +197,13 @@ local function segv_sig_handler (signo)
   io.stderr:write (program_name .. ": " .. PACKAGE_NAME ..
                    " crashed.  Please send a bug report to <" ..
                    PACKAGE_BUGREPORT .. ">.\r\n")
-  zile_exit (true)
+  zi_exit (true)
 end
 
 local function other_sig_handler (signo)
   local msg = program_name .. ": terminated with signal " .. signo .. ".\n" .. debug.traceback ()
   io.stderr:write (msg:gsub ("\n", "\r\n"))
-  zile_exit (false)
+  zi_exit (false)
 end
 
 local function signal_init ()

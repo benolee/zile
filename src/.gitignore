@@ -1,12 +1,12 @@
 /TAGS
 /.deps
-/zile
-/zile.lua
+/zi
+/zi.lua
 /loadlua.lua
-/dotzile.sample
+/dotzi.sample
 /gendocs_template
-/zile.1
-/zile.1.in
+/zi.1
+/zi.1.in
 /core
 /gmon.out
 /log

@@ -8,7 +8,7 @@ of an invalid command-line argument, and 2 if it crashes or runs out
 of memory.
 
 [files]
-~/.zile \(em user's Zile init file
+~/.zi \(em user's Zi init file
 
 [author]
 Zile was written by Reuben Thomas, based on the C version by Sandro

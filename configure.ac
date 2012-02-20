@@ -2,7 +2,7 @@ dnl configure.ac
 dnl
 dnl Copyright (c) 1997-2012 Free Software Foundation, Inc.
 dnl
-dnl This file is part of GNU Zile.
+dnl This file is part of GNU Zi.
 dnl
 dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published
@@ -20,7 +20,7 @@ dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 AC_PREREQ([2.61])
 
 dnl Initialise autoconf and automake
-AC_INIT([Zile], [2.5.0.50], [bug-zile@gnu.org])
+AC_INIT([Zi], [1.7.0.20], [bug-zile@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([-Wall -Werror std-options])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -48,5 +48,5 @@ if test -n "$EMACSPROG"; then
 fi
 
 dnl Generate output
-AC_CONFIG_FILES([Makefile src/zile.lua])
+AC_CONFIG_FILES([Makefile src/zi.lua])
 AC_OUTPUT

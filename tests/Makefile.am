@@ -2,7 +2,7 @@
 #
 # Copyright (c) 1997-2012 Free Software Foundation, Inc.
 #
-# This file is part of GNU Zile.
+# This file is part of GNU Zi.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ EXTRA_DIST +=						\
 	tests/test.input				\
 	tests/run-lisp-tests.lua
 
-check-local: $(builddir)/src/zile
+check-local: $(builddir)/src/zi
 	echo $(LISP_TESTS) | $(LUA_ENV) EMACSPROG="$(EMACSPROG)" $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
 	echo $(LISP_TESTS_ZILE_ONLY) | $(LUA_ENV) EMACSPROG= $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
 	echo $(LISP_TESTS_ZILE_ONLY_FIXED_SCREEN) | COLUMNS=80 LINES=24 $(LISP_TESTS_ENVIRONMENT) EMACSPROG= xargs $(RUNLISPTESTS)
-	$(LISP_TESTS_ENVIRONMENT) $(builddir)/src/zile --unknown-flag --load $(srcdir)/tests/quit.el
+	$(LISP_TESTS_ENVIRONMENT) $(builddir)/src/zi --unknown-flag --load $(srcdir)/tests/quit.el

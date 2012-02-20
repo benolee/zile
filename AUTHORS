@@ -15,5 +15,7 @@ The authors of Zile:
 * Scott Lawrence <yorgle@gmail.com> wrote the "lithp" interpreter
   which was used as the basis for the tiny Lisp interpreter.
 
-* Gary V. Vaughan <gary@gnu.org> made the build system non-recursive
-  and did a lot of work on the Lua version.
+* Gary V. Vaughan <gary@gnu.org> made the build system non-recursive,
+  did a lot of work on the Lua version, and created the Lua Zi
+  personality (with lua scripting and no Lisp Engine) for Zi version
+  1.7.
