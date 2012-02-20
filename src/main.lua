@@ -99,8 +99,8 @@ local options = {
   {"doc", "Initialization options:"},
   {"doc", ""},
   {"opt", "no-init-file", 'q', "optional", "", "do not load ~/." .. PACKAGE},
-  {"opt", "funcall", 'f', "required", "FUNC", "call " .. PACKAGE_NAME .. " Lisp function FUNC with no arguments"},
-  {"opt", "load", 'l', "required", "FILE", "load " .. PACKAGE_NAME .. " Lisp FILE using the load function"},
+  {"opt", "funcall", 'f', "required", "FUNC", "call " .. PACKAGE_NAME .. " Lua function FUNC with no arguments"},
+  {"opt", "load", 'l', "required", "FILE", "load " .. PACKAGE_NAME .. " Lua FILE using the load function"},
   {"opt", "help", '\0', "optional", "", "display this help message and exit"},
   {"opt", "version", '\0', "optional", "", "display version information and exit"},
   {"doc", ""},
@@ -238,7 +238,7 @@ function main ()
   if not qflag then
     local s = os.getenv ("HOME")
     if s then
-      lisp_loadfile (s .. "/." .. PACKAGE)
+      evaluate_file (s .. "/." .. PACKAGE)
     end
   end
 
@@ -264,7 +264,7 @@ function main ()
         minibuf_error (string.format ("Function `%s' not defined", arg))
       end
     elseif type == "loadfile" then
-      ok = lisp_loadfile (arg)
+      ok = evaluate_file (arg)
       if not ok then
         minibuf_error (string.format ("Cannot open load file: %s\n", arg))
       end

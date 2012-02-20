@@ -444,13 +444,11 @@ says to insert the output in the current buffer.
 ]],
   true,
   function (cmd, insert)
-    if not insert then
-      insert = lastflag.set_uniarg
-      -- Undo mangled interactive args when called from \C-u\M-!cmd\r.
-      if insert and cmd == tostring(current_prefix_arg) then cmd = nil end
-    end
     if not cmd then
       cmd = minibuf_read_shell_command ()
+    end
+    if not insert then
+      insert = lastflag.set_uniarg
     end
 
     if cmd then

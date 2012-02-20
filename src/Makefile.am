@@ -28,7 +28,7 @@ src_zi_LUA =						\
 	src/astr.lua					\
 	src/estr.lua					\
 	src/history.lua					\
-	src/lisp.lua					\
+	src/eval.lua					\
 	src/main.lua					\
 	src/variables.lua				\
 	src/basic.lua					\
@@ -59,14 +59,14 @@ src_zi_LUA =						\
 dist_pkgdata_DATA =					\
 	$(src_zi_LUA)					\
 	src/loadlua.lua					\
-	src/default-bindings.el
+	src/default-bindings.lua
 
 PRODUCTIONSOURCES =					\
 	$(src_zi_LUA)					\
 	$(top_srcdir)/src/zi.lua			\
 	$(top_srcdir)/src/loadlua.lua			\
 	$(top_srcdir)/src/Makefile.am			\
-	$(top_srcdir)/src/*.el				\
+	$(top_srcdir)/src/default-bindings.lua		\
 	$(top_srcdir)/Makefile.am $(top_srcdir)/configure.ac
 
 src/loadlua.lua: src/Makefile.am src/loadlua.lua.in

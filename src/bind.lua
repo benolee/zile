@@ -51,9 +51,7 @@ _last_command = nil
 _this_command = nil
 _interactive = false
 
-function call_command (f, branch)
-  thisflag = {defining_macro = lastflag.defining_macro}
-
+function call_command (f, ...)
   -- Execute the command.
   _this_command = f
   _interactive = true
@@ -71,8 +69,6 @@ function call_command (f, branch)
     cur_bp.next_undop = cur_bp.last_undop
   end
 
-  lastflag = thisflag
-
   return ok
 end
 
@@ -82,7 +78,12 @@ function get_and_run_command ()
   minibuf_clear ()
 
   if function_exists (name) then
-    call_command (name, lastflag.set_uniarg and (prefix_arg or 1 ))
+    -- Each function in the zi table calls it's own functionality
+    -- via call_command () above.
+
+    thisflag = {defining_macro = lastflag.defining_macro}
+    zi[name] (lastflag.set_uniarg and (prefix_arg or 1 ))
+    lastflag = thisflag
   else
     minibuf_error (tostring (keys) .. " is undefined")
   end
@@ -104,7 +105,7 @@ function init_default_bindings ()
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 
-  lisp_loadfile (PATH_DATA .. "/default-bindings.el")
+  evaluate_file (PATH_DATA .. "/default-bindings.lua")
 end
 
 function do_binding_completion (as)

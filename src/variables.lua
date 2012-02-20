@@ -17,6 +17,27 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local mt = {}
+
+mt.__index = function (t, k)
+  if main_vars[k] then
+    return get_variable (k)
+  else
+    return rawget (t, k)
+  end
+end
+
+mt.__newindex = function (t, k, v)
+  if main_vars[k] then
+    set_variable (k, v)
+  else
+    rawset (t, k, v)
+  end
+end
+
+setmetatable (zi, mt)
+
+
 function get_variable (var)
   return get_variable_bp (cur_bp, var)
 end
@@ -37,7 +58,7 @@ end
 function get_variable_bool (var)
   local p = get_variable (var)
   if p then
-    return p ~= "nil"
+    return p ~= false
   end
 
   return false
