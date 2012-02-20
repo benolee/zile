@@ -27,12 +27,9 @@ require "std"
 local srcdir = os.getenv ("srcdir") or "."
 local abs_srcdir = os.getenv ("abs_srcdir") or "."
 local builddir = os.getenv ("builddir") or "."
-local EMACSPROG = os.getenv ("EMACSPROG") or ""
 
 local zi_pass = 0
 local zi_fail = 0
-local emacs_pass = 0
-local emacs_fail = 0
 
 local zi_cmd = io.catfile (builddir, "src", "zi")
 local srcdir_pat = string.escapePattern (srcdir)
@@ -62,16 +59,6 @@ for _, name in ipairs (arg) do
 
     posix.system ("mkdir", "-p", posix.dirname (edit_file))
 
-    if EMACSPROG ~= "" then
-      if run_test (test, name, "Emacs", edit_file, EMACSPROG, list.concat (args, {"--quick", "--batch"})) then
-        emacs_pass = emacs_pass + 1
-      else
-        emacs_fail = emacs_fail + 1
-        os.rename (edit_file, edit_file .. "-emacs")
-        os.rename (edit_file .. "~", edit_file .. "-emacs~")
-      end
-    end
-
     if run_test (test, name, "Zi", edit_file, zi_cmd, args) then
       zi_pass = zi_pass + 1
     else
@@ -81,6 +68,5 @@ for _, name in ipairs (arg) do
 end
 
 print (string.format ("Zi: %d pass(es) and %d failure(s)", zi_pass, zi_fail))
-print (string.format ("Emacs: %d pass(es) and %d failure(s)", emacs_pass, emacs_fail))
 
-os.exit (zi_fail + emacs_fail)
+os.exit (zi_fail)
