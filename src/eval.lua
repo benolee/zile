@@ -21,7 +21,9 @@
 
 
 -- User commands
-zi = {}
+zi = {
+  pairs = pairs  -- FIXME: hack to make default-bindings.lua work
+}
 
 -- User command introspection.
 local introspect = setmetatable ({}, {__mode = "k"})
