@@ -47,6 +47,6 @@ h:write (
 for i, v in ipairs (vars) do
   h:writelines ("-- " .. v.doc:gsub ("\n", "\n-- "),
                 "-- Default value is " .. tostring (v.val) .. ".",
-                'setq ("' .. v.name .. '", ' .. tostring (v.val) .. ")",
+                v.name .. " = " .. tostring (v.val),
                 "")
 end

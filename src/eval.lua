@@ -139,24 +139,6 @@ Execute a file of Lua code named FILE.
   end
 )
 
-Defun ("setq",
-       {},
-[[
-setq ([varname, val]...)
-
-Set each varname to the value of its val.
-]],
-  false,
-  function (...)
-    local ret
-    local l = {...}
-    for i = 1, #l/2 do
-      set_variable (l[2*i -1], l[2*i])
-    end
-    return ret
-  end
-)
-
 function function_exists (f)
   return zi[f] ~= nil
 end

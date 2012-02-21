@@ -7,14 +7,14 @@ open_line (1)
 forward_line ()
 yank ()
 forward_line ()
-set_fill_column (3)
+fill_column = 3
 fill_paragraph ()
 forward_line (-3)
-set_fill_column (12)
+fill_column = 12
 fill_paragraph ()
 forward_line (-6)
 end_of_line ()
-set_fill_column (33)
+fill_column = 33
 fill_paragraph ()
 save_buffer ()
 save_buffers_kill_zi ()
