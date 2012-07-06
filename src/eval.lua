@@ -195,7 +195,7 @@ Read function name, then read its arguments and call it.
         msg = string.format ("%d ", current_prefix_arg)
       end
     end
-    msg = msg .. "M-x "
+    msg = msg .. "A-x "
 
     local name = minibuf_read_function_name (msg)
     return name and zi[name] (n) or nil

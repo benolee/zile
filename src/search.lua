@@ -242,7 +242,7 @@ local function isearch (forward, regexp)
       elseif last_search then
         pattern = last_search
       end
-    elseif c.META or c.CTRL or c == keycode "\\RET" or term_keytobyte (c) == nil then
+    elseif c.ALT or c.CTRL or c == keycode "\\RET" or term_keytobyte (c) == nil then
       if c == keycode "\\RET" and #pattern == 0 then
         do_search (forward, regexp)
       else
@@ -323,7 +323,7 @@ Defun ("isearch_forward_regexp",
 Do incremental search forward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch_forward} for more info.
+is treated as a regexp.  See @kbd{A-x isearch_forward} for more info.
 ]],
   true,
   function ()
@@ -337,7 +337,7 @@ Defun ("isearch_backward_regexp",
 Do incremental search backward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch_backward} for more info.
+is treated as a regexp.  See @kbd{A-x isearch_backward} for more info.
 ]],
   true,
   function ()

@@ -19,7 +19,7 @@
 
 -- Key modifiers.
 local KBD_CTRL = 512
-local KBD_META = 1024
+local KBD_ALT = 1024
 
 -- Common non-alphanumeric keys.
 local KBD_CANCEL = 257
@@ -103,7 +103,7 @@ local keynametocode_map = {
   ["\\HOME"] = KBD_HOME,
   ["\\INSERT"] = KBD_INS,
   ["\\LEFT"] = KBD_LEFT,
-  ["\\M-"] = KBD_META,
+  ["\\A-"] = KBD_ALT,
   ["\\PAGEDOWN"] = KBD_PGDN,
   ["\\PAGEUP"] = KBD_PGUP,
   ["\\RET"] = KBD_RET,
@@ -126,7 +126,7 @@ local function mapkey (map, key, mod)
     return "invalid keycode: nil"
   end
 
-  local s = (key.CTRL and mod.C or "") .. (key.META and mod.M or "")
+  local s = (key.CTRL and mod.C or "") .. (key.ALT and mod.A or "")
 
   if not key.key then
     return "invalid keycode: " .. s .. "nil"
@@ -147,19 +147,19 @@ local keyreadsyntax_map = table.invert (keynametocode_map)
 
 -- Convert an internal format key chord back to its read syntax
 local function toreadsyntax (key)
-  return mapkey (keyreadsyntax_map, key, {C = "\\C-", M = "\\M-"})
+  return mapkey (keyreadsyntax_map, key, {C = "\\C-", A = "\\A-"})
 end
 
 -- A key code has one `keypress' and some optional modifiers.
 -- For comparisons to work, keycodes are immutable atoms.
 local keycode_mt = {
-  -- Output the write syntax for this keycode (e.g. C-M-<f1>).
+  -- Output the write syntax for this keycode (e.g. C-A-<f1>).
   __tostring = function (self)
-    return mapkey (codetoname, self, {C = "C-", M = "M-"})
+    return mapkey (codetoname, self, {C = "C-", A = "A-"})
   end,
 
   -- Normalise modifier lookups to uppercase, sans `-' suffix.
-  --   hasmodifier = keycode.META or keycode["c"]
+  --   hasmodifier = keycode.ALT or keycode["c"]
   __index = function (self, mod)
     mod = string.upper (string.sub (mod, 1, 1))
     return rawget (self, mod)
@@ -175,7 +175,7 @@ local keycode_mt = {
   end,
 
   -- Return the immutable atom for this keycode with modifier removed.
-  --   withoutmeta = key - "\\M-"
+  --   withoutalt = key - "\\A-"
   __sub = function (self, mod)
     if type (self) == "string" then mod, self = self, mod end
     mod = string.upper (string.sub (mod, 2, 2))
@@ -231,14 +231,14 @@ local function string_to_keycode (chord)
 
     if fragment == "\\C-" then
       key.CTRL = true
-    elseif fragment == "\\M-" then
-      key.META = true
+    elseif fragment == "\\A-" then
+      key.ALT = true
     elseif fragment == "\\" then
       key.key = keynametocode_map["\\\\"]
     else
       key.key = keynametocode_map[fragment]
     end
-  until fragment ~= "\\C-" and fragment ~= "\\M-"
+  until fragment ~= "\\C-" and fragment ~= "\\A-"
 
   return key, fragment
 end
@@ -252,9 +252,9 @@ memoized_keycode = memoize (string_to_keycode)
 function keycode (chord)
   local key, fragment = string_to_keycode (chord)
 
-  -- Normalise modifiers so that \\C-\\M-r and \\M-\\C-r are the same
+  -- Normalise modifiers so that \\C-\\A-r and \\A-\\C-r are the same
   -- atom.
-  local k = (key.CTRL and "\\C-" or "") .. (key.META and "\\M-" or "") .. fragment
+  local k = (key.CTRL and "\\C-" or "") .. (key.ALT and "\\A-" or "") .. fragment
   return memoized_keycode (k)
 end
 
@@ -270,7 +270,7 @@ local function keychords (s)
       fragment, tail = strtokey (tail)
       if fragment == nil then return nil end
       head = head .. fragment
-    until fragment ~= "\\C-" and fragment ~= "\\M-"
+    until fragment ~= "\\C-" and fragment ~= "\\A-"
 
     return head, tail
   end

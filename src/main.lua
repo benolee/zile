@@ -72,8 +72,8 @@ downloaded from http://www.gnu.org/licenses/gpl.html.
 local splash_str = "Welcome to GNU " .. PACKAGE_NAME .. [[.
 
 Undo changes	C-x u        Exit ]] .. PACKAGE_NAME .. [[	C-x C-c
-(`C-' means use the CTRL key.  `M-' means hold the Meta (or Alt) key.
-If you have no Meta key, you may type ESC followed by the character.)
+(`C-' means use the CTRL key.  `A-' means hold the Alt key.
+If you have no Alt key, you may type ESC followed by the character.)
 Combinations like `C-x u' mean first press `C-x', then `u'.
 
 Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ

@@ -172,10 +172,10 @@ function get_key_sequence ()
 end
 
 function get_function_by_keys (keys)
-  -- Detect Meta-digit
+  -- Detect Alt-digit
   if #keys == 1 then
     local key = keys[1]
-    if key.META and key.key < 255 and string.match (string.char (key.key), "[%d%-]") then
+    if key.ALT and key.key < 255 and string.match (string.char (key.key), "[%d%-]") then
       return zi.universal_argument
     end
   end

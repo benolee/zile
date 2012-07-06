@@ -124,7 +124,7 @@ Defun ("find_file_read_only",
 [[
 Edit file @i{filename} but don't allow changes.
 Like `find_file' but marks buffer as read-only.
-Use @kbd{M-x toggle_read_only} to permit editing.
+Use @kbd{A-x toggle_read_only} to permit editing.
 ]],
   true,
   function (filename)

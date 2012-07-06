@@ -141,11 +141,11 @@ function term_init ()
       elseif code < 0x80 then
         key = keycode (string.char (code))
 
-      -- meta keys
+      -- alt keys
       else
         local basekey = codetokey[{code - 0x80}]
         if type (basekey) == "table" and basekey.key then
-          key = "\\M-" + basekey
+          key = "\\A-" + basekey
         end
       end
 
@@ -258,7 +258,7 @@ function term_getkey (delay)
 
   if key == keycode "\\e" then
     local another = term_getkey (GETKEY_DEFAULT)
-    if another then key = "\\M-" + another end
+    if another then key = "\\A-" + another end
   end
 
   return key
@@ -289,9 +289,9 @@ function term_ungetkey (key)
   local codevec = {}
 
   if key ~= nil then
-    if key.META then
+    if key.ALT then
       codevec = { ESC }
-      key = key - "\\M-"
+      key = key - "\\A-"
     end
 
     local code = keytocode[key]

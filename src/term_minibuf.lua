@@ -130,7 +130,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
       else
         ding ()
       end
-    elseif c == keycode "\\M-v" or c == keycode "\\PAGEUP" then
+    elseif c == keycode "\\A-v" or c == keycode "\\PAGEUP" then
       if cp == nil then
         ding ()
       elseif cp.poppedup then
@@ -144,7 +144,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
         completion_scroll_up ()
         thistab = lasttab
       end
-    elseif c == keycode "\\M-p" or c == keycode "\\UP" then
+    elseif c == keycode "\\A-p" or c == keycode "\\UP" then
       if hp then
         local elem = previous_history_element (hp)
         if elem then
@@ -154,7 +154,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
           as = elem
         end
       end
-    elseif c == keycode "\\M-n" or c == keycode "\\DOWN" then
+    elseif c == keycode "\\A-n" or c == keycode "\\DOWN" then
       if hp then
         local elem = next_history_element (hp)
         if elem then
@@ -194,7 +194,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
         end
       end
     else
-      if c.key > 255 or c.META or c.CTRL or not posix.isprint (string.char (c.key)) then
+      if c.key > 255 or c.ALT or c.CTRL or not posix.isprint (string.char (c.key)) then
         ding ()
       else
         as = string.sub (as, 1, pos) .. string.char (c.key) .. string.sub (as, pos + 1)

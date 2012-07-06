@@ -173,7 +173,7 @@ by 4 each time.
         local digit = key.key - string.byte ('0')
         thisflag.uniarg_empty = false
 
-        if key.META then
+        if key.ALT then
           as = "ESC "
         end
 
@@ -193,7 +193,7 @@ by 4 each time.
         else
           break
         end
-      elseif key == keycode "\\M--" and i == 0 then
+      elseif key == keycode "\\A--" and i == 0 then
         if sgn > 0 then
           sgn = -sgn
           as = as .. "-"
@@ -791,7 +791,7 @@ Defun ("mark_sexp",
        {"number"},
 [[
 Set mark @i{arg} sexps from point.
-The place mark goes is the same place @kbd{C-M-f} would
+The place mark goes is the same place @kbd{C-A-f} would
 move to with the same argument.
 ]],
   true,
@@ -1143,7 +1143,7 @@ are interchanged.
 Defun ("transpose_sexps",
        {"number"},
 [[
-Like @kbd{M-x transpose_words} but applies to sexps.
+Like @kbd{A-x transpose_words} but applies to sexps.
 ]],
   true,
   function (n)
