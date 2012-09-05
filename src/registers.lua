@@ -49,7 +49,7 @@ Copy region into register @i{register}.
 
 local regnum
 
-function insert_register ()
+local function insert_register ()
   insert_estr (regs[term_bytetokey (regnum)])
   return true
 end
