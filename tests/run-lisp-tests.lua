@@ -58,12 +58,12 @@ for _, name in ipairs (arg) do
   if io.open (test .. ".output") ~= nil then
     name = test:gsub (io.catfile (srcdir, "tests/"), "")
     local edit_file = test:gsub ("^" .. srcdir_pat, builddir) .. ".input"
-    local args = {"--quick", "--batch", "--no-init-file", edit_file, "--load", test:gsub ("^" .. srcdir_pat, abs_srcdir) .. ".el"}
+    local args = {"--no-init-file", edit_file, "--load", test:gsub ("^" .. srcdir_pat, abs_srcdir) .. ".el"}
 
     posix.system ("mkdir", "-p", posix.dirname (edit_file))
 
     if EMACSPROG ~= "" then
-      if run_test (test, name, "Emacs", edit_file, EMACSPROG, args) then
+      if run_test (test, name, "Emacs", edit_file, EMACSPROG, list.concat (args, {"--quick", "--batch"})) then
         emacs_pass = emacs_pass + 1
       else
         emacs_fail = emacs_fail + 1
