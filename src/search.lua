@@ -334,10 +334,10 @@ is treated as a regexp.  See @kbd{M-x isearch-forward} for more info.
 Defun ("isearch-backward-regexp",
        {},
 [[
-Do incremental search forward for regular expression.
+Do incremental search backward for regular expression.
 With a prefix argument, do a regular string search instead.
 Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-forward} for more info.
+is treated as a regexp.  See @kbd{M-x isearch-backward} for more info.
 ]],
   true,
   function ()
