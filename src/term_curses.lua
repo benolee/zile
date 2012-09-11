@@ -71,6 +71,7 @@ function term_init ()
     [0x20]    = "\\SPC",
     [0x5c]    = "\\\\",
     [0x7f]    = "\\C-?",
+    ["kbs"]   = "\\BACKSPACE",
     ["kdch1"] = "\\DELETE",
     ["kcud1"] = "\\DOWN",
     ["kend"]  = "\\END",
