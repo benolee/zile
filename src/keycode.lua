@@ -157,7 +157,7 @@ local keyreadsyntax_map = table.merge (table.invert (keynametocode_map), {
                                       })
 
 -- Convert an internal format key chord back to its read syntax
-function toreadsyntax (key)
+local function toreadsyntax (key)
   return mapkey (keyreadsyntax_map, key, {C = "\\C-", M = "\\M-"})
 end
 
