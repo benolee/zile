@@ -92,7 +92,7 @@ end
 root_bindings = tree.new ()
 
 function init_default_bindings ()
-  -- Bind all printing keys to self_insert_command
+  -- Bind all printing keys to self-insert-command
   for i = 0, 0xff do
     if posix.isprint (string.char (i)) then
       root_bindings[{keycode (string.char (i))}] = "self-insert-command"
@@ -101,9 +101,9 @@ function init_default_bindings ()
 
   -- Bind special key names to self-insert-command
   list.map (function (e)
-	      root_bindings[{keycode (e)}] = "self-insert-command"
-	    end,
-	    {"\\SPC", "\\TAB", "\\RET", "\\\\"})
+              root_bindings[{keycode (e)}] = "self-insert-command"
+            end,
+            {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 
   lisp_loadfile (PATH_DATA .. "/default-bindings.el")
 end
