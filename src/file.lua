@@ -194,11 +194,10 @@ Set mark after the inserted text.
       local s = io.slurp (file)
       if s then
         insert_estr (EStr (s))
+        execute_function ("set-mark-command")
       else
         ok = minibuf_error ("%s: %s", file, posix.errno ())
       end
-    else
-      execute_function ("set-mark-command")
     end
 
     return ok
