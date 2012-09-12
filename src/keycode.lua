@@ -290,6 +290,9 @@ function keystrtovec (s)
   })
 
   for chord in keychords (s) do
+    if chord == nil then
+      return nil
+    end
     table.insert (keys, keycode (chord))
   end
 
