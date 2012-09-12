@@ -240,7 +240,7 @@ function term_getkey (delay)
       table.insert (codes, c)
       key = codetokey[codes]
       if key and key.key then
-        -- ..code lookeup matched a key, return it.
+        -- ...code lookup matched a key, return it.
         break
       elseif key == nil then
         -- ...or return nil for an invalid lookup code.
