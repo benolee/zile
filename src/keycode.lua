@@ -131,7 +131,6 @@ local function mapkey (map, key, mod)
     return "invalid keycode: nil"
   end
 
-  local s = ""
   local s = (key.CTRL and mod.C or "") .. (key.META and mod.M or "")
 
   if not key.key then
