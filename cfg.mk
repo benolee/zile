@@ -50,3 +50,18 @@ local-checks-to-skip = \
 #
 # sc_bindtextdomain: Emacs isn't internationalised
 # sc_error_message_{period,uppercase}: Emacs does these
+
+define _sc_search_regexp_or_exclude
+  files=$$($(VC_LIST_EXCEPT));						\
+  if test -n "$$files"; then						\
+    grep -nE "$$prohibit" $$files | grep -v -- '-- exclude from $@'	\
+      && { msg="$$halt" $(_sc_say_and_exit) } || :;			\
+  else :;								\
+  fi || :;
+endef
+
+# Prohibit rvalues on LHS of a comparison in Lua.
+sc_lua_prohibit_LHS_rvalue:
+	@prohibit='if  *(false|nil|true|"[^"]*"|'"'[^']*'"'|[1-9][0-9]*) *[~=]=' \
+	halt='found useless `"rhs" == lhs'\'' transposed comparison'	\
+	  $(_sc_search_regexp_or_exclude)
