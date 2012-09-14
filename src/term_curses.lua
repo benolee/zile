@@ -71,7 +71,6 @@ function term_init ()
     [0x20]    = "\\SPC",
     [0x5c]    = "\\\\",
     [0x7f]    = "\\C-?",
-    ["kbs"]   = "\\BACKSPACE",
     ["kdch1"] = "\\DELETE",
     ["kcud1"] = "\\DOWN",
     ["kend"]  = "\\END",
@@ -119,8 +118,13 @@ function term_init ()
   -- Reverse lookup of a lone ESC.
   keytocode[keycode "\\e"] = { ESC }
 
-  -- ...fallback on 0x7f for backspace if terminfo doesn't know better
-  if not curses.tigetstr ("kbs") then
+  local kbs = curses.tigetstr ("kbs")
+  if kbs and kbs ~= 0x08 then
+    -- using 0x08 (^H) for \BACKSPACE hangs with C-qC-h
+    keytocode[keycode "\\BACKSPACE"] = {kbs}
+    codetokey[{kbs}] = "\\BACKSPACE"
+  else
+    -- ...fallback on 0x7f for backspace if terminfo doesn't know better
     keytocode[keycode "\\BACKSPACE"] = {0x7f}
   end
   if not codetokey[{0x7f}] then codetokey[{0x7f}] = keycode "\\BACKSPACE" end
