@@ -178,7 +178,7 @@ local keycode_mt = {
   -- Return the immutable atom for this keycode with modifier added.
   --   ctrlkey = "\\C-" + key
   __add = function (self, mod)
-    if "string" == type (self) then mod, self = self, mod end
+    if type (self) == "string" then mod, self = self, mod end
     mod = string.upper (string.sub (mod, 2, 2))
     if self[mod] then return self end
     return keycode ("\\" .. mod .. "-" .. toreadsyntax (self))
@@ -187,7 +187,7 @@ local keycode_mt = {
   -- Return the immutable atom for this keycode with modifier removed.
   --   withoutmeta = key - "\\M-"
   __sub = function (self, mod)
-    if "string" == type (self) then mod, self = self, mod end
+    if type (self) == "string" then mod, self = self, mod end
     mod = string.upper (string.sub (mod, 2, 2))
     local keystr = string.gsub (toreadsyntax (self), "\\" .. mod .. "%-", "")
     return keycode (keystr)
@@ -234,11 +234,11 @@ keycode = memoize (function (chord)
     fragment, tail = strtokey (tail)
     if fragment == nil then return nil end
 
-    if "\\C-" == fragment then
+    if fragment == "\\C-" then
       key.CTRL = true
-    elseif "\\M-" == fragment then
+    elseif fragment == "\\M-" then
       key.META = true
-    elseif "\\" == fragment then
+    elseif fragment == "\\" then
       key.key = keynametocode_map["\\\\"]
     else
       key.key = keynametocode_map[fragment]

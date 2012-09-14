@@ -110,7 +110,7 @@ creating one if none already exists.
 
     if not filename then
       ok = execute_function ("keyboard-quit")
-    elseif "" ~= filename then
+    elseif filename ~= "" then
       ok = find_file (filename)
     end
 
