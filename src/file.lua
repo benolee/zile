@@ -324,7 +324,7 @@ local function backup_and_write (bp, filename)
   end
 
   local ret, err = write_to_disk (bp, filename, "rw-rw-rw-")
-  if ret then
+  if ret == true then
     return true
   end
 
