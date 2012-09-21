@@ -323,13 +323,13 @@ local function backup_and_write (bp, filename)
     end
   end
 
-  local ret, err = write_to_disk (bp, filename, "rw-rw-rw-")
+  local ret = write_to_disk (bp, filename, "rw-rw-rw-")
   if ret == true then
     return true
   end
 
   if ret == -1 then
-    return minibuf_error (string.format ("Error writing `%s': %s", filename, err))
+    return minibuf_error (string.format ("Error writing `%s': %s", filename, posix.errno ()))
   end
   return minibuf_error (string.format ("Error writing `%s'", filename))
 end
