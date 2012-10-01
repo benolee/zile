@@ -56,7 +56,7 @@ local function draw_line (line, startcol, wp, o, rp, highlight, cur_tab_width)
     end
     local c = get_buffer_char (bp, o + i)
     if posix.isprint (c) then
-      term_addch (string.byte (c))
+      term_addstr (c)
       x = x + 1
     else
       local s = make_char_printable (c, x, cur_tab_width)
