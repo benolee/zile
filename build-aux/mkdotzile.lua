@@ -21,10 +21,6 @@ require "std"
 require "lib"
 
 -- Load variables
-vars = {}
-function X (name, default_value, local_when_set, docstring)
-  table.insert (vars, {name = name, val = default_value, islocal = local_when_set, doc = texi (docstring)})
-end
 require "tbl_vars"
 
 local h = io.open ("src/dotzile.sample", "w")
@@ -44,7 +40,7 @@ h:write (
 -- Don't note where the contents of this file comes from or that it's
 -- auto-generated, because it's ugly in a user configuration file.
 
-for i, v in ipairs (vars) do
+for i, v in ipairs (main_vars) do
   h:writelines ("; " .. v.doc:gsub ("\n", "\n; "),
                 "; Default value is " .. v.val .. ".",
                 "(setq " .. v.name .. " " .. v.val .. ")",
