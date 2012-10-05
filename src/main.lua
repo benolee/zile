@@ -275,7 +275,6 @@ function main ()
       ok = find_file (arg)
       if ok then
         execute_function ("goto-line", line)
-        lastflag.need_resync = true
       end
     end
     if thisflag.quit then
