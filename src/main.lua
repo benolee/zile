@@ -298,6 +298,9 @@ function main ()
   -- written during startup
   minibuf_refresh ()
 
+  -- Leave cursor in correct position.
+  term_redraw_cursor ()
+
   -- Run the main loop.
   while not thisflag.quit do
     if lastflag.need_resync then
