@@ -73,25 +73,6 @@ On reaching end of buffer, stop and signal error.
   end
 )
 
--- Get the goal column, expanding tabs.
-function get_goalc_bp (bp, o)
-  local col = 0
-  local t = tab_width (bp)
-  local start = buffer_start_of_line (bp, o)
-  for i = 0, o - start - 1 do
-    if get_buffer_char (bp, start + i) == '\t' then
-      col = bit32.bor (col, t - 1)
-    end
-    col = col + 1
-  end
-
-  return col
-end
-
-function get_goalc ()
-  return get_goalc_bp (cur_bp, get_buffer_pt (cur_bp))
-end
-
 Defun ("goto-char",
        {"number"},
 [[
