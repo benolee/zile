@@ -28,9 +28,7 @@ local function undo_save (ty, o, osize, size)
     return
   end
 
-  local up = {type = ty, next = cur_bp.last_undop}
-
-  up.o = o
+  local up = {type = ty, next = cur_bp.last_undop, o = o}
 
   if ty == UNDO_REPLACE_BLOCK then
     up.size = size
