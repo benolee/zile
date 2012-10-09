@@ -49,9 +49,6 @@ X = nil
 -- defining_macro: we are defining a macro.
 
 
--- Default waitkey pause in ds
-WAITKEY_DEFAULT = 20
-
 -- The current window
 cur_wp = nil
 

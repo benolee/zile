@@ -454,7 +454,7 @@ local function save_some_buffers ()
             break
           else
             minibuf_error ("Please answer y, n, !, . or q.")
-            waitkey (WAITKEY_DEFAULT)
+            waitkey ()
           end
         end
       end

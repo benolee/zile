@@ -94,7 +94,7 @@ function minibuf_vread_completion (fmt, value, cp, hp, empty_err, invalid_err)
         break
       else
         minibuf_error (string.format (invalid_err, ms))
-        waitkey (WAITKEY_DEFAULT)
+        waitkey ()
       end
     end
   end
