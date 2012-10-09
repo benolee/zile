@@ -383,21 +383,14 @@ what to do with it.
     local count = 0
     local ok = true
     while search (get_buffer_pt (cur_bp), find, true, false) do
-      local c = string.byte (' ')
+      local c = keycode ' '
 
       if not noask then
         if thisflag.need_resync then
           window_resync (cur_wp)
         end
-        while true do
-          minibuf_write (string.format ("Query replacing `%s' with `%s' (y, n, !, ., q)? ", find, repl))
-          c = getkey (GETKEY_DEFAULT)
-          if c == keycode "\\C-g" or c == keycode "\\RET" or c == keycode " " or c == keycode "y" or c == keycode "n"  or c == keycode "q" or c == keycode "." or c == keycode "!" then
-            break
-          end
-          minibuf_error ("Please answer y, n, !, . or q.")
-          waitkey ()
-        end
+        minibuf_write (string.format ("Query replacing `%s' with `%s' (y, n, !, ., q)? ", find, repl))
+        c = getkey (GETKEY_DEFAULT)
         minibuf_clear ()
 
         if c == keycode "q" then -- Quit immediately.
@@ -410,7 +403,7 @@ what to do with it.
         end
       end
 
-      if c ~= keycode "n" and c ~= keycode "\\RET" and c ~= keycode "\\DELETE" then -- Do not replace.
+      if c == keycode " " or c == keycode "y" or c == keycode "." or c == keycode "!" then
         -- Perform replacement.
         count = count + 1
         local case_repl = repl
@@ -430,6 +423,10 @@ what to do with it.
         if c == keycode "." then -- Replace and quit.
           break
         end
+      elseif c ~= keycode "n" and c ~= keycode "\\RET" and c ~= keycode "\\DELETE" then
+        ungetkey (c)
+        ok = false
+        break
       end
     end
 
