@@ -68,17 +68,6 @@ dist-hook: $(changelog)
 
 distcheck-hook: syntax-check
 
-uninstall-hook:
-	@$(NORMAL_UNINSTALL)
-	@test -d $(DESTDIR)$(bindir) && rmdir $(DESTDIR)$(bindir) || :
-	@test -d $(DESTDIR)$(docdir) && rmdir $(DESTDIR)$(docdir) || :
-	@test -d $(DESTDIR)$(datadir)/doc && rmdir $(DESTDIR)$(datadir)/doc || :
-	@test -d $(DESTDIR)$(man1dir) && rmdir $(DESTDIR)$(man1dir) || :
-	@test -d $(DESTDIR)$(mandir) && rmdir $(DESTDIR)$(mandir) || :
-	@test -d $(DESTDIR)$(pkgdatadir) && rmdir $(DESTDIR)$(pkgdatadir) || :
-	@test -d $(DESTDIR)$(datadir) && rmdir $(DESTDIR)$(datadir) || :
-	@test -d $(DESTDIR)$(prefix) && rmdir $(DESTDIR)$(prefix) || :
-
 ## An empty target to depend on when a rule needs to always run
 ## whenever it is visited.
 FORCE:
