@@ -73,8 +73,8 @@ The rest of the files in the top-level directory are part of the
  * Directory `m4` contains a mixture of [gnulib]() supplied and Zile-
    specific macros for rebuilding the `configure' script.
  * Directory `src` contains the source code used to build Zile.
- * Directory `tests` contains a small suite of tests used by
-   `make check` to sanity check a newly built `src/zile` binary.
+ * Directory `tests` contains a suite of tests used by `make check` to
+   sanity check a newly built `src/zile` binary.
 
   [Autotools]: http://sourceware.org/autobook/
 
