@@ -37,15 +37,16 @@ Emacs user should feel at home with Zile. Zile is aimed at small
 footprint systems and quick editing sessions (it starts up and shuts
 down instantly).
 
-Zile is written in Lua 5.1 using POSIX APIs, and hence requires only a
-Lua 5.1 runtime and a few additional Lua modules:
+Zile is written in Lua 5.1 using POSIX APIs, and hence requires a Lua
+5.1 runtime and a few additional Lua modules:
 
- * Lua stdlib <http://luaforge.net/projects/stdlib>
+ * Lua stdlib <https://github.com/rrthomas/lua-stdlib>
  * Lua BitOp <http://bitop.luajit.org/>
- * lrexlib <http://luaforge.net/projects/lrexlib>
+ * lrexlib <http://rrthomas.github.com/lrexlib/>
    (the rex_gnu module must be built)
- * luaposix <http://luaforge.net/projects/luaposix>
+ * luaposix <https://github.com/luaposix/luaposix>
    (the curses module must be built)
+ * alien <http://mascarenhas.github.com/alien/>
 
 For exact version dependencies, see `src/loadlibs.lua.in`.
 
@@ -158,19 +159,13 @@ then run this command to import it:
 and then rerun the `gpg --verify' command.
 
 Generic instructions for how to build GNU Zile from a release tarball
-are contained in the file `INSTALL`. Additionally, If you wish to use a
-non-standard curses library name, this can be specified using
-`CURSES_LIB` and `CPPFLAGS`. For example, to use the X version of
-[PDcurses][]:
-
-    CPPFLAGS=/usr/local/include/xcurses CURSES_LIB=-lXCurses ./configure
+are contained in the file `INSTALL`.
 
 If you are missing any of the prerequisite libraries needed to
 successfully build GNU Zile, the `configure` script will abort itself
 and tell you right away.
 
   [GnuPG]:    http://www.gnupg.org/
-  [PDcurses]: http://pdcurses.sf.ne
 
 
 Development Sources
