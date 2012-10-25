@@ -80,7 +80,7 @@ function get_goalc_bp (bp, o)
   local start = buffer_start_of_line (bp, o)
   for i = 0, o - start - 1 do
     if get_buffer_char (bp, start + i) == '\t' then
-      col = bit.bor (col, t - 1)
+      col = bit32.bor (col, t - 1)
     end
     col = col + 1
   end

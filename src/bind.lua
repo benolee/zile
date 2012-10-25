@@ -79,7 +79,6 @@ end
 function get_and_run_command ()
   local keys = get_key_sequence ()
   local name = get_function_by_keys (keys)
-
   minibuf_clear ()
 
   if function_exists (name) then

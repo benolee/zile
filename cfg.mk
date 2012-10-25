@@ -33,7 +33,7 @@ update-copyright-env = UPDATE_COPYRIGHT_USE_INTERVALS=1
 exclude_file_name_regexp--sc_trailing_blank = \.diff$
 
 # Lua-ish, not GNU-ish, error messages in some internal files
-exclude_file_name_regexp--sc_unmarked_diagnostics = ^src/(std|ldb)\.lua$$
+exclude_file_name_regexp--sc_unmarked_diagnostics = ^src/std\.lua$$
 
 # We aren't internationalised
 translation_project_ = ""

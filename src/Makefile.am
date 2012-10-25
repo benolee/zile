@@ -56,13 +56,8 @@ src_zile_LUA =						\
 	src/term_minibuf.lua				\
 	src/term_redisplay.lua
 
-LUA_RUNTIME =						\
-	src/ldb.lua					\
-	src/ldb-config.lua				\
-	$(src_zile_LUA)
-
 dist_pkgdata_DATA =					\
-	$(LUA_RUNTIME)					\
+	$(src_zile_LUA)					\
 	src/loadlua.lua					\
 	src/default-bindings.el
 
@@ -70,14 +65,13 @@ PRODUCTIONSOURCES =					\
 	$(src_zile_LUA)					\
 	$(top_srcdir)/src/zile.lua			\
 	$(top_srcdir)/src/loadlua.lua			\
-	$(top_srcdir)/src/ldb-config.lua		\
 	$(top_srcdir)/src/Makefile.am			\
 	$(top_srcdir)/src/*.el				\
 	$(top_srcdir)/Makefile.am $(top_srcdir)/configure.ac
 
 src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
 	cp src/loadlua.lua.in $@
-	for i in $(LUA_RUNTIME); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
+	for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
 
 $(top_builddir)/src/zile: $(PRODUCTIONSOURCES) Makefile
 	rm -f $@ $@.tmp
@@ -95,7 +89,7 @@ install-exec-hook:
 	rm -f $@.tmp
 
 EXTRA_DIST +=						\
-	$(LUA_RUNTIME)					\
+	$(src_zile_LUA)					\
 	src/zile.lua.in					\
 	src/loadlua.lua.in				\
 	src/dotzile.sample

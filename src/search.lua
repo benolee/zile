@@ -42,20 +42,20 @@ function find_substr (as, bs, s, from, to, forward, notbol, noteol, regex, icase
     s = string.gsub (s, "([$^.*[%]\\+?])", "\\%1")
   end
   if icase then
-    cf = bit.bor (cf, re_flags.ICASE)
+    cf = bit32.bor (cf, re_flags.ICASE)
   end
 
   local ok, r = pcall (rex_gnu.new, s, cf)
   if ok then
     local ef = 0
     if notbol then
-      ef = bit.bor (ef, re_flags.not_bol)
+      ef = bit32.bor (ef, re_flags.not_bol)
     end
     if noteol then
-      ef = bit.bor (ef, re_flags.not_eol)
+      ef = bit32.bor (ef, re_flags.not_eol)
     end
     if not forward then
-      ef = bit.bor (ef, re_flags.backward)
+      ef = bit32.bor (ef, re_flags.backward)
     end
     local match_from, match_to = r:find (string.sub (as .. bs, from, to), nil, ef)
     if match_from then

@@ -25,6 +25,7 @@ usercmd = {}
 
 -- Initialise prefix arg
 prefix_arg = false -- Not nil, so it is picked up in environment table
+current_prefix_arg = false
 
 function Defun (name, argtypes, doc, interactive, func)
   usercmd[name] = {
@@ -47,8 +48,7 @@ function Defun (name, argtypes, doc, interactive, func)
                arglist = arglist.next
                i = i + 1
              end
-             setfenv (func, setmetatable ({current_prefix_arg = prefix_arg},
-                                          {__index = _G, __newindex = _G}))
+             current_prefix_arg = prefix_arg
              prefix_arg = false
              local ret = func (unpack (args))
              if ret == nil then

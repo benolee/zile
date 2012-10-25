@@ -335,7 +335,7 @@ This is useful for inserting control characters.
   true,
   function ()
     minibuf_write ("C-q-")
-    insert_char (string.char (bit.band (getkey_unfiltered (GETKEY_DEFAULT), 0xff)))
+    insert_char (string.char (bit32.band (getkey_unfiltered (GETKEY_DEFAULT), 0xff)))
     minibuf_clear ()
   end
 )
