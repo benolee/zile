@@ -104,24 +104,19 @@ local keynametocode_map = {
   ["\\INSERT"] = KBD_INS,
   ["\\LEFT"] = KBD_LEFT,
   ["\\M-"] = KBD_META,
-  ["\\NEXT"] = KBD_PGDN,
   ["\\PAGEDOWN"] = KBD_PGDN,
   ["\\PAGEUP"] = KBD_PGUP,
-  ["\\PRIOR"] = KBD_PGUP,
-  ["\\r"] = KBD_RET, -- FIXME: Kludge to make keystrings work in both Emacs and Zile.
   ["\\RET"] = KBD_RET,
   ["\\RIGHT"] = KBD_RIGHT,
   ["\\SPC"] = string.byte (' '),
-  ["\\t"] = KBD_TAB,
   ["\\TAB"] = KBD_TAB,
   ["\\UP"] = KBD_UP,
-  ["\t"] = KBD_TAB,
   ["\\\\"] = string.byte ('\\'),
 }
 
 -- Insert printable characters in the ASCII range.
 for i=0x0,0x7f do
-  if posix.isprint (string.char (i)) and i ~= string.byte ('\\') then
+  if posix.isprint (string.char (i)) and i ~= string.byte ('\\') and i ~= string.byte (' ') then
     keynametocode_map[string.char (i)] = i
   end
 end
@@ -148,12 +143,7 @@ local function mapkey (map, key, mod)
   return s
 end
 
-local keyreadsyntax_map = table.merge (table.invert (keynametocode_map), {
-                                        [KBD_PGDN] = "\\PAGEDOWN",
-                                        [KBD_PGUP] = "\\PAGEUP",
-                                        [KBD_RET]  = "\\RET",
-                                        [KBD_TAB]  = "\\TAB",
-                                      })
+local keyreadsyntax_map = table.invert (keynametocode_map)
 
 -- Convert an internal format key chord back to its read syntax
 local function toreadsyntax (key)
@@ -194,40 +184,45 @@ local keycode_mt = {
   end,
 }
 
+local equivs = {
+  ["\\NEXT"] = "\\PAGEDOWN",
+  ["\\PRIOR"] = "\\PAGEUP",
+  ["\\r"] = "\\RET", -- FIXME: Kludge to make keystrings work in both Emacs and Zile.
+  ["\\t"] = "\\TAB",
+  ["\t"] = "\\TAB",
+  [" "] = "\\SPC",
+}
+
 -- Extract a prefix of a key string.
 local function strtokey (tail)
   if tail == "\\" then
     return "\\", ""
-  elseif tail[1] == "\\" then
-    local head
+  end
 
+  local head, real_key
+  for match, equiv in pairs (equivs) do
+    if match == tail:sub (1, #match) then
+      head, real_key = match, equiv
+      break
+    end
+  end
+  if not head then
     for match in pairs (keynametocode_map) do
       if match == tail:sub (1, #match) then
-        head = match
+        head, real_key = match, match
         break
       end
     end
-    if head then
-      return head, tail:sub (#head + 1)
-    end
-    return "", nil
+  end
+  if head then
+    return real_key, tail:sub (#head + 1)
   end
 
-  return tail[1], tail:sub (2)
+  return "", nil
 end
 
--- Convert a single keychord string to its key code.
-keycode = memoize (function (chord)
+local function string_to_keycode (chord)
   local key, tail = setmetatable ({}, keycode_mt), chord
-
-  -- Equivalencies
-  if chord == "\\r" then
-    return keycode "\\RET"
-  elseif chord == " " then
-    return keycode "\\SPC"
-  elseif chord == "\\t" or chord == "\t" then
-    return keycode "\\TAB"
-  end
 
   local fragment
   repeat
@@ -245,13 +240,23 @@ keycode = memoize (function (chord)
     end
   until fragment ~= "\\C-" and fragment ~= "\\M-"
 
+  return key, fragment
+end
+
+memoized_keycode = memoize (string_to_keycode)
+
+-- Convert a single keychord string to its key code.
+-- First normalize the keycode, then call a memoized version so we get
+-- an identical table, which can be compared, on each call with the
+-- same chord.
+function keycode (chord)
+  local key, fragment = string_to_keycode (chord)
+
   -- Normalise modifiers so that \\C-\\M-r and \\M-\\C-r are the same
   -- atom.
   local k = (key.CTRL and "\\C-" or "") .. (key.META and "\\M-" or "") .. fragment
-  if k ~= chord then return keycode (k) end
-
-  return key
-end)
+  return memoized_keycode (k)
+end
 
 -- Iterator over a key sequence string, returning the next key chord on
 -- each iteration.
