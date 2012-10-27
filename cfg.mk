@@ -29,9 +29,6 @@ VC_LIST_ALWAYS_EXCLUDE_REGEX = \.(output|diff)$$
 # Use dashes instead of lists when updating copyright headers
 update-copyright-env = UPDATE_COPYRIGHT_USE_INTERVALS=1
 
-# Lua-ish, not GNU-ish, error messages in some internal files
-exclude_file_name_regexp--sc_unmarked_diagnostics = ^src/std\.lua$$
-
 # We aren't internationalised
 translation_project_ = ""
 
