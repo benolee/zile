@@ -33,14 +33,11 @@ update-copyright-env = UPDATE_COPYRIGHT_USE_INTERVALS=1
 translation_project_ = ""
 
 local-checks-to-skip = \
-	sc_bindtextdomain \
-	sc_error_message_period \
 	sc_error_message_uppercase
 
 # Rationale:
 #
-# sc_bindtextdomain: Emacs isn't internationalised
-# sc_error_message_{period,uppercase}: Emacs does these
+# sc_error_message_uppercase: Emacs does these
 
 define _sc_search_regexp_or_exclude
   files=$$($(VC_LIST_EXCEPT));						\
