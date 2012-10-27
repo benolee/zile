@@ -23,7 +23,7 @@ gnulib_dir = $(GNULIB_SRCDIR)
 # Set format of NEWS
 old_NEWS_hash := 40a4c6ac8e6b133a341fecbce7f875a6
 
-# Don't check test outputs
+# Don't check test outputs or diffs
 VC_LIST_ALWAYS_EXCLUDE_REGEX = \.(output|diff)$$
 
 # Use dashes instead of lists when updating copyright headers
