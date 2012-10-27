@@ -32,9 +32,6 @@ update-copyright-env = UPDATE_COPYRIGHT_USE_INTERVALS=1
 # We aren't internationalised
 translation_project_ = ""
 
-# Pig & Whistle
-exclude_file_name_regexp--sc_prohibit_doubled_word = \.lua$$
-
 local-checks-to-skip = \
 	sc_bindtextdomain \
 	sc_error_message_period \
