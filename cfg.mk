@@ -32,12 +32,9 @@ update-copyright-env = UPDATE_COPYRIGHT_USE_INTERVALS=1
 # We aren't internationalised
 translation_project_ = ""
 
-local-checks-to-skip = \
-	sc_error_message_uppercase
-
-# Rationale:
-#
-# sc_error_message_uppercase: Emacs does these
+# Allow errors to start with a capital (they are displayed on a
+# separate line, interactively)
+local-checks-to-skip = sc_error_message_uppercase
 
 define _sc_search_regexp_or_exclude
   files=$$($(VC_LIST_EXCEPT));						\
