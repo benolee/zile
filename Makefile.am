@@ -25,12 +25,11 @@ LUA_PATH ?= ;
 LUA_ENV = LUA_PATH="$(abs_srcdir)/src/?.lua;$(LUA_PATH)"
 
 CLEANFILES =
-DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
 install_edit = sed \
-	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g' \
-	-e 's|@pkgdocdir[@]|$(docdir)|g'
+	-e 's|@pkgdatadir[@]|$(PKGDATA_PATH)|g' \
+	-e 's|@pkgdocdir[@]|$(PKGDOC_PATH)|g'
 
 inplace_edit = sed \
 	-e 's|@pkgdatadir[@]|$(abs_top_srcdir)/src|g' \
@@ -39,7 +38,12 @@ inplace_edit = sed \
 EXTRA_DIST =						\
 	FAQ						\
 	GNUmakefile					\
-	maint.mk
+	maint.mk					\
+	$(PACKAGE).rockspec.in
+
+DISTCLEANFILES = $(PACKAGE).rockspec
+
+ROCKSPEC = $(PACKAGE)-$(VERSION)-1.rockspec
 
 doc_DATA = AUTHORS FAQ NEWS
 
@@ -89,8 +93,15 @@ uninstall-hook:
 	@test -d $(DESTDIR)$(datadir) && rmdir $(DESTDIR)$(datadir) || :
 	@test -d $(DESTDIR)$(prefix) && rmdir $(DESTDIR)$(prefix) || :
 
+# Depend on distcheck so that 'make release' runs distcheck before
+# making the rockspec, so the release archive MD5sum is correct in the
+# rockspec
+$(ROCKSPEC): $(PACKAGE).rockspec distcheck
+	sed -e 's/_MD5_/'`$(MD5SUM) $(distdir).tar.gz | cut -d " " -f 1`'/g' < $(PACKAGE).rockspec > $@
+
 release:
 	agrep -d '^\* Note' $(VERSION) NEWS | tail -n +3 | head -n -1 | grep -v '^\*\*' > release-notes && \
+	LUAROCKS_CONFIG=$(abs_srcdir)/luarocks-config.lua luarocks --tree=$(abs_srcdir)/luarocks make $(ROCKSPEC) && \
 	woger freecode,gnu upload=alpha.gnu.org package=$(PACKAGE) package_name="$(PACKAGE_NAME)" version=$(VERSION) description="the tiny Emacs clone" notes=release-notes email=~/announce-$(PACKAGE)-$(VERSION) dist_type="tar.gz" && \
 	rm -f release-notes
 

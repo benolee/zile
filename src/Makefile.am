@@ -19,7 +19,7 @@
 
 doc_DATA += src/dotzile.sample
 
-BUILT_SOURCES = src/loadlua.lua
+BUILT_SOURCES = src/loadprog.lua
 
 bin_SCRIPTS = src/zile
 
@@ -58,19 +58,20 @@ src_zile_LUA =						\
 
 dist_pkgdata_DATA =					\
 	$(src_zile_LUA)					\
-	src/loadlua.lua					\
+	src/loadprog.lua				\
 	src/default-bindings.el
 
 PRODUCTIONSOURCES =					\
 	$(src_zile_LUA)					\
 	$(top_srcdir)/src/zile.lua			\
-	$(top_srcdir)/src/loadlua.lua			\
+	$(top_srcdir)/src/loadprog.lua			\
 	$(top_srcdir)/src/Makefile.am			\
 	$(top_srcdir)/src/*.el				\
 	$(top_srcdir)/Makefile.am $(top_srcdir)/configure.ac
 
-src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
-	cp src/loadlua.lua.in $@
+src/loadprog.lua: src/Makefile.am src/loadprog.lua.in
+	cp src/loadprog.lua.in $@
+	$(LUA) -e "require 'std'; loadfile ('$(PACKAGE).rockspec.in') (); local modules = {stdlib = 'std', luaposix = 'posix', ['lrexlib-gnu'] = 'rex_gnu'}; list.map (function (s) local l, v = s:match ('([%w-_]+) >= ([%d%.]+)'); if l then local name = modules[l] or l; print (name .. ' = require_version (\"' .. name .. '\", \"' .. v .. '\")') end end, dependencies)" >> $@
 	for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
 
 $(top_builddir)/src/zile: $(PRODUCTIONSOURCES) Makefile
@@ -91,7 +92,7 @@ install-exec-hook:
 EXTRA_DIST +=						\
 	$(src_zile_LUA)					\
 	src/zile.lua.in					\
-	src/loadlua.lua.in				\
+	src/loadprog.lua.in				\
 	src/dotzile.sample
 
 CLEANFILES +=						\

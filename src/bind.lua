@@ -104,7 +104,7 @@ function init_default_bindings ()
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 
-  lisp_loadfile (PATH_DATA .. "/default-bindings.el")
+  lisp_loadfile (PKGDATA_PATH .. "/default-bindings.el")
 end
 
 function do_binding_completion (as)

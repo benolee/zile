@@ -2,7 +2,7 @@
 /.deps
 /zile
 /zile.lua
-/loadlua.lua
+/loadprog.lua
 /dotzile.sample
 /gendocs_template
 /zile.1

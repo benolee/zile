@@ -76,7 +76,7 @@ Undo changes	C-x u        Exit ]] .. PACKAGE_NAME .. [[	C-x C-c
 If you have no Meta key, you may type ESC followed by the character.)
 Combinations like `C-x u' mean first press `C-x', then `u'.
 
-Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ
+Keys not working properly?  See file://]] .. PKGDOC_PATH .. [[/FAQ
 
 ]] .. ZILE_VERSION_STRING .. [[
 

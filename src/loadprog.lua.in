@@ -1,0 +1,3 @@
+require "std" -- load std
+require "strict" -- optional stdlib module
+curses = require "curses" -- part of luaposix
