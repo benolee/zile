@@ -37,8 +37,8 @@ Emacs user should feel at home with Zile. Zile is aimed at small
 footprint systems and quick editing sessions (it starts up and shuts
 down instantly).
 
-Zile is written in Lua 5.1 using POSIX APIs, and hence requires a Lua
-5.1 runtime and a few additional Lua modules:
+Zile is written in Lua 5.2 using POSIX APIs, and hence requires a Lua
+5.2 runtime and a few additional Lua modules:
 
  * Lua stdlib <https://github.com/rrthomas/lua-stdlib>
  * Lua BitOp <http://bitop.luajit.org/>
@@ -48,10 +48,12 @@ Zile is written in Lua 5.1 using POSIX APIs, and hence requires a Lua
    (the curses module must be built)
  * alien <http://mascarenhas.github.com/alien/>
 
-For exact version dependencies, see `src/loadlibs.lua.in`.
+For exact version dependencies, see `src/loadlua.lua.in`. These are
+most easily installed using [LuaRocks][].
 
   [Emacs]:   http://www.gnu.org/s/emacs
   [gnulib]:  http://www.gnu.org/s/gnulib
+  [LuaRocks]:  http://www.luarocks.org/
 
 
 Source Layout
