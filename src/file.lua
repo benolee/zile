@@ -41,15 +41,16 @@ local function check_writable (filename)
   return ok and ok >= 0
 end
 
--- This functions makes the passed path an absolute path:
---
---  * expands `~/' and `~name/' expressions;
---  * replaces `//' with `/' (restarting from the root directory);
---  * removes `..' and `.' entries.
---
--- Returns normalized path, or nil if a password entry could not be
--- read
-function normalize_path (path)
+--- Find the canonical absolute name of a given file.
+-- <ul>
+-- <li>expand <code>~/</code> and <code>~name/</code> expressions;<li>
+-- <li>replace <code>//</code> with <code>/</code> (restarting from the root directory);</li>
+-- <li>remove <code>..</code> and <code>.</code> components.</li>
+-- </ul>
+-- FIXME: See the canonicalize module of gnulib for better code.
+-- @param filename filename to normalize
+-- @return canonical path, or nil on failure
+function canonicalize_filename (path)
   local comp = io.splitdir (path)
   local ncomp = {}
 
@@ -242,7 +243,7 @@ local function create_backup_filename (filename, backupdir)
       buf = buf .. '/'
       filename = gsub (filename, "/", "!")
 
-      if not normalize_path (buf) then
+      if not posix.canonicalize_filename (buf) then
         buf = nil
       end
       res = buf
