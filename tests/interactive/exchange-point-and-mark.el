@@ -1,6 +1,6 @@
-; ESC 4 forward-char set-mark forward-line forward-line
+; ESC 4 forward-char set-mark end-of-buffer
 ; exchange-point-and-mark f save-buffer save-buffers-kill-emacs
-(execute-kbd-macro "\e4\C-f\C-@f\M->\C-x\C-x\C-x\C-s\C-x\C-c")
+(execute-kbd-macro "\e4\C-f\C-@\M->\C-x\C-xf\C-x\C-s\C-x\C-c")
 
 ;; With a direct translation, Emacs exits 255 with 'end of buffer' error
 ;; for some reason?!
