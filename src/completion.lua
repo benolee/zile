@@ -74,7 +74,7 @@ local function completion_readdir (cp, path)
   cp.completions = {}
 
   -- Normalize path, and abort if it fails
-  path = posix.canonicalize_filename (path)
+  path = canonicalize_filename (path)
   if not path then
     return false
   end

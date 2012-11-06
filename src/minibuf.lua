@@ -105,7 +105,7 @@ function minibuf_read_filename (fmt, name, file)
   if not file and #name > 0 and name[-1] ~= '/' then
     name = name .. '/'
   end
-  name = posix.canonicalize_filename (name)
+  name = canonicalize_filename (name)
   if name then
     name = compact_path (name)
 
@@ -116,7 +116,7 @@ function minibuf_read_filename (fmt, name, file)
     name = term_minibuf_read (fmt, name, pos, completion_new (true), files_history)
 
     if name then
-      name = posix.canonicalize_filename (name)
+      name = canonicalize_filename (name)
       if name then
         add_history_element (files_history, name)
       end

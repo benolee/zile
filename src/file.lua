@@ -243,7 +243,7 @@ local function create_backup_filename (filename, backupdir)
       buf = buf .. '/'
       filename = gsub (filename, "/", "!")
 
-      if not posix.canonicalize_filename (buf) then
+      if not canonicalize_filename (buf) then
         buf = nil
       end
       res = buf
