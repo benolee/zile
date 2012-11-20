@@ -48,7 +48,9 @@ LUA_RUNTIME =						\
 	src/term.lua					\
 	src/term_curses.lua
 
-dist_pkgdata_DATA = $(LUA_RUNTIME)
+dist_pkgdata_DATA =					\
+	$(LUA_RUNTIME)					\
+	src/emacs_bindings.lua
 
 pkgdata_DATA = src/loadprog.lua
 
