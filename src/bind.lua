@@ -207,21 +207,18 @@ Argument is a command name.
   true,
   function ()
     local name = minibuf_read_function_name ("Where is command: ")
-    local g = {}
 
-    if name then
-      g.f = name
-      if function_exists (g.f) then
-        g.bindings = ""
-        walk_bindings (root_bindings, gather_bindings, g)
+    if name and function_exists (name) then
+      local g = { f = name, bindings = "" }
 
-        if #g.bindings == 0 then
-          minibuf_write (name .. " is not on any key")
-        else
-          minibuf_write ("%s is on %s", name, g.bindings)
-        end
-        return true
+      walk_bindings (root_bindings, gather_bindings, g)
+
+      if #g.bindings == 0 then
+        minibuf_write (name .. " is not on any key")
+      else
+        minibuf_write (string.format ("%s is on %s", name, g.bindings))
       end
+      return true
     end
   end
 )
