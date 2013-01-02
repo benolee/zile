@@ -82,7 +82,7 @@ local codetoname = {
 
 
 -- Array of key names
-local keynametocode_map = {
+local keynametocode = {
   ["\\BACKSPACE"] = KBD_BS,
   ["\\C-"] = KBD_CTRL,
   ["\\DELETE"] = KBD_DEL,
@@ -118,7 +118,7 @@ local keynametocode_map = {
 -- Insert printable characters in the ASCII range.
 for i = 0x0, 0x7f do
   if posix.isprint (string.char (i)) and i ~= string.byte ('\\') and i ~= string.byte (' ') then
-    keynametocode_map[string.char (i)] = i
+    keynametocode[string.char (i)] = i
   end
 end
 
@@ -144,11 +144,11 @@ local function mapkey (map, key, mod)
   return s
 end
 
-local keyreadsyntax_map = table.invert (keynametocode_map)
+local keyreadsyntax = table.invert (keynametocode)
 
 -- Convert an internal format key chord back to its read syntax
 local function toreadsyntax (key)
-  return mapkey (keyreadsyntax_map, key, {C = "\\C-", M = "\\M-"})
+  return mapkey (keyreadsyntax, key, {C = "\\C-", M = "\\M-"})
 end
 
 -- A key code has one `keypress' and some optional modifiers.
@@ -209,7 +209,7 @@ local function strtokey (tail)
     end
   end
   if not head then
-    for match in pairs (keynametocode_map) do
+    for match in pairs (keynametocode) do
       if match == tail:sub (1, #match) then
         head, real_key = match, match
         break
@@ -236,9 +236,9 @@ local function string_to_keycode (chord)
     elseif fragment == "\\M-" then
       key.META = true
     elseif fragment == "\\" then
-      key.key = keynametocode_map["\\\\"]
+      key.key = keynametocode["\\\\"]
     else
-      key.key = keynametocode_map[fragment]
+      key.key = keynametocode[fragment]
     end
   until fragment ~= "\\C-" and fragment ~= "\\M-"
 
