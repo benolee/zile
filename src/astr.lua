@@ -77,6 +77,6 @@ AStr = Object {
   end,
 
   rfind = function (self, s, from)
-    return find_substr (tostring (self), "", s, 1, from - 1, false, true, true, false, false) -- FIXME
+    return find_substr (tostring (self), s, 1, from - 1, false, true, true, false, false) -- FIXME
   end
 }
