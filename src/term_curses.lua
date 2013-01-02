@@ -37,7 +37,7 @@ local function tigetvec (cap)
   local s = curses.tigetstr (cap)
   if s then
     vec = {}
-    for i=1,#s do
+    for i = 1, #s do
       table.insert (vec, s:byte (i))
     end
   end
@@ -132,7 +132,7 @@ function term_init ()
   end
 
   -- ...inject remaining ASCII key codes
-  for code=0,0x7f do
+  for code = 0, 0x7f do
     local key = nil
     if not codetokey[{code}] then
       -- control keys

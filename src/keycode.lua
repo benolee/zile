@@ -116,7 +116,7 @@ local keynametocode_map = {
 }
 
 -- Insert printable characters in the ASCII range.
-for i=0x0,0x7f do
+for i = 0x0, 0x7f do
   if posix.isprint (string.char (i)) and i ~= string.byte ('\\') and i ~= string.byte (' ') then
     keynametocode_map[string.char (i)] = i
   end
