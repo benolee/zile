@@ -79,7 +79,7 @@ EStr = Object {
 
   next_line = function (self, o)
     local eo = self:end_of_line (o)
-    return eo <= self.s:len () and eo + #self.eol or nil
+    return eo <= #self.s and eo + #self.eol or nil
   end,
 
   start_of_line = function (self, o)
@@ -89,7 +89,7 @@ EStr = Object {
 
   end_of_line = function (self, o)
     local next = self.s:find (self.eol, o)
-    return next or self.s:len () + 1
+    return next or #self.s + 1
   end,
 
   lines = function (self)
@@ -108,7 +108,7 @@ EStr = Object {
 
   replace = function (self, pos, src)
     local s = 1
-    local len = src.s:len ()
+    local len = #src.s
     while len > 0 do
       local next = src.s:find (src.eol, s + #src.eol + 1)
       local line_len = next and next - s or len
@@ -127,13 +127,13 @@ EStr = Object {
   end,
 
   cat = function (self, src)
-    local oldlen = self.s:len ()
+    local oldlen = #self.s
     self.s:insert (oldlen + 1, src:len (self.eol))
     return self:replace (oldlen + 1, src)
   end,
 
   bytes = function (self)
-    return self.s:len ()
+    return #self.s
   end,
 
   len = function (self, eol_type) -- FIXME in Lua 5.2 use __len metamethod
