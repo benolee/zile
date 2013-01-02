@@ -32,6 +32,18 @@ local function keypad (on)
   end
 end
 
+local function tigetvec (cap)
+  local vec = nil
+  local s = curses.tigetstr (cap)
+  if s then
+    vec = {}
+    for i=1,#s do
+      table.insert (vec, s:byte (i))
+    end
+  end
+  return vec
+end
+
 function term_init ()
   curses.initscr ()
 
@@ -65,6 +77,7 @@ function term_init ()
   keytocode = {}
 
   -- Starting with specially named keys:
+  local codes
   for code, key in pairs {
     [0x9]     = "\\TAB",
     [0xd]     = "\\RET",
@@ -95,19 +108,7 @@ function term_init ()
     ["kspd"]  = "\\C-z",
     ["kcuu1"] = "\\UP"
   } do
-    local codes = nil
-    if type (code) == "string" then
-      local s = curses.tigetstr (code)
-      if s then
-        codes = {}
-        for i=1,#s do
-          table.insert (codes, s:byte (i))
-        end
-      end
-    else
-      codes = {code}
-    end
-
+    codes = type (code) == "string" and tigetvec (code) or {code}
     if codes then
       key = keycode (key)
       keytocode[key]   = codes
@@ -118,16 +119,17 @@ function term_init ()
   -- Reverse lookup of a lone ESC.
   keytocode[keycode "\\e"] = { ESC }
 
+  -- Using 0x08 (^H) for \BACKSPACE hangs with C-qC-h, so when terminfo
+  -- tries to use 0x08 as \BACKSPACE, fallback to  0x7f (^?) instead.
   local kbs = curses.tigetstr ("kbs")
-  if kbs and kbs ~= 0x08 then
-    -- using 0x08 (^H) for \BACKSPACE hangs with C-qC-h
-    keytocode[keycode "\\BACKSPACE"] = {kbs}
-    codetokey[{kbs}] = "\\BACKSPACE"
-  else
-    -- ...fallback on 0x7f for backspace if terminfo doesn't know better
-    keytocode[keycode "\\BACKSPACE"] = {0x7f}
+  codes = {0x7f}
+  if kbs and kbs ~= string.char (0x08) then
+    codes = tigetvec ("kbs")
   end
-  if not codetokey[{0x7f}] then codetokey[{0x7f}] = keycode "\\BACKSPACE" end
+  if codes then
+    keytocode[keycode "\\BACKSPACE"] = codes
+    codetokey[codes] = keycode "\\BACKSPACE"
+  end
 
   -- ...inject remaining ASCII key codes
   for code=0,0x7f do
