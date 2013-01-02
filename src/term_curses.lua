@@ -280,7 +280,7 @@ end
 -- return nil.
 function term_keytobyte (key)
   local codes = keytocode[key]
-  if codes and  #codes == 1 and 0xff >= codes[1] then
+  if codes and #codes == 1 and 0xff >= codes[1] then
     return codes[1]
   end
   return nil
