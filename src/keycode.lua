@@ -22,6 +22,7 @@ local KBD_CTRL = 512
 local KBD_META = 1024
 
 -- Common non-alphanumeric keys.
+local KBD_ESC = 27
 local KBD_CANCEL = 257
 local KBD_TAB = 258
 local KBD_RET = 259
@@ -50,7 +51,7 @@ local KBD_F11 = 282
 local KBD_F12 = 283
 
 local codetoname = {
-  [27]        = "\\e",
+  [KBD_ESC]   = "ESC",
   [KBD_PGUP]  = "<prior>",
   [KBD_PGDN]  = "<next>",
   [KBD_HOME]  = "<home>",
@@ -86,7 +87,7 @@ local keynametocode_map = {
   ["\\C-"] = KBD_CTRL,
   ["\\DELETE"] = KBD_DEL,
   ["\\DOWN"] = KBD_DOWN,
-  ["\\e"] = 27, -- Escape or ^[
+  ["\\ESC"] = KBD_ESC,
   ["\\END"] = KBD_END,
   ["\\F1"] = KBD_F1,
   ["\\F10"] = KBD_F10,
@@ -187,6 +188,7 @@ local keycode_mt = {
 local equivs = {
   ["\\NEXT"] = "\\PAGEDOWN",
   ["\\PRIOR"] = "\\PAGEUP",
+  ["\\e"] = "\\ESC",
   ["\\r"] = "\\RET", -- FIXME: Kludge to make keystrings work in both Emacs and Zile.
   ["\\t"] = "\\TAB",
   ["\t"] = "\\TAB",

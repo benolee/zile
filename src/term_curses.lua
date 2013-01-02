@@ -117,7 +117,7 @@ function term_init ()
   end
 
   -- Reverse lookup of a lone ESC.
-  keytocode[keycode "\\e"] = { ESC }
+  keytocode[keycode "\\ESC"] = { ESC }
 
   -- Using 0x08 (^H) for \BACKSPACE hangs with C-qC-h, so when terminfo
   -- tries to use 0x08 as \BACKSPACE, fallback to  0x7f (^?) instead.
@@ -220,7 +220,7 @@ function term_getkey (delay)
     c = term_getkey_unfiltered (ESCDELAY)
     if c == nil then
       -- ...if nothing follows quickly enough, assume ESC keypress...
-      key = keycode "\\e"
+      key = keycode "\\ESC"
     else
       -- ...see whether the following chars match an escape sequence...
       codes = { ESC }
@@ -233,7 +233,7 @@ function term_getkey (delay)
         elseif key == nil then
           -- ...no match, rebuffer unmatched chars and return ESC.
           unget_codes (list.tail (codes))
-          key = keycode "\\e"
+          key = keycode "\\ESC"
           break
         end
         -- ...partial match, fetch another char and try again.
@@ -258,7 +258,7 @@ function term_getkey (delay)
     end
   end
 
-  if key == keycode "\\e" then
+  if key == keycode "\\ESC" then
     local another = term_getkey (GETKEY_DEFAULT)
     if another then key = "\\M-" + another end
   end
@@ -280,7 +280,7 @@ end
 
 function term_bytetokey (byte)
   if byte == ESC then
-    return keycode "\\e"
+    return keycode "\\ESC"
   else
     return codetokey[byte]
   end
