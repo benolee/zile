@@ -29,7 +29,7 @@ current_prefix_arg = false
 
 function Defun (name, argtypes, doc, interactive, func)
   usercmd[name] = {
-    doc = texi (doc),
+    doc = texi (doc:chomp ()),
     interactive = interactive,
     func = function (arglist)
              local args = {}
