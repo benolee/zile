@@ -122,6 +122,8 @@ end
 local zarg = {}
 local qflag = false
 
+-- FIXME: Rewrite using stdlib getopt
+-- FIXME: Remove processed arguments from arg, ignore the rest, allowing processing by load scripts?
 function process_args ()
   -- Leading `-' means process all arguments in order, treating
   -- non-options as arguments to an option with code 1
