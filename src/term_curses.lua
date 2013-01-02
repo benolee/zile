@@ -19,7 +19,16 @@
 
 local codetokey, keytocode, key_buf
 
-local ESC      = 0x1b
+-- ASCII character codes:
+local ASC_BS  = 0x08
+local ASC_TAB = 0x09
+local ASC_RET = 0x0d
+local ASC_SP  = 0x20
+local ASC_A   = 0x41
+local ASC_ESC = 0x1b
+local ASC_BSL = 0x5c
+local ASC_DEL = 0x7f
+
 local ESCDELAY = 500
 
 local resumed = true
@@ -79,11 +88,11 @@ function term_init ()
   -- Starting with specially named keys:
   local codes
   for code, key in pairs {
-    [0x9]     = "\\TAB",
-    [0xd]     = "\\RET",
-    [0x20]    = "\\SPC",
-    [0x5c]    = "\\\\",
-    [0x7f]    = "\\C-?",
+    [ASC_TAB] = "\\TAB",
+    [ASC_RET] = "\\RET",
+    [ASC_SP]  = "\\SPC",
+    [ASC_BSL] = "\\\\",
+    [ASC_DEL] = "\\C-?",
     ["kdch1"] = "\\DELETE",
     ["kcud1"] = "\\DOWN",
     ["kend"]  = "\\END",
@@ -117,13 +126,13 @@ function term_init ()
   end
 
   -- Reverse lookup of a lone ESC.
-  keytocode[keycode "\\ESC"] = { ESC }
+  keytocode[keycode "\\ESC"] = { ASC_ESC }
 
   -- Using 0x08 (^H) for \BACKSPACE hangs with C-qC-h, so when terminfo
   -- tries to use 0x08 as \BACKSPACE, fallback to  0x7f (^?) instead.
   local kbs = curses.tigetstr ("kbs")
-  codes = {0x7f}
-  if kbs and kbs ~= string.char (0x08) then
+  codes = {ASC_DEL}
+  if kbs and kbs ~= string.char (ASC_BS) then
     codes = tigetvec ("kbs")
   end
   if codes then
@@ -132,20 +141,20 @@ function term_init ()
   end
 
   -- ...inject remaining ASCII key codes
-  for code = 0, 0x7f do
+  for code = 0, ASC_DEL do
     local key = nil
     if not codetokey[{code}] then
       -- control keys
-      if code < 0x20 then
-        key = keycode ("\\C-" .. string.lower (string.char (code + 0x40)))
+      if code < ASC_SP then
+        key = keycode ("\\C-" .. string.lower (string.char (code + ASC_A - 1)))
 
       -- printable keys
-      elseif code < 0x80 then
+      elseif code < (1+ ASC_DEL) then
         key = keycode (string.char (code))
 
       -- meta keys
       else
-        local basekey = codetokey[{code - 0x80}]
+        local basekey = codetokey[{code - (1+ ASC_DEL)}]
         if type (basekey) == "table" and basekey.key then
           key = "\\M-" + basekey
         end
@@ -215,7 +224,7 @@ function term_getkey (delay)
   local codes, key = {}
 
   local c = term_getkey_unfiltered (delay)
-  if c == ESC then
+  if c == ASC_ESC then
     -- Detecting ESC is tricky...
     c = term_getkey_unfiltered (ESCDELAY)
     if c == nil then
@@ -223,7 +232,7 @@ function term_getkey (delay)
       key = keycode "\\ESC"
     else
       -- ...see whether the following chars match an escape sequence...
-      codes = { ESC }
+      codes = { ASC_ESC }
       while true do
         table.insert (codes, c)
         key = codetokey[codes]
@@ -279,7 +288,7 @@ end
 
 
 function term_bytetokey (byte)
-  if byte == ESC then
+  if byte == ASC_ESC then
     return keycode "\\ESC"
   else
     return codetokey[byte]
@@ -292,7 +301,7 @@ function term_ungetkey (key)
 
   if key ~= nil then
     if key.META then
-      codevec = { ESC }
+      codevec = { ASC_ESC }
       key = key - "\\M-"
     end
 
