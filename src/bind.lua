@@ -247,6 +247,20 @@ Show a list of all defined keys, and their definitions.
   end
 )
 
+local function prompt_key_sequence (prompt, keystr)
+  local keys
+  if keystr then
+    keys = keystrtovec (keystr)
+    if not keys then
+      return nil, string.format ("Key sequence %s is invalid", keystr)
+    end
+  else
+    minibuf_write (prompt .. ": ")
+    keys = get_key_sequence ()
+  end
+  return keys
+end
+
 
 Defun ("global-set-key",
        {"string", "string"},
@@ -257,17 +271,9 @@ sequence.
 ]],
   true,
   function (keystr, name)
-    local keys
+    local keys = prompt_key_sequence ("Set key globally", keystr)
 
-    if keystr then
-      keys = keystrtovec (keystr)
-      if not keys then
-        minibuf_error (string.format ("Key sequence %s is invalid", keystr))
-        return
-      end
-    else
-      minibuf_write ("Set key globally: ")
-      keys = get_key_sequence ()
+    if keystr == nil then
       keystr = tostring (keys)
     end
 
@@ -284,6 +290,27 @@ sequence.
     end
 
     root_bindings[keys] = name
+
+    return true
+  end
+)
+
+
+Defun ("global-unset-key",
+       {"string"},
+[[
+Remove global binding of a key sequence.
+Read key sequence and unbind any function already bound to that sequence.
+]],
+  true,
+  function (keystr)
+    local keys = prompt_key_sequence ("Unset key globally", keystr)
+
+    if keystr == nil then
+      keystr = tostring (keys)
+    end
+
+    root_bindings[keys] = nil
 
     return true
   end
