@@ -663,7 +663,7 @@ local function move_sexp (dir)
   local gotsexp, single_quote, double_quote = false, dir < 0, dir < 0
 
   local function isopenbracketchar (c)
-    return (c == '(') or (c == '[') or ( c== '{') or ((c == '\"') and not double_quote) or ((c == '\'') and not single_quote)
+    return (c == '(') or (c == '[') or (c == '{') or ((c == '\"') and not double_quote) or ((c == '\'') and not single_quote)
   end
 
   local function isclosebracketchar (c)
