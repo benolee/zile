@@ -53,7 +53,7 @@ function find_substr (as, s, from, to, forward, notbol, noteol, regex, icase)
     if not forward then
       ef = bit32.bor (ef, re_flags.backward)
     end
-    local match_from, match_to = r:find (string.sub (tostring (as), from, to), nil, ef)
+    local match_from, match_to = r:find (as:sub (from, to), nil, ef)
     if match_from then
       if forward then
         ret = match_to + from
