@@ -400,7 +400,7 @@ what to do with it.
         end
       end
 
-      if c == keycode " " or c == keycode "y" or c == keycode "." or c == keycode "!" then
+      if keyset {" ", "y", "Y", ".", "!"}:member (c) then
         -- Perform replacement.
         count = count + 1
         local case_repl = repl
@@ -420,7 +420,7 @@ what to do with it.
         if c == keycode "." then -- Replace and quit.
           break
         end
-      elseif c ~= keycode "n" and c ~= keycode "\\RET" and c ~= keycode "\\DELETE" then
+      elseif not keyset {"n", "N", "\\RET", "\\DELETE"}:member (c) then
         ungetkey (c)
         ok = false
         break

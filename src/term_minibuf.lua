@@ -94,17 +94,17 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     elseif c == keycode "\\C-g" then
       as = nil
       break
-    elseif c == keycode "\\C-a" or c == keycode "\\HOME" then
+    elseif keyset {"\\C-a", "\\HOME"}:member (c) then
       pos = 0
-    elseif c == keycode "\\C-e" or c == keycode "\\END" then
+    elseif keyset {"\\C-e", "\\END"}:member (c) then
       pos = #as
-    elseif c == keycode "\\C-b" or c == keycode "\\LEFT" then
+    elseif keyset {"\\C-b", "\\LEFT"}:member (c) then
       if pos > 0 then
         pos = pos - 1
       else
         ding ()
       end
-    elseif c == keycode "\\C-f" or c == keycode "\\RIGHT" then
+    elseif keyset {"\\C-f", "\\RIGHT"}:member (c) then
       if pos < #as then
         pos = pos + 1
       else
@@ -124,27 +124,27 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
       else
         ding ()
       end
-    elseif c == keycode "\\C-d" or c == keycode "\\DELETE" then
+    elseif keyset {"\\C-d", "\\DELETE"}:member (c) then
       if pos < #as then
         as = string.sub (as, 1, pos) .. string.sub (as, pos + 2)
       else
         ding ()
       end
-    elseif c == keycode "\\M-v" or c == keycode "\\PAGEUP" then
+    elseif keyset {"\\M-v", "\\PAGEUP"}:member (c) then
       if cp == nil then
         ding ()
       elseif cp.poppedup then
         completion_scroll_down ()
         thistab = lasttab
       end
-    elseif c == keycode "\\C-v" or c == keycode "\\PAGEDOWN" then
+    elseif keyset {"\\C-v", "\\PAGEDOWN"}:member (c) then
       if cp == nil then
         ding ()
       elseif cp.poppedup then
         completion_scroll_up ()
         thistab = lasttab
       end
-    elseif c == keycode "\\M-p" or c == keycode "\\UP" then
+    elseif keyset {"\\M-p", "\\UP"}:member (c) then
       if hp then
         local elem = previous_history_element (hp)
         if elem then
@@ -154,7 +154,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
           as = elem
         end
       end
-    elseif c == keycode "\\M-n" or c == keycode "\\DOWN" then
+    elseif keyset {"\\M-n", "\\DOWN"}:member (c) then
       if hp then
         local elem = next_history_element (hp)
         if elem then
@@ -203,7 +203,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     end
 
     lasttab = thistab
-  until c == keycode "\\RET" or c == keycode "\\C-g"
+  until keyset {"\\RET", "\\C-g"}:member (c)
 
   minibuf_clear ()
   maybe_close_popup (cp)
