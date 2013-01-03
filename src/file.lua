@@ -430,32 +430,23 @@ local function save_some_buffers ()
       if noask then
         save_buffer (bp)
       else
-        while true do
-          minibuf_write (string.format ("Save file %s? (y, n, !, ., q) ", fname))
-          local c = getkey (GETKEY_DEFAULT)
-          minibuf_clear ()
+        local c = minibuf_read_key (string.format ("Save file %s?", fname),
+                                    {"y", "n", "!", ".", "q"},
+                                    {"Y", "N", " ", "\\RET", "\\DELETE"})
 
-          if c == keycode "\\C-g" then
-            execute_function ("keyboard-quit")
-            return false
-          elseif c == keycode "q" then
-            bp = nil
-            break
-          elseif c == keycode "." then
-            save_buffer (bp)
-            return true
-          elseif c == keycode "!" then
-            noask = true
-          end
-          if c == keycode "!" or c == keycode " " or c == keycode "y" then
-            save_buffer (bp)
-          end
-          if c == keycode "!" or c == keycode " " or c == keycode "y" or c == keycode "n" or c == keycode "\\RET" or c == keycode "\\DELETE" then
-            break
-          else
-            minibuf_error ("Please answer y, n, !, . or q.")
-            waitkey ()
-          end
+        if c == keycode "\\C-g" then
+          return false
+        elseif c == keycode "q" then
+          bp = nil
+	  break
+        elseif c == keycode "." then
+          save_buffer (bp)
+          return true
+        elseif c == keycode "!" then
+          noask = true
+        end
+        if keyset {"!", " ", "y", "Y"}:member (c) then
+          save_buffer (bp)
         end
       end
     end
