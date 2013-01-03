@@ -132,22 +132,33 @@ function minibuf_read_yesno (fmt)
   return ret
 end
 
-function minibuf_read_yn (fmt)
+-- Read and return a single key from a list of KEYS.  In addition, C-g
+-- is always accepted, causing this function to return -1.
+function minibuf_read_key (fmt, keys)
   local errmsg = ""
 
   while true do
     minibuf_write (errmsg .. fmt)
     local key = getkeystroke (GETKEY_DEFAULT)
-    if key == keycode "y" then
-      return true
-    elseif key == keycode "n" then
-      return false
-    elseif key == keycode "\\C-g" then
+
+    if key == keycode "\\C-g" then
       return -1
+    elseif set.new (list.map (keycode, keys)):member (key) then
+      return key
     else
-      errmsg = "Please answer y or n.  "
+      errmsg = keys[#keys]
+      if #keys > 1 then
+        errmsg = table.concat (list.slice (keys, 1, -2), ", ") .. " or " .. errmsg
+      end
+      errmsg = "Please answer " .. errmsg .. ".  "
     end
   end
+end
+
+function minibuf_read_yn (fmt)
+  local c = minibuf_read_key (fmt, {"y", "n"})
+  if c == -1 then return -1 end
+  return c ~= keycode "n"
 end
 
 -- Read a string from the minibuffer.
