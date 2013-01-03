@@ -33,10 +33,6 @@ windows = {}
 --   ewidth, eheight: The effective width and height of the window.
 -- }
 
-local function window_new ()
-  return {topdelta = 0, start_column = 0, lastpointn = 0}
-end
-
 -- Set the current window and its buffer as the current buffer.
 function set_current_window (wp)
   -- Save buffer's point in a new marker.
@@ -319,7 +315,7 @@ Both windows display the same buffer now current.
 function create_scratch_window ()
   local bp = create_scratch_buffer ()
   local w, h = term_width (), term_height ()
-  local wp = window_new ()
+  local wp = {topdelta = 0, start_column = 0, lastpointn = 0}
   cur_wp = wp
   table.insert (windows, wp)
   wp.fwidth = w
