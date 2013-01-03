@@ -336,7 +336,6 @@ local function backup_and_write (bp, filename)
 end
 
 local function write_buffer (bp, needname, confirm, name, prompt)
-  local ans = true
   local ok = true
 
   if needname then
@@ -351,18 +350,17 @@ local function write_buffer (bp, needname, confirm, name, prompt)
   end
 
   if confirm and exist_file (name) then
-    ans = minibuf_read_yn (string.format ("File `%s' exists; overwrite? (y or n) ", name))
-    if ans == -1 then
-      execute_function ("keyboard-quit")
-    elseif ans == false then
+    local key = minibuf_read_key (string.format ("File `%s' exists; overwrite?", name),
+                                  {"y", "n"})
+    if key == keycode "n" then
       minibuf_error ("Canceled")
     end
-    if ans ~= true then
+    if key ~= keycode "y" then
       ok = false
     end
   end
 
-  if ans == true then
+  if ok then
     if not bp.filename or name ~= bp.filename then
       set_buffer_names (bp, name)
     end
