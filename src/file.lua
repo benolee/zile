@@ -351,11 +351,12 @@ local function write_buffer (bp, needname, confirm, name, prompt)
 
   if confirm and exist_file (name) then
     local key = minibuf_read_key (string.format ("File `%s' exists; overwrite?", name),
-                                  {"y", "n"})
-    if key == keycode "n" then
+                                  {"y", "n"}, {"Y", " ", "\\RET", "N", "\\DELETE"})
+
+    if set.new (list.map (keycode, {"n", "N", "\\DELETE"})):member (key) then
       minibuf_error ("Canceled")
     end
-    if key ~= keycode "y" then
+    if not set.new (list.map (keycode, {"y", "Y", " ", "\\RET"})):member (key) then
       ok = false
     end
   end

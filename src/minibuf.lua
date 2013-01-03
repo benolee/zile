@@ -132,9 +132,12 @@ function minibuf_read_yesno (fmt)
   return ret
 end
 
--- Read and return a single key from a list of KEYS.  In addition, C-g
--- is always accepted, causing this function to return nil.
-function minibuf_read_key (fmt, keys)
+-- Read and return a single key from a list of KEYS.  EXTRA keys are also
+-- accepted and returned, though not shown in the error message when no
+-- accepted key is pressed.  In addition, C-g is always accepted, causing
+-- this function to execute "keyboard-quit" and then return nil.
+function minibuf_read_key (fmt, keys, extra)
+  local accept = list.concat (keys, extra)
   local errmsg = ""
 
   while true do
@@ -144,7 +147,7 @@ function minibuf_read_key (fmt, keys)
     if key == keycode "\\C-g" then
       execute_function ("keyboard-quit")
       break
-    elseif set.new (list.map (keycode, keys)):member (key) then
+    elseif set.new (list.map (keycode, accept)):member (key) then
       return key
     else
       errmsg = keys[#keys]
