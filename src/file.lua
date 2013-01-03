@@ -353,10 +353,10 @@ local function write_buffer (bp, needname, confirm, name, prompt)
     local key = minibuf_read_key (string.format ("File `%s' exists; overwrite?", name),
                                   {"y", "n"}, {"Y", " ", "\\RET", "N", "\\DELETE"})
 
-    if set.new (list.map (keycode, {"n", "N", "\\DELETE"})):member (key) then
+    if keyset {"n", "N", "\\DELETE"}:member (key) then
       minibuf_error ("Canceled")
     end
-    if not set.new (list.map (keycode, {"y", "Y", " ", "\\RET"})):member (key) then
+    if not keyset {"y", "Y", " ", "\\RET"}:member (key) then
       ok = false
     end
   end

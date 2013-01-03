@@ -136,6 +136,8 @@ end
 -- accepted and returned, though not shown in the error message when no
 -- accepted key is pressed.  In addition, C-g is always accepted, causing
 -- this function to execute "keyboard-quit" and then return nil.
+-- Note that KEYS in particular is a list and not a keyset, because we
+-- want to prompt with the options in the same order as given!
 function minibuf_read_key (fmt, keys, extra)
   local accept = list.concat (keys, extra)
   local errmsg = ""
@@ -147,7 +149,7 @@ function minibuf_read_key (fmt, keys, extra)
     if key == keycode "\\C-g" then
       execute_function ("keyboard-quit")
       break
-    elseif set.new (list.map (keycode, accept)):member (key) then
+    elseif keyset (accept):member (key) then
       return key
     else
       errmsg = keys[#keys]
