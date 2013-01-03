@@ -130,7 +130,7 @@ local function draw_status_line (line, wp)
 
   local as = string.format ("--%s%2s  %-15s   %s %-9s (Fundamental",
                             eol_type, make_modeline_flags (wp), wp.bp.name, make_screen_pos (wp),
-                            string.format ("(%d,%d)", n + 1, get_goalc_bp (wp.bp, window_o (wp))))
+                            string.format ("(%d,%d)", n + 1, get_goalc (wp.bp, window_o (wp))))
 
   if wp.bp.autofill then
     as = as .. " Fill"

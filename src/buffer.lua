@@ -533,7 +533,10 @@ function move_char (offset)
 end
 
 -- Get the goal column, expanding tabs.
-function get_goalc_bp (bp, o)
+function get_goalc (bp, o)
+  bp = bp or cur_bp
+  o = o or get_buffer_pt (bp)
+
   local col = 0
   local t = tab_width (bp)
   local start = buffer_start_of_line (bp, o)
@@ -545,10 +548,6 @@ function get_goalc_bp (bp, o)
   end
 
   return col
-end
-
-function get_goalc ()
-  return get_goalc_bp (cur_bp, get_buffer_pt (cur_bp))
 end
 
 -- Go to the column `goalc'.  Take care of expanding tabulations.
