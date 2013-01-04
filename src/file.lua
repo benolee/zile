@@ -339,7 +339,7 @@ local function write_buffer (bp, needname, confirm, name, prompt)
   local ok = true
 
   if needname then
-    name = minibuf_read_filename (prompt, "")
+    name = minibuf_read_filename (prompt, bp.dir)
     if not name then
       return execute_function ("keyboard-quit")
     end
