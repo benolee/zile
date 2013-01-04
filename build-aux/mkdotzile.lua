@@ -40,9 +40,9 @@ h:write (
 -- Don't note where the contents of this file comes from or that it's
 -- auto-generated, because it's ugly in a user configuration file.
 
-for i, v in ipairs (main_vars) do
+for k, v in pairs (main_vars) do
   h:writelines ("; " .. v.doc:gsub ("\n", "\n; "),
                 "; Default value is " .. v.val .. ".",
-                "(setq " .. v.name .. " " .. v.val .. ")",
+                "(setq " .. k.. " " .. v.val .. ")",
                 "")
 end
