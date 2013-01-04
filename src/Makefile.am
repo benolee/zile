@@ -23,7 +23,6 @@ dist_pkgdata_DATA =					\
 	src/estr.lua					\
 	src/history.lua					\
 	src/lisp.lua					\
-	src/main.lua					\
 	src/variables.lua				\
 	src/basic.lua					\
 	src/bind.lua					\

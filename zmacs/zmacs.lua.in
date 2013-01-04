@@ -21,12 +21,14 @@ A=--[[ exec @LUA@ "$0" "$@"  # -*- mode: lua; -*- ]]A
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -- Constants set by configure
-PACKAGE = "@PACKAGE@"
-PACKAGE_NAME = "@PACKAGE_NAME@"
+PROGRAM           = "zmacs"
+PROGRAM_NAME      = "Zmacs"
+PACKAGE           = "@PACKAGE@"
+PACKAGE_NAME      = "@PACKAGE_NAME@"
 PACKAGE_BUGREPORT = "@PACKAGE_BUGREPORT@"
-VERSION = "@VERSION@"
-PATH_DATA = "@zmacsdatadir@"
-PATH_DOCDIR = "@pkgdocdir@"
+VERSION           = "@VERSION@"
+PATH_DATA         = "@zmacsdatadir@"
+PATH_DOCDIR       = "@pkgdocdir@"
 
 -- Remove current directory from package search path
 package.path = package.path:gsub (";%./%?.lua;", ";")
@@ -80,6 +82,7 @@ require "term_redisplay"
 
 -- Zmacs modules:
 require "tbl_vars"
+
 
 local function err (err)
   term_close ()

@@ -18,11 +18,37 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -- Derived constants
-ZILE_VERSION_STRING = "GNU " .. PACKAGE_NAME .. " " .. VERSION
+local PROGRAM_STRING    = PROGRAM_NAME .. " (GNU " .. PACKAGE_NAME .. ")"
+local VERSION_STRING    = PROGRAM_STRING .. " " .. VERSION
+local COPYRIGHT_STRING  = "Copyright (C) 2013 Free Software Foundation, Inc."
+
+local COPYRIGHT_NOTICE  = [[
+]] .. PROGRAM_STRING .. [[ comes with ABSOLUTELY NO WARRANTY.
+]] .. PROGRAM_NAME .. [[ is Free Software--Free as in Freedom--so you can redistribute copies
+of ]] .. PROGRAM .. [[ and modify it; see the file COPYING. Otherwise, a copy can be
+downloaded from http://www.gnu.org/licenses/gpl.html.
+]]
+
+splash_str = "Welcome to " .. PROGRAM_STRING .. [[.
+
+Undo changes	C-x u        Exit ]] .. PROGRAM_NAME .. [[	C-x C-c
+(`C-' means use the CTRL key.  `M-' means hold the Meta (or Alt) key.
+If you have no Meta key, you may type ESC followed by the character.)
+Combinations like `C-x u' mean first press `C-x', then `u'.
+
+Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ
+
+]] .. VERSION_STRING .. [[
+
+]] .. COPYRIGHT_STRING .. [[
+
+
+]] .. COPYRIGHT_NOTICE
+
 
 -- Runtime constants
 -- The executable name
-program_name = posix.basename (arg[0] or PACKAGE)
+program_name = posix.basename (arg[0] or PROGRAM)
 
 -- Zi display attributes
 display = {}
@@ -51,33 +77,6 @@ cur_bp = nil
 thisflag = {}
 lastflag = {}
 
-
-local ZILE_COPYRIGHT_STRING = "Copyright (C) 2013 Free Software Foundation, Inc."
-
-local ZILE_COPYRIGHT_NOTICE = [[
-GNU ]] .. PACKAGE_NAME .. [[ comes with ABSOLUTELY NO WARRANTY.
-Zile is Free Software--Free as in Freedom--so you can redistribute copies
-of Zile and modify it; see the file COPYING. Otherwise, a copy can be
-downloaded from http://www.gnu.org/licenses/gpl.html.
-]]
-
-local splash_str = "Welcome to GNU " .. PACKAGE_NAME .. [[.
-
-Undo changes	C-x u        Exit ]] .. PACKAGE_NAME .. [[	C-x C-c
-(`C-' means use the CTRL key.  `M-' means hold the Meta (or Alt) key.
-If you have no Meta key, you may type ESC followed by the character.)
-Combinations like `C-x u' mean first press `C-x', then `u'.
-
-Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ
-
-]] .. ZILE_VERSION_STRING .. [[
-
-]] .. ZILE_COPYRIGHT_STRING .. [[
-
-
-]] .. ZILE_COPYRIGHT_NOTICE
-
-
 -- Documented options table
 --
 -- Documentation line: "doc", "DOCSTRING"
@@ -90,9 +89,9 @@ Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ
 local options = {
   {"doc", "Initialization options:"},
   {"doc", ""},
-  {"opt", "no-init-file", 'q', "optional", "", "do not load ~/." .. PACKAGE},
-  {"opt", "funcall", 'f', "required", "FUNC", "call " .. PACKAGE_NAME .. " Lisp function FUNC with no arguments"},
-  {"opt", "load", 'l', "required", "FILE", "load " .. PACKAGE_NAME .. " Lisp FILE using the load function"},
+  {"opt", "no-init-file", 'q', "optional", "", "do not load ~/." .. PROGRAM},
+  {"opt", "funcall", 'f', "required", "FUNC", "call " .. PROGRAM_NAME .. " Lisp function FUNC with no arguments"},
+  {"opt", "load", 'l', "required", "FILE", "load " .. PROGRAM_NAME .. " Lisp FILE using the load function"},
   {"opt", "help", '\0', "optional", "", "display this help message and exit"},
   {"opt", "version", '\0', "optional", "", "display version information and exit"},
   {"doc", ""},
@@ -110,12 +109,9 @@ for _, v in ipairs (options) do
   end
 end
 
+zarg = {}
+qflag = false
 
-local zarg = {}
-local qflag = false
-
--- FIXME: Rewrite using stdlib getopt
--- FIXME: Remove processed arguments from arg, ignore the rest, allowing processing by load scripts?
 function process_args ()
   -- Leading `-' means process all arguments in order, treating
   -- non-options as arguments to an option with code 1
@@ -148,7 +144,7 @@ function process_args ()
     elseif longindex == 3 then
       io.write ("Usage: " .. arg[0] .. " [OPTION-OR-FILENAME]...\n" ..
                 "\n" ..
-                "Run " .. PACKAGE_NAME .. ", the lightweight Emacs clone.\n" ..
+                "Run " .. PROGRAM_NAME .. ", a lightweight Emacs clone.\n" ..
                 "\n")
 
       for _, v in ipairs (options) do
@@ -167,12 +163,9 @@ function process_args ()
                 "Report bugs to " .. PACKAGE_BUGREPORT .. ".\n")
       os.exit (0)
     elseif longindex == 4 then
-      io.write (ZILE_VERSION_STRING .. "\n" ..
-                ZILE_COPYRIGHT_STRING .. "\n" ..
-                "GNU " .. PACKAGE_NAME .. " comes with ABSOLUTELY NO WARRANTY.\n" ..
-                "You may redistribute copies of " .. PACKAGE_NAME .. "\n" ..
-                "under the terms of the GNU General Public License.\n" ..
-                "For more information about these matters, see the file named COPYING.\n")
+      io.write (VERSION_STRING .. "\n" ..
+                COPYRIGHT_STRING .. "\n" ..
+                COPYRIGHT_NOTICE .. "\n")
       os.exit (0)
     elseif longindex == 5 then
       if optarg[1] == '+' then
@@ -188,7 +181,7 @@ function process_args ()
 end
 
 local function segv_sig_handler (signo)
-  io.stderr:write (program_name .. ": " .. PACKAGE_NAME ..
+  io.stderr:write (program_name .. ": " .. PROGRAM_NAME ..
                    " crashed.  Please send a bug report to <" ..
                    PACKAGE_BUGREPORT .. ">.\r\n")
   zile_exit (true)
@@ -232,7 +225,7 @@ function main ()
   if not qflag then
     local s = os.getenv ("HOME")
     if s then
-      lisp_loadfile (s .. "/." .. PACKAGE)
+      lisp_loadfile (s .. "/." .. PROGRAM)
     end
   end
 
@@ -240,7 +233,7 @@ function main ()
   -- load file is specified on the command line, and there has been no
   -- error.
   if #zarg == 0 and not minibuf_contents and not get_variable_bool ("inhibit-splash-screen") then
-    local bp = create_auto_buffer ("*GNU " .. PACKAGE_NAME .. "*")
+    local bp = create_auto_buffer ("*GNU " .. PROGRAM_NAME .. "*")
     switch_to_buffer (bp)
     insert_string (splash_str)
     cur_bp.readonly = true
