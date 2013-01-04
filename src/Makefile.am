@@ -17,10 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-doc_DATA += src/dotzile.sample
-
-bin_SCRIPTS = src/zile
-
 dist_pkgdata_DATA =					\
 	src/lib.lua					\
 	src/astr.lua					\
@@ -54,31 +50,3 @@ dist_pkgdata_DATA =					\
 	src/term_minibuf.lua				\
 	src/term_redisplay.lua				\
 	src/default-bindings.el
-
-src/zile: $(dist_pkgdata_DATA) Makefile
-	@rm -f $@ $@.tmp
-	$(AM_V_GEN)$(inplace_edit) '$@.lua' >$@.tmp
-	$(AM_V_at)mv $@.tmp $@
-	$(AM_V_at)chmod +x $@
-	$(AM_V_at)$@ --version >/dev/null || rm $@
-
-src/dotzile.sample: src/tbl_vars.lua build-aux/mkdotzile.lua
-	$(AM_V_GEN)PACKAGE="$(PACKAGE)" $(LUA_ENV)	\
-	  $(LUA) $(srcdir)/build-aux/mkdotzile.lua $(srcdir)/src/tbl_vars.lua
-
-install-exec-hook:
-	@$(install_edit) 'src/zile.lua' >$@.tmp
-	@echo $(INSTALL_SCRIPT) $@ $(DESTDIR)$(bindir)/zile
-	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zile
-	@rm -f $@.tmp
-
-EXTRA_DIST +=						\
-	src/zile.lua.in					\
-	src/dotzile.sample
-
-CLEANFILES +=						\
-	src/zile					\
-	src/zile.lua
-
-DISTCLEANFILES +=					\
-	$(BUILT_SOURCES)

@@ -1,5 +1,5 @@
 [description]
-Zile is a lightweight Emacs clone that provides a subset of Emacs's
+Zmacs is a lightweight Emacs clone that provides a subset of Emacs's
 functionality suitable for basic editing.
 
 /then go to/
@@ -8,11 +8,12 @@ of an invalid command-line argument, and 2 if it crashes or runs out
 of memory.
 
 [files]
-~/.zile \(em user's Zile init file
+~/.zmacs \(em user's Zmacs init file
 
 [author]
-Zile was written by Reuben Thomas, based on the C version by Sandro
-Sigala, Reuben Thomas, David A. Capello and Scott Lawrence.
+Zmacs was written by Reuben Thomas and Gary V. Vaughan, based on the
+C version by Sandro Sigala, Reuben Thomas, David A. Capello and Scott
+Lawrence.
 
 [see also]
 .BR emacs (1),

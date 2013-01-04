@@ -1,4 +1,4 @@
--- Produce dotzile.sample
+-- Produce dotzmacs.sample
 --
 -- Copyright (c) 2012-2013 Free Software Foundation, Inc.
 --
@@ -23,12 +23,7 @@ require "lib"
 -- Load variables
 require "tbl_vars"
 
-local h = io.open ("src/dotzile.sample", "w")
-if not h then
-  error ()
-end
-
-h:write (
+io.stdout:write (
   [[
 ;;;; .]] .. os.getenv ("PACKAGE") .. [[ configuration
 
@@ -41,8 +36,8 @@ h:write (
 -- auto-generated, because it's ugly in a user configuration file.
 
 for k, v in pairs (main_vars) do
-  h:writelines ("; " .. v.doc:gsub ("\n", "\n; "),
-                "; Default value is " .. v.val .. ".",
-                "(setq " .. k.. " " .. v.val .. ")",
-                "")
+  io.stdout:writelines ("; " .. v.doc:gsub ("\n", "\n; "),
+                        "; Default value is " .. v.val .. ".",
+                        "(setq " .. k .. " " .. v.val .. ")",
+                        "")
 end

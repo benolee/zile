@@ -26,6 +26,10 @@ CLEANFILES =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
+bin_SCRIPTS =
+install_exec_hooks =
+man_MANS =
+
 install_edit = sed \
 	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g' \
 	-e 's|@pkgdocdir[@]|$(docdir)|g'
@@ -41,9 +45,8 @@ EXTRA_DIST =						\
 
 doc_DATA = AUTHORS FAQ NEWS
 
-include build-aux/Makefile.am
-include doc/Makefile.am
 include src/Makefile.am
+include zmacs/Makefile.am
 include tests/Makefile.am
 
 
@@ -67,6 +70,8 @@ $(changelog): FORCE
 dist-hook: $(changelog)
 
 distcheck-hook: syntax-check
+
+install-exec-hook: $(install_exec_hooks)
 
 ## An empty target to depend on when a rule needs to always run
 ## whenever it is visited.
