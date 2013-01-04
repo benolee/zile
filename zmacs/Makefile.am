@@ -36,6 +36,7 @@ bin_SCRIPTS += zmacs/zmacs
 man_MANS += zmacs/zmacs.1
 
 dist_zmacsdata_DATA =					\
+	zmacs/default-bindings.el			\
 	zmacs/tbl_vars.lua
 
 zmacs/zmacs: $(dist_pkgdata_DATA) $(dist_zmacsdata_DATA) Makefile

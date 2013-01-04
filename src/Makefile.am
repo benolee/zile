@@ -47,5 +47,4 @@ dist_pkgdata_DATA =					\
 	src/window.lua					\
 	src/term_curses.lua				\
 	src/term_minibuf.lua				\
-	src/term_redisplay.lua				\
-	src/default-bindings.el
+	src/term_redisplay.lua

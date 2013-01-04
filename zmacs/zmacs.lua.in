@@ -25,7 +25,7 @@ PACKAGE = "@PACKAGE@"
 PACKAGE_NAME = "@PACKAGE_NAME@"
 PACKAGE_BUGREPORT = "@PACKAGE_BUGREPORT@"
 VERSION = "@VERSION@"
-PATH_DATA = "@pkgdatadir@"
+PATH_DATA = "@zmacsdatadir@"
 PATH_DOCDIR = "@pkgdocdir@"
 
 -- Remove current directory from package search path
