@@ -43,7 +43,6 @@ dist_pkgdata_DATA =					\
 	src/redisplay.lua				\
 	src/registers.lua				\
 	src/search.lua					\
-	src/tbl_vars.lua				\
 	src/undo.lua					\
 	src/window.lua					\
 	src/term_curses.lua				\

@@ -20,7 +20,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
 LUA_PATH ?= ;
-LUA_ENV = LUA_PATH="$(abs_srcdir)/src/?.lua;$(LUA_PATH)"
+ZILE_PATH = $(abs_srcdir)/src/?.lua
 
 CLEANFILES =
 DISTCLEANFILES =

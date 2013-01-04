@@ -33,7 +33,7 @@ package.path = package.path:gsub (";%./%?.lua;", ";")
 package.path = package.path:gsub ("^%./%?.lua;", "")
 package.path = package.path:gsub (";%./%?.lua$", "")
 
-package.path = PATH_DATA .. "/?.lua;" .. package.path
+package.path = "@zmacsdatadir@/?.lua;@pkgdatadir@/?.lua;" .. package.path
 
 -- Load external modules:
 require "std" -- load std
@@ -70,7 +70,6 @@ require "minibuf"
 require "redisplay"
 require "registers"
 require "search"
-require "tbl_vars"
 require "undo"
 require "window"
 
@@ -78,6 +77,9 @@ require "window"
 require "term_curses"
 require "term_minibuf"
 require "term_redisplay"
+
+-- Zmacs modules:
+require "tbl_vars"
 
 local function err (err)
   term_close ()

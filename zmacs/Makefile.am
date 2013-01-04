@@ -17,8 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+ZMACS_PATH = $(abs_srcdir)/zmacs/?.lua
 
-MKDOTZMACS_ENV = PACKAGE='$(PACKAGE)' $(LUA_ENV)
+zmacsdatadir = $(datadir)/zmacs
+
+zmacs_install_edit =					\
+	$(install_edit)					\
+	-e 's|@zmacsdatadir[@]|$(zmacsdatadir)|g'
+
+zmacs_inplace_edit =					\
+	$(inplace_edit)					\
+	-e 's|@zmacsdatadir[@]|$(abs_top_srcdir)/zmacs|g'
 
 doc_DATA += zmacs/dotzmacs.sample
 
@@ -26,21 +35,25 @@ bin_SCRIPTS += zmacs/zmacs
 
 man_MANS += zmacs/zmacs.1
 
-zmacs/zmacs: $(dist_pkgdata_DATA) Makefile
+dist_zmacsdata_DATA =					\
+	zmacs/tbl_vars.lua
+
+zmacs/zmacs: $(dist_pkgdata_DATA) $(dist_zmacsdata_DATA) Makefile
 	@rm -f $@ $@.tmp
-	$(AM_V_GEN)$(inplace_edit) '$@.lua' >'$@.tmp'
+	$(AM_V_GEN)$(zmacs_inplace_edit) '$@.lua' >'$@.tmp'
 	$(AM_V_at)mv $@.tmp $@
 	$(AM_V_at)chmod +x $@
 	$(AM_V_at)$@ --version >/dev/null || rm $@
 
-zmacs/dotzmacs.sample: src/tbl_vars.lua zmacs/mkdotzmacs.lua
-	$(AM_V_GEN)$(MKDOTZMACS_ENV)			\
+zmacs/dotzmacs.sample: zmacs/tbl_vars.lua zmacs/mkdotzmacs.lua
+	$(AM_V_GEN)PACKAGE='$(PACKAGE)'			\
+	LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)' \
 	  $(LUA) $(srcdir)/zmacs/mkdotzmacs.lua > '$@'
 
 zmacs/zmacs.1: $(srcdir)/zmacs/zmacs.1.in zmacs/Makefile.am config.status
 	@test -d zmacs || mkdir zmacs
 	$(AM_V_at)rm -f $@ $@.tmp
-	$(AM_V_GEN)$(install_edit) '$(srcdir)/$@.in' >'$@.tmp'
+	$(AM_V_GEN)$(zmacs_install_edit) '$(srcdir)/$@.in' >'$@.tmp'
 	$(AM_V_at)mv '$@.tmp' '$@'
 
 $(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
@@ -52,7 +65,7 @@ $(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
 
 install_exec_hooks += install-zmacs-hook
 install-zmacs-hook:
-	@$(install_edit) zmacs/zmacs.lua >'$@.tmp'
+	@$(zmacs_install_edit) zmacs/zmacs.lua >'$@.tmp'
 	@echo $(INSTALL_SCRIPT) zmacs/zmacs $(DESTDIR)$(bindir)/zmacs
 	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zmacs
 	@rm -f $@.tmp
