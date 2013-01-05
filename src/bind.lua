@@ -107,18 +107,6 @@ function self_insert_command ()
   return true
 end
 
-function get_and_run_command ()
-  local keys = get_key_sequence ()
-  local name = get_function_by_keys (keys)
-  minibuf_clear ()
-
-  if lisp.function_exists (name) then
-    lisp.call_command (name, lastflag.set_uniarg and (prefix_arg or 1))
-  else
-    minibuf_error (tostring (keys) .. " is undefined")
-  end
-end
-
 function do_binding_completion (as)
   local bs = ""
 

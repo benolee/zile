@@ -78,6 +78,7 @@ require "term_minibuf"
 require "term_redisplay"
 
 -- Zmacs modules:
+require "callbacks"
 require "commands.bind"
 require "commands.buffer"
 require "commands.edit"

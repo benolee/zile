@@ -37,6 +37,7 @@ man_MANS += zmacs/zmacs.1
 
 dist_zmacsdata_DATA =					\
 	zmacs/default-bindings.el			\
+	zmacs/callbacks.lua				\
 	zmacs/commands/bind.lua				\
 	zmacs/commands/buffer.lua			\
 	zmacs/commands/edit.lua				\
