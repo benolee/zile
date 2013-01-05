@@ -1,6 +1,6 @@
 dnl configure.ac
 dnl
-dnl Copyright (c) 1997-2012 Free Software Foundation, Inc.
+dnl Copyright (c) 1997-2013 Free Software Foundation, Inc.
 dnl
 dnl This file is part of GNU Zile.
 dnl

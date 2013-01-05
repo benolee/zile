@@ -1,6 +1,6 @@
 -- Program invocation, startup and shutdown
 --
--- Copyright (c) 2010-2012 Free Software Foundation, Inc.
+-- Copyright (c) 2010-2013 Free Software Foundation, Inc.
 --
 -- This file is part of GNU Zile.
 --
@@ -52,7 +52,7 @@ thisflag = {}
 lastflag = {}
 
 
-local ZILE_COPYRIGHT_STRING = "Copyright (C) 2012 Free Software Foundation, Inc."
+local ZILE_COPYRIGHT_STRING = "Copyright (C) 2013 Free Software Foundation, Inc."
 
 local ZILE_COPYRIGHT_NOTICE = [[
 GNU ]] .. PACKAGE_NAME .. [[ comes with ABSOLUTELY NO WARRANTY.
