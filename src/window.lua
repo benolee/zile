@@ -94,7 +94,7 @@ local function window_prev (this_wp)
   return windows[1]
 end
 
-local function window_next (this_wp)
+function window_next (this_wp)
   for i, wp in ipairs (windows) do
     if wp == this_wp then
       if i > 1 then
@@ -127,109 +127,6 @@ function delete_window (del_wp)
     unchain_marker (del_wp.saved_pt)
   end
 end
-
-Defun ("delete-window",
-       {},
-[[
-Remove the current window from the screen.
-]],
-  true,
-  function ()
-    if #windows == 1 then
-      minibuf_error ("Attempt to delete sole ordinary window")
-      return false
-    end
-
-    delete_window (cur_wp)
-  end
-)
-
-Defun ("enlarge-window",
-       {},
-[[
-Make current window one line bigger.
-]],
-  true,
-  function ()
-    if #windows == 1 then
-      return false
-    end
-
-    local wp = cur_wp.next
-    if not wp or wp.fheight < 3 then
-      for _, wp in ipairs (windows) do
-        if wp.next == cur_wp then
-          if wp.fheight < 3 then
-            return false
-          end
-          break
-        end
-      end
-
-      if cur_wp == windows[#windows] and cur_wp.next.fheight < 3 then
-        return false
-      end
-
-      wp.fheight = wp.fheight - 1
-      wp.eheight = wp.eheight - 1
-      if wp.topdelta >= wp.eheight then
-        recenter (wp)
-      end
-      cur_wp.fheight = cur_wp.fheight + 1
-      cur_wp.eheight = cur_wp.eheight + 1
-    end
-  end
-)
-
-Defun ("shrink-window",
-       {},
-[[
-Make current window one line smaller.
-]],
-  true,
-  function ()
-    if #windows == 1 or cur_wp.fheight < 3 then
-      return false
-    end
-
-    local next_wp = window_next (cur_wp)
-    next_wp.fheight = next_wp.fheight + 1
-    next_wp.eheight = next_wp.eheight + 1
-    cur_wp.fheight = cur_wp.fheight - 1
-    cur_wp.eheight = cur_wp.eheight - 1
-    if cur_wp.topdelta >= cur_wp.eheight then
-      recenter (next_wp)
-    end
-  end
-)
-
-Defun ("delete-other-windows",
-       {},
-[[
-Make the selected window fill the screen.
-]],
-  true,
-  function ()
-    for _, wp in ipairs (table.clone (windows)) do
-      if wp ~= cur_wp then
-        delete_window (wp)
-      end
-    end
-  end
-)
-
-Defun ("other-window",
-       {},
-[[
-Select the first different window on the screen.
-All windows are arranged in a cyclic order.
-This command selects the window one step away in that order.
-]],
-  true,
-  function ()
-    set_current_window (window_next (cur_wp))
-  end
-)
 
 
 -- Scroll completions up.
@@ -278,37 +175,6 @@ function popup_window ()
 
   return window_next (cur_wp)
 end
-
-Defun ("split-window",
-       {},
-[[
-Split current window into two windows, one above the other.
-Both windows display the same buffer now current.
-]],
-  true,
-  function ()
-    -- Windows smaller than 4 lines cannot be split.
-    if cur_wp.fheight < 4 then
-      minibuf_error (string.format ("Window height %d too small (after splitting)", cur_wp.fheight))
-      return false
-    end
-
-    local newwp = table.clone (cur_wp)
-    newwp.fheight = math.floor (cur_wp.fheight / 2) + cur_wp.fheight % 2
-    newwp.eheight = newwp.fheight - 1
-    newwp.saved_pt = point_marker ()
-    table.insert (windows, newwp)
-
-    cur_wp.next = newwp
-    cur_wp.fheight = math.floor (cur_wp.fheight / 2)
-    cur_wp.eheight = cur_wp.fheight - 1
-    if cur_wp.topdelta >= cur_wp.eheight then
-      recenter (cur_wp)
-    end
-
-    return true
-  end
-)
 
 -- This function creates the scratch buffer and window when there are
 -- no other windows (and possibly no other buffers).

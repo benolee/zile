@@ -94,119 +94,8 @@ function compact_path (path)
   return (string.gsub (path, "^" .. home, "~"))
 end
 
-Defun ("find-file",
-       {"string"},
-[[
-Edit file @i{filename}.
-Switch to a buffer visiting file @i{filename},
-creating one if none already exists.
-]],
-  true,
-  function (filename)
-    local ok = false
-
-    if not filename then
-      filename = minibuf_read_filename ("Find file: ", cur_bp.dir)
-    end
-
-    if not filename then
-      ok = execute_function ("keyboard-quit")
-    elseif filename ~= "" then
-      ok = find_file (filename)
-    end
-
-    return ok
-  end
-)
-
-Defun ("find-file-read-only",
-       {"string"},
-[[
-Edit file @i{filename} but don't allow changes.
-Like `find-file' but marks buffer as read-only.
-Use @kbd{M-x toggle-read-only} to permit editing.
-]],
-  true,
-  function (filename)
-    local ok = execute_function ("find-file", filename)
-    if ok then
-      cur_bp.readonly = true
-    end
-  end
-)
-
-Defun ("find-alternate-file",
-       {},
-[[
-Find the file specified by the user, select its buffer, kill previous buffer.
-If the current buffer now contains an empty file that you just visited
-(presumably by mistake), use this command to visit the file you really want.
-]],
-  true,
-  function ()
-    local buf = cur_bp.filename
-    local base, ms, as
-
-    if not buf then
-      buf = cur_bp.dir
-    else
-      base = posix.basename (buf)
-    end
-    ms = minibuf_read_filename ("Find alternate: ", buf, base)
-
-    local ok = false
-    if not ms then
-      ok = execute_function ("keyboard-quit")
-    elseif ms ~= "" and check_modified_buffer (cur_bp ()) then
-      kill_buffer (cur_bp)
-      ok = find_file (ms)
-    end
-
-    return ok
-  end
-)
-
-Defun ("insert-file",
-       {"string"},
-[[
-Insert contents of file FILENAME into buffer after point.
-Set mark after the inserted text.
-]],
-  true,
-  function (file)
-    local ok = true
-
-    if warn_if_readonly_buffer () then
-      return false
-    end
-
-    if not file then
-      file = minibuf_read_filename ("Insert file: ", cur_bp.dir)
-      if not file then
-        ok = execute_function ("keyboard-quit")
-      end
-    end
-
-    if not file or file == "" then
-      ok = false
-    end
-
-    if ok then
-      local s = io.slurp (file)
-      if s then
-        insert_estr (EStr (s))
-        execute_function ("set-mark-command")
-      else
-        ok = minibuf_error ("%s: %s", file, posix.errno ())
-      end
-    end
-
-    return ok
-  end
-)
-
 -- Write buffer to given file name with given mode.
-local function write_to_disk (bp, filename, mode)
+function write_to_disk (bp, filename, mode)
   local ret = true
   local h = posix.creat (filename, mode)
   if not h then
@@ -335,7 +224,7 @@ local function backup_and_write (bp, filename)
   return minibuf_error (string.format ("Error writing `%s'", filename))
 end
 
-local function write_buffer (bp, needname, confirm, name, prompt)
+function write_buffer (bp, needname, confirm, name, prompt)
   local ok = true
 
   if needname then
@@ -380,7 +269,7 @@ local function write_buffer (bp, needname, confirm, name, prompt)
   return ok
 end
 
-local function save_buffer (bp)
+function save_buffer (bp)
   if bp.modified then
     return write_buffer (bp, bp.needname, false, bp.filename, "File to save in: ")
   end
@@ -389,35 +278,7 @@ local function save_buffer (bp)
   return true
 end
 
-Defun ("save-buffer",
-       {},
-[[
-Save current buffer in visited file if modified.  By default, makes the
-previous version into a backup file if this is the first save.
-]],
-  true,
-  function ()
-    return save_buffer (cur_bp)
-  end
-)
-
-Defun ("write-file",
-       {},
-[[
-Write current buffer into file @i{filename}.
-This makes the buffer visit that file, and marks it as not modified.
-
-Interactively, confirmation is required unless you supply a prefix argument.
-]],
-  true,
-  function ()
-    return write_buffer (cur_bp, true,
-                         _interactive and not lastflag.set_uniarg,
-                         nil, "Write file: ")
-  end
-)
-
-local function save_some_buffers ()
+function save_some_buffers ()
   local none_to_save = true
   local noask = false
 
@@ -458,128 +319,6 @@ local function save_some_buffers ()
 
   return true
 end
-
-Defun ("save-some-buffers",
-       {},
-[[
-Save some modified file-visiting buffers.  Asks user about each one.
-]],
-  true,
-  function ()
-    return save_some_buffers ()
-  end
-)
-
-Defun ("save-buffers-kill-emacs",
-       {},
-[[
-Offer to save each buffer, then kill this Zile process.
-]],
-  true,
-  function ()
-    if not save_some_buffers () then
-      return false
-    end
-
-    for _, bp in ipairs (buffers) do
-      if bp.modified and not bp.needname then
-        while true do
-          local ans = minibuf_read_yesno ("Modified buffers exist; exit anyway? (yes or no) ")
-          if ans == nil then
-            return execute_function ("keyboard-quit")
-          elseif not ans then
-            return false
-          end
-          break -- We have found a modified buffer, so stop.
-        end
-      end
-    end
-
-    thisflag.quit = true
-  end
-)
-
-Defun ("cd",
-       {"string"},
-[[
-Make DIR become the current buffer's default directory.
-]],
-  true,
-  function (dir)
-    if not dir and _interactive then
-      dir = minibuf_read_filename ("Change default directory: ", cur_bp.dir)
-    end
-
-    if not dir then
-      return execute_function ("keyboard-quit")
-    end
-
-    if dir ~= "" then
-      local st = posix.stat (dir)
-      if not st or not st.type == "directory" then
-        minibuf_error (string.format ("`%s' is not a directory", dir))
-      elseif posix.chdir (dir) == -1 then
-        minibuf_write (string.format ("%s: %s", dir, posix.errno ()))
-      else
-        cur_bp.dir = dir
-        return true
-      end
-    end
-  end
-)
-
-Defun ("insert-buffer",
-       {"string"},
-[[
-Insert after point the contents of BUFFER.
-Puts mark after the inserted text.
-]],
-  true,
-  function (buffer)
-    local ok = true
-
-    local def_bp = buffers[#buffers]
-    for i = 2, #buffers do
-      if buffers[i] == cur_bp then
-        def_bp = buffers[i - 1]
-        break
-      end
-    end
-
-    if warn_if_readonly_buffer () then
-      return false
-    end
-
-    if not buffer then
-      local cp = make_buffer_completion ()
-      buffer = minibuf_read (string.format ("Insert buffer (default %s): ", def_bp.name),
-                             "", cp, buffer_name_history)
-      if not buffer then
-        ok = execute_function ("keyboard-quit")
-      end
-    end
-
-    if ok then
-      local bp
-
-      if buffer and buffer ~= "" then
-        bp = find_buffer (buffer)
-        if not bp then
-          ok = minibuf_error (string.format ("Buffer `%s' not found", buffer))
-        end
-      else
-        bp = def_bp
-      end
-
-      if ok then
-        insert_buffer (bp)
-        execute_function ("set-mark-command")
-      end
-    end
-
-    return ok
-  end
-)
 
 function find_file (filename)
   local bp

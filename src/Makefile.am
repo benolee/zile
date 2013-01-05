@@ -31,7 +31,6 @@ dist_pkgdata_DATA =					\
 	src/editfns.lua					\
 	src/funcs.lua					\
 	src/getkey.lua					\
-	src/help.lua					\
 	src/file.lua					\
 	src/keycode.lua					\
 	src/killring.lua				\

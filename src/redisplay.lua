@@ -27,21 +27,6 @@ function recenter (wp)
   end
 end
 
-Defun ("recenter",
-       {},
-[[
-Center point in selected window and redisplay frame.
-]],
-  true,
-  function ()
-    recenter (cur_wp)
-    term_clear ()
-    term_redisplay ()
-    term_refresh ()
-    return true
-  end
-)
-
 function resize_windows ()
   local wp
 

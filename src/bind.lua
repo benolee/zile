@@ -35,18 +35,6 @@ function self_insert_command ()
   return true
 end
 
-Defun ("self-insert-command",
-       {},
-[[
-Insert the character you type.
-Whichever character you type to run this command is inserted.
-]],
-  true,
-  function ()
-    return execute_with_uniarg (true, current_prefix_arg, self_insert_command)
-  end
-)
-
 _last_command = nil
 _this_command = nil
 _interactive = false
@@ -130,7 +118,7 @@ function do_binding_completion (as)
   return key
 end
 
-local function walk_bindings (tree, process, st)
+function walk_bindings (tree, process, st)
   local function walk_bindings_tree (tree, keys, process, st)
     for key, node in pairs (tree) do
       table.insert (keys, tostring (key))
@@ -198,56 +186,7 @@ function gather_bindings (key, p, g)
   end
 end
 
-Defun ("where-is",
-       {},
-[[
-Print message listing key sequences that invoke the command DEFINITION.
-Argument is a command name.
-]],
-  true,
-  function ()
-    local name = minibuf_read_function_name ("Where is command: ")
-
-    if name and function_exists (name) then
-      local g = { f = name, bindings = "" }
-
-      walk_bindings (root_bindings, gather_bindings, g)
-
-      if #g.bindings == 0 then
-        minibuf_write (name .. " is not on any key")
-      else
-        minibuf_write (string.format ("%s is on %s", name, g.bindings))
-      end
-      return true
-    end
-  end
-)
-
-local function print_binding (key, func)
-  insert_string (string.format ("%-15s %s\n", key, func))
-end
-
-local function write_bindings_list (key, binding)
-  insert_string ("Key translations:\n")
-  insert_string (string.format ("%-15s %s\n", "key", "binding"))
-  insert_string (string.format ("%-15s %s\n", "---", "-------"))
-
-  walk_bindings (root_bindings, print_binding)
-end
-
-Defun ("describe-bindings",
-       {},
-[[
-Show a list of all defined keys, and their definitions.
-]],
-  true,
-  function ()
-    write_temp_buffer ("*Help*", true, write_bindings_list)
-    return true
-  end
-)
-
-local function prompt_key_sequence (prompt, keystr)
+function prompt_key_sequence (prompt, keystr)
   local keys
   if keystr then
     keys = keystrtovec (keystr)
@@ -260,58 +199,3 @@ local function prompt_key_sequence (prompt, keystr)
   end
   return keys
 end
-
-
-Defun ("global-set-key",
-       {"string", "string"},
-[[
-Bind a command to a key sequence.
-Read key sequence and function name, and bind the function to the key
-sequence.
-]],
-  true,
-  function (keystr, name)
-    local keys = prompt_key_sequence ("Set key globally", keystr)
-
-    if keystr == nil then
-      keystr = tostring (keys)
-    end
-
-    if not name then
-      name = minibuf_read_function_name (string.format ("Set key %s to command: ", keystr))
-      if not name then
-        return
-      end
-    end
-
-    if not function_exists (name) then -- Possible if called non-interactively
-      minibuf_error (string.format ("No such function `%s'", name))
-      return
-    end
-
-    root_bindings[keys] = name
-
-    return true
-  end
-)
-
-
-Defun ("global-unset-key",
-       {"string"},
-[[
-Remove global binding of a key sequence.
-Read key sequence and unbind any function already bound to that sequence.
-]],
-  true,
-  function (keystr)
-    local keys = prompt_key_sequence ("Unset key globally", keystr)
-
-    if keystr == nil then
-      keystr = tostring (keys)
-    end
-
-    root_bindings[keys] = nil
-
-    return true
-  end
-)

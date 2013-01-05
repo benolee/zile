@@ -19,81 +19,22 @@
 
 local regs = {}
 
-Defun ("copy-to-register",
-       {"number"},
-[[
-Copy region into register @i{register}.
-]],
-  true,
-  function (reg)
-    if not reg then
-      minibuf_write ("Copy to register: ")
-      reg = getkey_unfiltered (GETKEY_DEFAULT)
-    end
+function register_isempty (reg)
+  return not regs[term_bytetokey (reg)]
+end
 
-    if reg == 7 then
-      return execute_function ("keyboard-quit")
-    else
-      minibuf_clear ()
-      local rp = calculate_the_region ()
-      if not rp then
-        return false
-      else
-        regs[term_bytetokey (reg)] = get_buffer_region (cur_bp, rp)
-      end
-    end
+function register_store (reg, data)
+  regs[term_bytetokey (reg)] = data
+end
 
-    return true
-  end
-)
+regnum = false
 
-local regnum
-
-local function insert_register ()
+function insert_register ()
   insert_estr (regs[term_bytetokey (regnum)])
   return true
 end
 
-Defun ("insert-register",
-       {"number"},
-[[
-Insert contents of the user specified register.
-Puts point before and mark after the inserted text.
-]],
-  true,
-  function (reg)
-    local ok = true
-
-    if warn_if_readonly_buffer () then
-      return false
-    end
-
-    if not reg then
-      minibuf_write ("Insert register: ")
-      reg = getkey_unfiltered (GETKEY_DEFAULT)
-    end
-
-    if reg == 7 then
-      ok = execute_function ("keyboard-quit")
-    else
-      minibuf_clear ()
-      if not regs[term_bytetokey (reg)] then
-        minibuf_error ("Register does not contain text")
-        ok = false
-      else
-        execute_function ("set-mark-command")
-        regnum = reg
-        execute_with_uniarg (true, current_prefix_arg, insert_register)
-        execute_function ("exchange_point_and_mark")
-        deactivate_mark ()
-      end
-    end
-
-    return ok
-  end
-)
-
-local function write_registers_list (i)
+function write_registers_list (i)
   for i, r in pairs (regs) do
     if r then
       insert_string (string.format ("Register %s contains ", tostring (i)))
@@ -110,14 +51,3 @@ local function write_registers_list (i)
     end
   end
 end
-
-Defun ("list-registers",
-       {},
-[[
-List defined registers.
-]],
-  true,
-  function ()
-    write_temp_buffer ("*Registers List*", true, write_registers_list)
-  end
-)

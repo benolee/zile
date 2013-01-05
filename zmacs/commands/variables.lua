@@ -1,4 +1,4 @@
--- Macro facility functions
+-- Variable facility commands.
 --
 -- Copyright (c) 2010-2013 Free Software Foundation, Inc.
 --
@@ -17,45 +17,33 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-cmd_mp = {}
-cur_mp = {}
 
-function add_cmd_to_macro ()
-  cur_mp = list.concat (cur_mp, cmd_mp)
-  cmd_mp = {}
-end
+Defun ("set-variable",
+       {"string", "string"},
+[[
+Set a variable value to the user-specified value.
+]],
+  true,
+  function (var, val)
+    local ok = true
 
-function add_key_to_cmd (key)
-  table.insert (cmd_mp, key)
-end
+    if not var then
+      var = minibuf_read_variable_name ("Set variable: ")
+    end
+    if not var then
+      return false
+    end
+    if not val then
+      val = minibuf_read (string.format ("Set %s to value: ", var), "")
+    end
+    if not val then
+      ok = execute_function ("keyboard-quit")
+    end
 
-function remove_key_from_cmd ()
-  table.remove (cmd_mp)
-end
+    if ok then
+      set_variable (var, val)
+    end
 
-function cancel_kbd_macro ()
-  cmd_mp = {}
-  cur_mp = {}
-  thisflag.defining_macro = false
-end
-
-local function process_keys (keys)
-  local cur = term_buf_len ()
-
-  for i = #keys, 1, -1 do
-    term_ungetkey (keys[i])
+    return ok
   end
-
-  undo_start_sequence ()
-  while term_buf_len () > cur do
-    get_and_run_command ()
-  end
-  undo_end_sequence ()
-end
-
-macro_keys = {}
-
-function call_macro ()
-  process_keys (macro_keys)
-  return true
-end
+)

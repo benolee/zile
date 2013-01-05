@@ -19,7 +19,7 @@
 
 -- Return true if there are no upper-case letters in the given string.
 -- If `regex' is true, ignore escaped letters.
-local function no_upper (s, regex)
+function no_upper (s, regex)
   local quote_flag = false
   for i = 1, #s do
     if regex and s[i] == '\\' then
@@ -68,7 +68,7 @@ function find_substr (as, s, from, to, forward, notbol, noteol, regex, icase)
   return ret
 end
 
-local function search (o, s, forward, regexp)
+function search (o, s, forward, regexp)
   if #s < 1 then
     return false
   end
@@ -117,53 +117,9 @@ function do_search (forward, regexp, pattern)
   return ok
 end
 
-Defun ("search-forward",
-       {"string"},
-[[
-Search forward from point for the user specified text.
-]],
-  true,
-  function (pattern)
-    return do_search (true, false, pattern)
-  end
-)
-
-Defun ("search-backward",
-       {"string"},
-[[
-Search backward from point for the user specified text.
-]],
-  true,
-  function (pattern)
-    return do_search (false, false, pattern)
-  end
-)
-
-Defun ("search-forward-regexp",
-       {"string"},
-[[
-Search forward from point for regular expression REGEXP.
-]],
-  true,
-  function (pattern)
-    return do_search (true, true, pattern)
-  end
-)
-
-Defun ("search-backward-regexp",
-       {"string"},
-[[
-Search backward from point for match for regular expression REGEXP.
-]],
-  true,
-  function (pattern)
-    return do_search (false, true, pattern)
-  end
-)
-
 
 -- Incremental search engine.
-local function isearch (forward, regexp)
+function isearch (forward, regexp)
   local old_mark
   if cur_wp.bp.mark then
     old_mark = copy_marker (cur_wp.bp.mark)
@@ -281,160 +237,3 @@ local function isearch (forward, regexp)
 
   return true
 end
-
-Defun ("isearch-forward",
-       {},
-[[
-Do incremental search forward.
-With a prefix argument, do an incremental regular expression search instead.
-As you type characters, they add to the search string and are found.
-Type return to exit, leaving point at location found.
-Type @kbd{C-s} to search again forward, @kbd{C-r} to search again backward.
-@kbd{C-g} when search is successful aborts and moves point to starting point.
-]],
-  true,
-  function ()
-    return isearch (true, lastflag.set_uniarg)
-  end
-)
-
-Defun ("isearch-backward",
-       {},
-[[
-Do incremental search backward.
-With a prefix argument, do a regular expression search instead.
-As you type characters, they add to the search string and are found.
-Type return to exit, leaving point at location found.
-Type @kbd{C-r} to search again backward, @kbd{C-s} to search again forward.
-@kbd{C-g} when search is successful aborts and moves point to starting point.
-]],
-  true,
-  function ()
-    return isearch (false, lastflag.set_uniarg)
-  end
-)
-
-Defun ("isearch-forward-regexp",
-       {},
-[[
-Do incremental search forward for regular expression.
-With a prefix argument, do a regular string search instead.
-Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-forward} for more info.
-]],
-  true,
-  function ()
-    return isearch (true, not lastflag.set_uniarg)
-  end
-)
-
-Defun ("isearch-backward-regexp",
-       {},
-[[
-Do incremental search backward for regular expression.
-With a prefix argument, do a regular string search instead.
-Like ordinary incremental search except that your input
-is treated as a regexp.  See @kbd{M-x isearch-backward} for more info.
-]],
-  true,
-  function ()
-    return isearch (false, not lastflag.set_uniarg)
-  end
-)
-
--- Check the case of a string.
--- Returns "uppercase" if it is all upper case, "capitalized" if just
--- the first letter is, and nil otherwise.
-local function check_case (s)
-  if s:match ("^%u+$") then
-    return "uppercase"
-  elseif s:match ("^%u%U*") then
-    return "capitalized"
-  end
-end
-
-Defun ("query-replace",
-       {},
-[[
-Replace occurrences of a string with other text.
-As each match is found, the user must type a character saying
-what to do with it.
-]],
-  true,
-  function ()
-    local find = minibuf_read ("Query replace string: ", "")
-    if not find then
-      return execute_function ("keyboard-quit")
-    end
-    if find == "" then
-      return false
-    end
-    local find_no_upper = no_upper (find, false)
-
-    local repl = minibuf_read (string.format ("Query replace `%s' with: ", find), "")
-    if not repl then
-      execute_function ("keyboard-quit")
-    end
-
-    local noask = false
-    local count = 0
-    local ok = true
-    while search (get_buffer_pt (cur_bp), find, true, false) do
-      local c = keycode ' '
-
-      if not noask then
-        if thisflag.need_resync then
-          window_resync (cur_wp)
-        end
-        minibuf_write (string.format ("Query replacing `%s' with `%s' (y, n, !, ., q)? ", find, repl))
-        c = getkey (GETKEY_DEFAULT)
-        minibuf_clear ()
-
-        if c == keycode "q" then -- Quit immediately.
-          break
-        elseif c == keycode "\\C-g" then
-          ok = execute_function ("keyboard-quit")
-          break
-        elseif c == keycode "!" then -- Replace all without asking.
-          noask = true
-        end
-      end
-
-      if keyset {" ", "y", "Y", ".", "!"}:member (c) then
-        -- Perform replacement.
-        count = count + 1
-        local case_repl = repl
-        local r = region_new (get_buffer_pt (cur_bp) - #find, get_buffer_pt (cur_bp))
-        if find_no_upper and get_variable_bool ("case-replace") then
-          local case_type = check_case (tostring (get_buffer_region (cur_bp, r))) -- FIXME
-          if case_type then
-            case_repl = recase (repl, case_type)
-          end
-        end
-        local m = point_marker ()
-        goto_offset (r.start)
-        replace_estr (#find, EStr (case_repl))
-        goto_offset (m.o)
-        unchain_marker (m)
-
-        if c == keycode "." then -- Replace and quit.
-          break
-        end
-      elseif not keyset {"n", "N", "\\RET", "\\DELETE"}:member (c) then
-        ungetkey (c)
-        ok = false
-        break
-      end
-    end
-
-    if thisflag.need_resync then
-      window_resync (cur_wp)
-    end
-
-    if ok then
-      minibuf_write (string.format ("Replaced %d occurrence%s", count, count ~= 1 and "s" or ""))
-    end
-
-    return ok
-  end
-)

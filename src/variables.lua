@@ -58,33 +58,3 @@ function set_variable (var, val)
 
   vars[var].val = val
 end
-
-Defun ("set-variable",
-       {"string", "string"},
-[[
-Set a variable value to the user-specified value.
-]],
-  true,
-  function (var, val)
-    local ok = true
-
-    if not var then
-      var = minibuf_read_variable_name ("Set variable: ")
-    end
-    if not var then
-      return false
-    end
-    if not val then
-      val = minibuf_read (string.format ("Set %s to value: ", var), "")
-    end
-    if not val then
-      ok = execute_function ("keyboard-quit")
-    end
-
-    if ok then
-      set_variable (var, val)
-    end
-
-    return ok
-  end
-)

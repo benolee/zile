@@ -56,7 +56,7 @@ function undo_set_unchanged (up)
 end
 
 -- Revert an action.  Return the next undo entry.
-local function revert_action (up)
+function revert_action (up)
   if up.type == "end sequence" then
     undo_start_sequence ()
     up = up.next
@@ -80,46 +80,3 @@ local function revert_action (up)
 
   return up.next
 end
-
-Defun ("undo",
-       {},
-[[
-Undo some previous changes.
-Repeat this command to undo more changes.
-]],
-  true,
-  function ()
-    if cur_bp.noundo then
-      minibuf_error ("Undo disabled in this buffer")
-      return false
-    end
-
-    if warn_if_readonly_buffer () then
-      return false
-    end
-
-    if not cur_bp.next_undop then
-      minibuf_error ("No further undo information")
-      cur_bp.next_undop = cur_bp.last_undop
-      return false
-    end
-
-    cur_bp.next_undop = revert_action (cur_bp.next_undop)
-    minibuf_write ("Undo!")
-  end
-)
-
-Defun ("revert-buffer",
-       {},
-[[
-Undo until buffer is unmodified.
-]],
-  true,
-  function ()
-    -- FIXME: save pointer to current undo action and abort if we get
-    -- back to it.
-    while cur_bp.modified do
-      execute_function ("undo")
-    end
-  end
-)

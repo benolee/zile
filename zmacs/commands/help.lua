@@ -1,4 +1,4 @@
--- Self documentation facility functions
+-- Self documentation facility commands.
 --
 -- Copyright (c) 2010-2013 Free Software Foundation, Inc.
 --
@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+
 -- FIXME: Add apropos
 
 local function write_function_description (name, doc)
@@ -25,6 +27,7 @@ local function write_function_description (name, doc)
                                 get_function_interactive (name) and "an interactive" or "a",
                                 doc))
 end
+
 
 Defun ("describe-function",
        {"string"},
@@ -61,6 +64,7 @@ local function write_key_description (name, doc, binding)
                               _interactive and "an interactive" or "a",
                               doc))
 end
+
 
 Defun ("describe-key",
        {"string"},
@@ -105,6 +109,7 @@ local function write_variable_description (name, curval, doc)
                                 "Its value is %s\n\n%s",
                               name, curval, doc))
 end
+
 
 Defun ("describe-variable",
        {"string"},
