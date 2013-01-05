@@ -70,23 +70,25 @@ PRODUCTIONSOURCES =					\
 	$(top_srcdir)/Makefile.am $(top_srcdir)/configure.ac
 
 src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
-	cp src/loadlua.lua.in $@
-	for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
+	$(AM_V_at)cp src/loadlua.lua.in $@
+	$(AM_V_GEN)for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
 
 $(top_builddir)/src/zile: $(PRODUCTIONSOURCES) Makefile
-	rm -f $@ $@.tmp
-	$(inplace_edit) '$@.lua' >$@.tmp
-	mv $@.tmp $@
-	chmod +x $@
-	$(top_builddir)/src/zile --version >/dev/null || rm $@
+	@rm -f $@ $@.tmp
+	$(AM_V_GEN)$(inplace_edit) '$@.lua' >$@.tmp
+	$(AM_V_at)mv $@.tmp $@
+	$(AM_V_at)chmod +x $@
+	$(AM_V_at)$@ --version >/dev/null || rm $@
 
 src/dotzile.sample: src/tbl_vars.lua build-aux/mkdotzile.lua
-	PACKAGE="$(PACKAGE)" $(LUA_ENV) $(LUA) $(srcdir)/build-aux/mkdotzile.lua $(srcdir)/src/tbl_vars.lua
+	$(AM_V_GEN)PACKAGE="$(PACKAGE)" $(LUA_ENV)	\
+	  $(LUA) $(srcdir)/build-aux/mkdotzile.lua $(srcdir)/src/tbl_vars.lua
 
 install-exec-hook:
-	$(install_edit) '$(top_builddir)/src/zile.lua' >$@.tmp
-	$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zile
-	rm -f $@.tmp
+	@$(install_edit) '$(top_builddir)/src/zile.lua' >$@.tmp
+	@echo $(INSTALL_SCRIPT) $@ $(DESTDIR)$(bindir)/zile
+	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zile
+	@rm -f $@.tmp
 
 EXTRA_DIST +=						\
 	$(src_zile_LUA)					\

@@ -24,9 +24,9 @@ man_MANS = doc/zile.1
 
 doc/zile.1: $(srcdir)/doc/zile.1.in doc/Makefile.am config.status
 	@test -d doc || mkdir doc
-	rm -f $@ $@.tmp
-	$(install_edit) '$(srcdir)/$@.in' >$@.tmp
-	mv $@.tmp $@
+	$(AM_V_at)rm -f $@ $@.tmp
+	$(AM_V_GEN)$(install_edit) '$(srcdir)/$@.in' >$@.tmp
+	$(AM_V_at)mv $@.tmp $@
 
 $(srcdir)/doc/zile.1.in: doc/man-extras build-aux/zile-help2man-wrapper configure.ac
 	@test -d doc || mkdir doc
