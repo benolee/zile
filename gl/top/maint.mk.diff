@@ -1,20 +1,21 @@
---- gnulib/top/maint.mk	2012-07-07 18:15:13.000000000 +0700
-+++ maint.mk	2012-07-14 17:20:08.000000000 +0700
-@@ -1274,7 +1274,7 @@
+--- gnulib/top/maint.mk	2013-01-05 16:12:19.000000000 +0700
++++ maint.mk	2013-01-05 16:36:44.000000000 +0700
+@@ -1329,7 +1329,7 @@
  	    $$(case ,$(bootstrap-tools), in (*,gnulib,*)		\
  	       echo --gnulib-version=$(gnulib-version);; esac)		\
  	    --no-print-checksums					\
 -	    $(addprefix --url-dir=, $(url_dir_list))
 +	    $(addprefix --url-dir=, $(url_dir_list)) > ~/announce-$(my_distdir)
  
- ## ---------------- ##
- ## Updating files.  ##
-@@ -1361,7 +1361,7 @@
+ .PHONY: release-commit
+ release-commit:
+@@ -1432,8 +1432,7 @@
+ gl_noteworthy_news_ = * Noteworthy changes in release ?.? (????-??-??) [?]
+ .PHONY: release-prep
  release-prep:
- 	case $$RELEASE_TYPE in alpha|beta|stable) ;; \
- 	  *) echo "invalid RELEASE_TYPE: $$RELEASE_TYPE" 1>&2; exit 1;; esac
--	$(MAKE) --no-print-directory -s announcement > ~/announce-$(my_distdir)
-+	$(MAKE) --no-print-directory -s announcement
- 	if test -d $(release_archive_dir); then			\
+-	$(AM_V_GEN)$(MAKE) --no-print-directory -s announcement \
+-	  > ~/announce-$(my_distdir)
++	$(AM_V_GEN)$(MAKE) --no-print-directory -s announcement
+ 	$(AM_V_at)if test -d $(release_archive_dir); then	\
  	  ln $(rel-files) $(release_archive_dir);		\
  	  chmod a-w $(rel-files);				\

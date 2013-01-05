@@ -1,6 +1,6 @@
---- gnulib/build-aux/do-release-commit-and-tag	2012-07-14 16:32:48.000000000 +0700
-+++ build-aux/do-release-commit-and-tag	2012-07-14 16:32:28.000000000 +0700
-@@ -116,6 +116,53 @@
+--- gnulib/build-aux/do-release-commit-and-tag	2013-01-05 16:12:10.000000000 +0700
++++ build-aux/do-release-commit-and-tag	2013-01-05 16:29:03.000000000 +0700
+@@ -118,6 +118,53 @@
  ## First, sanity checks.  ##
  ## ---------------------- ##
  
@@ -54,7 +54,7 @@
  # Verify that $ver looks like a version number, and...
  echo "$ver"|grep -E '^[0-9][0-9.]*[0-9]$' > /dev/null \
    || die "invalid version: $ver"
-@@ -123,8 +170,8 @@
+@@ -125,8 +172,8 @@
    || die 'failed to determine previous version number from .prev-version'
  
  # Verify that $ver is sensible (> .prev-version).
