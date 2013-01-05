@@ -19,12 +19,18 @@
 
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 -- FIXME: Add apropos
 
 local function write_function_description (name, doc)
   insert_string (string.format ("%s is %s built-in function in `Lua source code'.\n\n%s",
                                 name,
-                                get_function_interactive (name) and "an interactive" or "a",
+                                lisp.get_function_interactive (name) and "an interactive" or "a",
                                 doc))
 end
 
@@ -43,7 +49,7 @@ Display the full documentation of a function.
       end
     end
 
-    local doc = get_function_doc (func)
+    local doc = lisp.get_function_doc (func)
     if not doc then
       return false
     else
@@ -55,7 +61,7 @@ Display the full documentation of a function.
 )
 
 local function write_key_description (name, doc, binding)
-  local _interactive = get_function_interactive (name)
+  local _interactive = lisp.get_function_interactive (name)
   assert (_interactive ~= nil)
 
   insert_string (string.format ("%s runs the command %s, which is %s built-in\n" ..
@@ -94,7 +100,7 @@ Display documentation of the command invoked by a key sequence.
 
     minibuf_write (string.format ("%s runs the command `%s'", binding, name))
 
-    local doc = get_function_doc (name)
+    local doc = lisp.get_function_doc (name)
     if not doc then
       return false
     end

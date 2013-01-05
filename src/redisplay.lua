@@ -78,5 +78,5 @@ function resize_windows ()
     until decreased == false
   end
 
-  execute_function ("recenter")
+  lisp.execute_function ("recenter")
 end

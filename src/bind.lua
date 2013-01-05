@@ -19,6 +19,78 @@
 
 -- Key binding.
 
+-- Initialise prefix arg
+prefix_arg = false -- Not nil, so it is picked up in environment table
+current_prefix_arg = false
+
+function execute_with_uniarg (undo, uniarg, forward, backward)
+  uniarg = uniarg or 1
+
+  if backward and uniarg < 0 then
+    forward = backward
+    uniarg = -uniarg
+  end
+  if undo then
+    undo_start_sequence ()
+  end
+  local ret = true
+  for _ = 1, uniarg do
+    ret = forward ()
+    if not ret then
+      break
+    end
+  end
+  if undo then
+    undo_end_sequence ()
+  end
+
+  return ret
+end
+
+function move_with_uniarg (uniarg, move)
+  local ret = true
+  for uni = 1, math.abs (uniarg) do
+    ret = move (uniarg < 0 and - 1 or 1)
+    if not ret then
+      break
+    end
+  end
+  return ret
+end
+
+local prev_label = nil
+local this_label = nil
+local interactive = 0
+
+command = {
+  is_interactive = function ()
+    return interactive > 0
+  end,
+
+  interactive_enter = function ()
+    interactive = interactive + 1
+  end,
+
+  interactive_exit = function ()
+    interactive = math.max (0, interactive -1)
+  end,
+
+  -- Commands that behave differently for particular immediately preceding
+  -- commands (e.g. consecutive kill commands append to the kill buffer)
+  -- attach and verify labels with the following two methods.
+  attach_label = function (label)
+    this_label = label
+  end,
+
+  was_labelled = function (label)
+    return prev_label == label
+  end,
+
+  next_label = function ()
+    prev_label = this_label
+  end,
+}
+
 function self_insert_command ()
   local key = term_keytobyte (lastkey ())
   deactivate_mark ()
@@ -35,64 +107,16 @@ function self_insert_command ()
   return true
 end
 
-_last_command = nil
-_this_command = nil
-_interactive = false
-
-function call_command (f, branch)
-  thisflag = {defining_macro = lastflag.defining_macro}
-
-  -- Execute the command.
-  _this_command = f
-  _interactive = true
-  local ok = execute_function (f, branch)
-  _interactive = false
-  _last_command = _this_command
-
-  -- Only add keystrokes if we were already in macro defining mode
-  -- before the function call, to cope with start-kbd-macro.
-  if lastflag.defining_macro and thisflag.defining_macro then
-    add_cmd_to_macro ()
-  end
-
-  if cur_bp and _last_command ~= "undo" then
-    cur_bp.next_undop = cur_bp.last_undop
-  end
-
-  lastflag = thisflag
-
-  return ok
-end
-
 function get_and_run_command ()
   local keys = get_key_sequence ()
   local name = get_function_by_keys (keys)
   minibuf_clear ()
 
-  if function_exists (name) then
-    call_command (name, lastflag.set_uniarg and (prefix_arg or 1))
+  if lisp.function_exists (name) then
+    lisp.call_command (name, lastflag.set_uniarg and (prefix_arg or 1))
   else
     minibuf_error (tostring (keys) .. " is undefined")
   end
-end
-
-root_bindings = tree.new ()
-
-function init_default_bindings ()
-  -- Bind all printing keys to self-insert-command
-  for i = 0, 0xff do
-    if posix.isprint (string.char (i)) then
-      root_bindings[{keycode (string.char (i))}] = "self-insert-command"
-    end
-  end
-
-  -- Bind special key names to self-insert-command
-  list.map (function (e)
-              root_bindings[{keycode (e)}] = "self-insert-command"
-            end,
-            {"\\SPC", "\\TAB", "\\RET", "\\\\"})
-
-  lisp_loadfile (PATH_DATA .. "/default-bindings.el")
 end
 
 function do_binding_completion (as)

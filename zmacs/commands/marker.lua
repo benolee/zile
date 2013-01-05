@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("exchange-point-and-mark",
        {},
 [[
@@ -58,17 +64,17 @@ Set the mark where point is.
 ]],
   true,
   function ()
-    execute_function ("set-mark")
+    lisp.execute_function ("set-mark")
     minibuf_write ("Mark set")
   end
 )
 
 
 local function mark (uniarg, func)
-  execute_function ("set-mark")
-  local ret = execute_function (func, uniarg)
+  lisp.execute_function ("set-mark")
+  local ret = lisp.execute_function (func, uniarg)
   if ret then
-    execute_function ("exchange-point-and-mark")
+    lisp.execute_function ("exchange-point-and-mark")
   end
   return ret
 end
@@ -108,15 +114,17 @@ The paragraph marked is the one that contains point or follows point.
 ]],
   true,
   function ()
-    if _last_command == "mark-paragraph" then
-      execute_function ("exchange-point-and-mark")
-      execute_function ("forward-paragraph")
-      execute_function ("exchange-point-and-mark")
+    if command.was_labelled ":mark-paragraph" then
+      lisp.execute_function ("exchange-point-and-mark")
+      lisp.execute_function ("forward-paragraph")
+      lisp.execute_function ("exchange-point-and-mark")
     else
-      execute_function ("forward-paragraph")
-      execute_function ("set-mark")
-      execute_function ("backward-paragraph")
+      lisp.execute_function ("forward-paragraph")
+      lisp.execute_function ("set-mark")
+      lisp.execute_function ("backward-paragraph")
     end
+
+    command.attach_label ":mark-paragraph"
   end
 )
 
@@ -128,8 +136,8 @@ Put point at beginning and mark at end of buffer.
 ]],
   true,
   function ()
-    execute_function ("end-of-buffer")
-    execute_function ("set-mark-command")
-    execute_function ("beginning-of-buffer")
+    lisp.execute_function ("end-of-buffer")
+    lisp.execute_function ("set-mark-command")
+    lisp.execute_function ("beginning-of-buffer")
   end
 )

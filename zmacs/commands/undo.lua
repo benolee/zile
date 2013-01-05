@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("undo",
        {},
 [[
@@ -43,6 +49,8 @@ Repeat this command to undo more changes.
 
     cur_bp.next_undop = revert_action (cur_bp.next_undop)
     minibuf_write ("Undo!")
+
+    command.attach_label ":undo"
   end
 )
 
@@ -57,7 +65,7 @@ Undo until buffer is unmodified.
     -- FIXME: save pointer to current undo action and abort if we get
     -- back to it.
     while cur_bp.modified do
-      execute_function ("undo")
+      lisp.execute_function ("undo")
     end
   end
 )

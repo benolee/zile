@@ -20,6 +20,12 @@
 -- MA 02111-1301, USA.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("load",
        {"string"},
 [[
@@ -28,7 +34,7 @@ Execute a file of Lisp code named FILE.
   true,
   function (file)
     if file then
-      return lisp_loadfile (file)
+      return lisp.loadfile (file)
     end
   end
 )
@@ -48,7 +54,7 @@ The values val are expressions; they are evaluated.
     local ret
     local l = {...}
     for i = 1, #l/2 do
-      ret = evaluateNode (l[i + 1])
+      ret = lisp.evaluateNode (l[i + 1])
       set_variable (l[i].data, ret.data)
     end
     return ret
@@ -75,7 +81,7 @@ Read function name, then read its arguments and call it.
     msg = msg .. "M-x "
 
     local name = minibuf_read_function_name (msg)
-    return name and execute_function (name, n) or nil
+    return name and lisp.execute_function (name, n) or nil
   end
 )
 
@@ -84,7 +90,7 @@ local functions_history = history_new ()
 function minibuf_read_function_name (fmt)
   local cp = completion_new ()
 
-  for name, func in pairs (usercmd) do
+  for name, func in lisp.commands () do
     if func.interactive then
       table.insert (cp.completions, name)
     end
@@ -108,6 +114,6 @@ means use current buffer).
   true,
   function (buffer)
     local bp = (buffer and buffer ~= "") and find_buffer (buffer) or cur_bp
-    return lisp_loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))
+    return lisp.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))
   end
 )

@@ -20,6 +20,12 @@
 -- MA 02111-1301, USA.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("indent-for-tab-command",
        {},
 [[
@@ -33,7 +39,7 @@ the indentation.  Else stay at same point in text.
     if get_variable_bool ("tab-always-indent") then
       return insert_tab ()
     elseif (get_goalc () < previous_line_indent ()) then
-      return execute_function ("indent-relative")
+      return lisp.execute_function ("indent-relative")
     end
   end
 )
@@ -151,7 +157,7 @@ Indentation is done using the `indent-for-tab-command' function.
       -- Only indent if we're in column > 0 or we're in column 0 and
       -- there is a space character there in the last non-blank line.
       if indent then
-        execute_function ("indent-for-tab-command")
+        lisp.execute_function ("indent-for-tab-command")
       end
       ok = true
     end
@@ -217,7 +223,7 @@ Delete all spaces and tabs around point, leaving one space.
   true,
   function ()
     undo_start_sequence ()
-    execute_function ("delete-horizontal-space")
+    lisp.execute_function ("delete-horizontal-space")
     insert_char (' ')
     undo_end_sequence ()
   end

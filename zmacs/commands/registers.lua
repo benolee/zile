@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("copy-to-register",
        {"number"},
 [[
@@ -31,7 +37,7 @@ Copy region into register @i{register}.
     end
 
     if reg == 7 then
-      return execute_function ("keyboard-quit")
+      return lisp.execute_function ("keyboard-quit")
     else
       minibuf_clear ()
       local rp = calculate_the_region ()
@@ -67,17 +73,17 @@ Puts point before and mark after the inserted text.
     end
 
     if reg == 7 then
-      ok = execute_function ("keyboard-quit")
+      ok = lisp.execute_function ("keyboard-quit")
     else
       minibuf_clear ()
       if register_isempty (reg) then
         minibuf_error ("Register does not contain text")
         ok = false
       else
-        execute_function ("set-mark-command")
+        lisp.execute_function ("set-mark-command")
 	regnum = reg
         execute_with_uniarg (true, current_prefix_arg, insert_register)
-        execute_function ("exchange_point_and_mark")
+        lisp.execute_function ("exchange_point_and_mark")
         deactivate_mark ()
       end
     end

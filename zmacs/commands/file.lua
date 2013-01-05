@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("find-file",
        {"string"},
 [[
@@ -34,7 +40,7 @@ creating one if none already exists.
     end
 
     if not filename then
-      ok = execute_function ("keyboard-quit")
+      ok = lisp.execute_function ("keyboard-quit")
     elseif filename ~= "" then
       ok = find_file (filename)
     end
@@ -53,7 +59,7 @@ Use @kbd{M-x toggle-read-only} to permit editing.
 ]],
   true,
   function (filename)
-    local ok = execute_function ("find-file", filename)
+    local ok = lisp.execute_function ("find-file", filename)
     if ok then
       cur_bp.readonly = true
     end
@@ -82,7 +88,7 @@ If the current buffer now contains an empty file that you just visited
 
     local ok = false
     if not ms then
-      ok = execute_function ("keyboard-quit")
+      ok = lisp.execute_function ("keyboard-quit")
     elseif ms ~= "" and check_modified_buffer (cur_bp ()) then
       kill_buffer (cur_bp)
       ok = find_file (ms)
@@ -110,7 +116,7 @@ Set mark after the inserted text.
     if not file then
       file = minibuf_read_filename ("Insert file: ", cur_bp.dir)
       if not file then
-        ok = execute_function ("keyboard-quit")
+        ok = lisp.execute_function ("keyboard-quit")
       end
     end
 
@@ -122,7 +128,7 @@ Set mark after the inserted text.
       local s = io.slurp (file)
       if s then
         insert_estr (EStr (s))
-        execute_function ("set-mark-command")
+        lisp.execute_function ("set-mark-command")
       else
         ok = minibuf_error ("%s: %s", file, posix.errno ())
       end
@@ -157,7 +163,7 @@ Interactively, confirmation is required unless you supply a prefix argument.
   true,
   function ()
     return write_buffer (cur_bp, true,
-                         _interactive and not lastflag.set_uniarg,
+                         command.is_interactive () and not lastflag.set_uniarg,
                          nil, "Write file: ")
   end
 )
@@ -191,7 +197,7 @@ Offer to save each buffer, then kill this Zile process.
         while true do
           local ans = minibuf_read_yesno ("Modified buffers exist; exit anyway? (yes or no) ")
           if ans == nil then
-            return execute_function ("keyboard-quit")
+            return lisp.execute_function ("keyboard-quit")
           elseif not ans then
             return false
           end
@@ -212,12 +218,12 @@ Make DIR become the current buffer's default directory.
 ]],
   true,
   function (dir)
-    if not dir and _interactive then
+    if not dir and command.is_interactive () then
       dir = minibuf_read_filename ("Change default directory: ", cur_bp.dir)
     end
 
     if not dir then
-      return execute_function ("keyboard-quit")
+      return lisp.execute_function ("keyboard-quit")
     end
 
     if dir ~= "" then
@@ -262,7 +268,7 @@ Puts mark after the inserted text.
       buffer = minibuf_read (string.format ("Insert buffer (default %s): ", def_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = execute_function ("keyboard-quit")
+        ok = lisp.execute_function ("keyboard-quit")
       end
     end
 
@@ -280,7 +286,7 @@ Puts mark after the inserted text.
 
       if ok then
         insert_buffer (bp)
-        execute_function ("set-mark-command")
+        lisp.execute_function ("set-mark-command")
       end
     end
 

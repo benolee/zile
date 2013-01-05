@@ -18,6 +18,31 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
+local function kill_text (uniarg, mark_func)
+  maybe_free_kill_ring ()
+
+  if warn_if_readonly_buffer () then
+    return false
+  end
+
+  push_mark ()
+  undo_start_sequence ()
+  lisp.execute_function (mark_func, uniarg)
+  lisp.execute_function ("kill-region")
+  undo_end_sequence ()
+  pop_mark ()
+  minibuf_clear () -- Erase "Set mark" message.
+
+  return true
+end
+
+
 Defun ("kill-word",
        {"number"},
 [[
@@ -76,7 +101,7 @@ killed @i{or} yanked.  Put point at end, and set mark at beginning.
       return false
     end
 
-    execute_function ("set-mark-command")
+    lisp.execute_function ("set-mark-command")
     killring_yank ()
     deactivate_mark ()
   end
@@ -98,7 +123,15 @@ to make one entry in the kill ring.
 ]],
   true,
   function ()
-    return copy_or_kill_the_region (true)
+    local rp = calculate_the_region ()
+
+    if rp then
+      maybe_free_kill_ring ()
+      kill_region (rp)
+      return true
+    end
+
+    return false
   end
 )
 
@@ -110,7 +143,15 @@ Save the region as if killed, but don't kill it.
 ]],
   true,
   function ()
-    return copy_or_kill_the_region (false)
+    local rp = calculate_the_region ()
+
+    if rp then
+      maybe_free_kill_ring ()
+      copy_region (rp)
+      return true
+    end
+
+    return false
   end
 )
 

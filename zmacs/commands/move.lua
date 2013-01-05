@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("beginning-of-line",
        {},
 [[
@@ -103,13 +109,13 @@ Goto @i{line}, counting from line 1 at beginning of buffer.
   true,
   function (n)
     n = n or current_prefix_arg
-    if not n and _interactive then
+    if not n and command.is_interactive () then
       n = minibuf_read_number ("Goto line: ")
     end
 
     if type (n) == "number" then
       move_line ((math.max (n, 1) - 1) - offset_to_line (cur_bp, get_buffer_pt (cur_bp)))
-      execute_function ("beginning-of-line")
+      lisp.execute_function ("beginning-of-line")
     else
       return false
     end
@@ -221,7 +227,7 @@ Precisely, if point is on line I, move to the start of line I + N.
   function (n)
     n = n or current_prefix_arg or 1
     if n ~= 0 then
-      execute_function ("beginning-of-line")
+      lisp.execute_function ("beginning-of-line")
       return move_line (n)
     end
     return false

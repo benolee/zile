@@ -453,7 +453,7 @@ function check_modified_buffer (bp)
     while true do
       local ans = minibuf_read_yesno (string.format ("Buffer %s modified; kill anyway? (yes or no) ", bp.name))
       if ans == nil then
-        execute_function ("keyboard-quit")
+        lisp.execute_function ("keyboard-quit")
         return false
       elseif not ans then
         return false
@@ -481,7 +481,7 @@ function move_char (offset)
     elseif not btest () then
       thisflag.need_resync = true
       set_buffer_pt (cur_bp, get_buffer_pt (cur_bp) + #get_buffer_eol (cur_bp) * dir)
-      execute_function (lmove)
+      lisp.execute_function (lmove)
     else
       return false
     end
@@ -541,9 +541,10 @@ function move_line (n)
     func = buffer_prev_line
   end
 
-  if _last_command ~= "next-line" and _last_command ~= "previous-line" then
+  if not command.was_labelled ":move_line" then
     cur_bp.goalc = get_goalc ()
   end
+  command.attach_label ":move_line"
 
   while n > 0 do
     local o = func (cur_bp, cur_bp.pt)

@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("self-insert-command",
        {},
 [[
@@ -41,7 +47,7 @@ Argument is a command name.
   function ()
     local name = minibuf_read_function_name ("Where is command: ")
 
-    if name and function_exists (name) then
+    if name and lisp.function_exists (name) then
       local g = { f = name, bindings = "" }
 
       walk_bindings (root_bindings, gather_bindings, g)
@@ -104,7 +110,7 @@ sequence.
       end
     end
 
-    if not function_exists (name) then -- Possible if called non-interactively
+    if not lisp.function_exists (name) then -- Possible if called non-interactively
       minibuf_error (string.format ("No such function `%s'", name))
       return
     end
@@ -166,7 +172,7 @@ by 4 each time.
 
       -- Cancelled.
       if key == keycode "\\C-g" then
-        ok = execute_function ("keyboard-quit")
+        ok = lisp.execute_function ("keyboard-quit")
         break
       -- Digit pressed.
       elseif string.match (string.char (key.key), "%d") then

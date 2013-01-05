@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("set-fill-column",
        {"number"},
 [[
@@ -27,7 +33,7 @@ Just C-u as argument means to use the current column.
 ]],
   true,
   function (n)
-    if not n and _interactive then
+    if not n and command.is_interactive () then
       local o = get_buffer_pt (cur_bp) - get_buffer_line_o (cur_bp)
       if lastflag.set_uniarg then
         n = current_prefix_arg
@@ -78,25 +84,25 @@ Fill paragraph at or after point.
 
     undo_start_sequence ()
 
-    execute_function ("forward-paragraph")
+    lisp.execute_function ("forward-paragraph")
     if is_empty_line () then
       previous_line ()
     end
     local m_end = point_marker ()
 
-    execute_function ("backward-paragraph")
+    lisp.execute_function ("backward-paragraph")
     if is_empty_line () then -- Move to next line if between two paragraphs.
       next_line ()
     end
 
     while buffer_end_of_line (cur_bp, get_buffer_pt (cur_bp)) < m_end.o do
-      execute_function ("end-of-line")
+      lisp.execute_function ("end-of-line")
       delete_char ()
-      execute_function ("just-one-space")
+      lisp.execute_function ("just-one-space")
     end
     unchain_marker (m_end)
 
-    execute_function ("end-of-line")
+    lisp.execute_function ("end-of-line")
     while get_goalc () > get_variable_number ("fill-column") + 1 and fill_break_line () do end
 
     goto_offset (m.o)
@@ -231,11 +237,11 @@ On nonblank line, delete any immediately following blank lines.
     undo_start_sequence ()
 
     -- Find following blank lines.
-    if execute_function ("forward-line") and is_blank_line () then
+    if lisp.execute_function ("forward-line") and is_blank_line () then
       r.start = get_buffer_pt (cur_bp)
       repeat
         r.finish = buffer_next_line (cur_bp, get_buffer_pt (cur_bp))
-      until not execute_function ("forward-line") or not is_blank_line ()
+      until not lisp.execute_function ("forward-line") or not is_blank_line ()
     end
     goto_offset (m.o)
 
@@ -245,7 +251,7 @@ On nonblank line, delete any immediately following blank lines.
       r.finish = math.max (r.finish, buffer_next_line (cur_bp, get_buffer_pt (cur_bp) or math.huge))
       repeat
         r.start = get_buffer_line_o (cur_bp)
-      until not execute_function ("forward-line", -1) or not is_blank_line ()
+      until not lisp.execute_function ("forward-line", -1) or not is_blank_line ()
 
       goto_offset (m.o)
       if r.start ~= get_buffer_line_o (cur_bp) or r.finish > buffer_next_line (cur_bp, get_buffer_pt (cur_bp)) then

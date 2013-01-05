@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("kill-buffer",
        {"string"},
 [[
@@ -33,7 +39,7 @@ With a nil argument, kill the current buffer.
       buffer = minibuf_read (string.format ("Kill buffer (default %s): ", cur_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = execute_function ("keyboard-quit")
+        ok = lisp.execute_function ("keyboard-quit")
       end
     end
 
@@ -77,7 +83,7 @@ Select buffer @i{buffer} in the current window.
                              "", cp, buffer_name_history)
 
       if not buffer then
-        ok = execute_function ("keyboard-quit")
+        ok = lisp.execute_function ("keyboard-quit")
       end
     end
 

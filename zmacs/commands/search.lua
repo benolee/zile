@@ -18,6 +18,12 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "lisp"
+
+
+local Defun = lisp.Defun
+
+
 Defun ("search-forward",
        {"string"},
 [[
@@ -152,7 +158,7 @@ what to do with it.
   function ()
     local find = minibuf_read ("Query replace string: ", "")
     if not find then
-      return execute_function ("keyboard-quit")
+      return lisp.execute_function ("keyboard-quit")
     end
     if find == "" then
       return false
@@ -161,7 +167,7 @@ what to do with it.
 
     local repl = minibuf_read (string.format ("Query replace `%s' with: ", find), "")
     if not repl then
-      execute_function ("keyboard-quit")
+      lisp.execute_function ("keyboard-quit")
     end
 
     local noask = false
@@ -181,7 +187,7 @@ what to do with it.
         if c == keycode "q" then -- Quit immediately.
           break
         elseif c == keycode "\\C-g" then
-          ok = execute_function ("keyboard-quit")
+          ok = lisp.execute_function ("keyboard-quit")
           break
         elseif c == keycode "!" then -- Replace all without asking.
           noask = true

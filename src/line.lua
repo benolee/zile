@@ -67,7 +67,7 @@ function fill_break_line ()
 
     if break_col >= 1 then -- Break line.
       goto_offset (get_buffer_line_o (cur_bp) + break_col)
-      execute_function ("delete-horizontal-space")
+      lisp.execute_function ("delete-horizontal-space")
       insert_newline ()
       goto_offset (m.o)
       break_made = true
@@ -127,7 +127,7 @@ function previous_nonblank_goalc ()
   local cur_goalc = get_goalc ()
 
   -- Find previous non-blank line.
-  while execute_function ("forward-line", -1) and is_blank_line () do end
+  while lisp.execute_function ("forward-line", -1) and is_blank_line () do end
 
   -- Go to `cur_goalc' in that non-blank line.
   while not eolp () and get_goalc () < cur_goalc do
@@ -139,8 +139,8 @@ function previous_line_indent ()
   local cur_indent
   local m = point_marker ()
 
-  execute_function ("previous-line")
-  execute_function ("beginning-of-line")
+  lisp.execute_function ("previous-line")
+  lisp.execute_function ("beginning-of-line")
 
   -- Find first non-blank char.
   while not eolp () and following_char ():match ("%s") do

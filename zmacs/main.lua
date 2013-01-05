@@ -225,7 +225,7 @@ function main ()
   if not qflag then
     local s = os.getenv ("HOME")
     if s then
-      lisp_loadfile (s .. "/." .. PROGRAM)
+      lisp.loadfile (s .. "/." .. PROGRAM)
     end
   end
 
@@ -237,7 +237,7 @@ function main ()
     switch_to_buffer (bp)
     insert_string (splash_str)
     cur_bp.readonly = true
-    execute_function ("beginning-of-buffer")
+    lisp.execute_function ("beginning-of-buffer")
   end
 
   -- Load files and load files and run functions given on the command line.
@@ -246,19 +246,19 @@ function main ()
     local type, arg, line = zarg[i][1], zarg[i][2], zarg[i][3]
 
     if type == "function" then
-      ok = execute_function (arg)
+      ok = lisp.execute_function (arg)
       if ok == nil then
         minibuf_error (string.format ("Function `%s' not defined", arg))
       end
     elseif type == "loadfile" then
-      ok = lisp_loadfile (arg)
+      ok = lisp.loadfile (arg)
       if not ok then
         minibuf_error (string.format ("Cannot open load file: %s\n", arg))
       end
     elseif type == "file" then
       ok = find_file (arg)
       if ok then
-        execute_function ("goto-line", line)
+        lisp.execute_function ("goto-line", line)
       end
     end
     if thisflag.quit then
@@ -271,11 +271,11 @@ function main ()
   -- Set up screen according to number of files loaded.
   if #buffers == 3 then
     -- *scratch* and two files.
-    execute_function ("split-window")
+    lisp.execute_function ("split-window")
     switch_to_buffer (buffers[#buffers -1])
-    execute_function ("other-window")
+    lisp.execute_function ("other-window")
   elseif #buffers > 3 then
-    execute_function ("list-buffers")
+    lisp.execute_function ("list-buffers")
   end
 
   -- Reinitialise the scratch buffer to catch settings

@@ -1,4 +1,4 @@
--- Variable facility commands.
+-- Zmacs key mappings
 --
 -- Copyright (c) 2010-2013 Free Software Foundation, Inc.
 --
@@ -17,39 +17,23 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+lisp = require "lisp"
 
-local lisp = require "lisp"
+root_bindings = tree.new ()
 
-
-local Defun = lisp.Defun
-
-
-Defun ("set-variable",
-       {"string", "string"},
-[[
-Set a variable value to the user-specified value.
-]],
-  true,
-  function (var, val)
-    local ok = true
-
-    if not var then
-      var = minibuf_read_variable_name ("Set variable: ")
+function init_default_bindings ()
+  -- Bind all printing keys to self-insert-command
+  for i = 0, 0xff do
+    if posix.isprint (string.char (i)) then
+      root_bindings[{keycode (string.char (i))}] = "self-insert-command"
     end
-    if not var then
-      return false
-    end
-    if not val then
-      val = minibuf_read (string.format ("Set %s to value: ", var), "")
-    end
-    if not val then
-      ok = lisp.execute_function ("keyboard-quit")
-    end
-
-    if ok then
-      set_variable (var, val)
-    end
-
-    return ok
   end
-)
+
+  -- Bind special key names to self-insert-command
+  list.map (function (e)
+              root_bindings[{keycode (e)}] = "self-insert-command"
+            end,
+            {"\\SPC", "\\TAB", "\\RET", "\\\\"})
+
+  lisp.loadfile (PATH_DATA .. "/default-bindings.el")
+end

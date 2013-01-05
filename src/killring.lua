@@ -27,68 +27,42 @@ function killring_yank ()
   insert_estr (kill_ring_text)
 end
 
-
 function maybe_free_kill_ring ()
-  if _last_command ~= "kill-region" then
+  if not command.was_labelled ":kill_ring_push" then
     kill_ring_text = nil
   end
 end
 
 local function kill_ring_push (es)
   kill_ring_text = (kill_ring_text or EStr ("")):cat (es)
+  command.attach_label ":kill_ring_push"
 end
 
-local function copy_or_kill_region (kill, rp)
+function copy_region (rp)
   kill_ring_push (get_buffer_region (cur_bp, rp))
 
-  if kill then
-    if cur_bp.readonly then
-      minibuf_error ("Read only text copied to kill ring")
-    else
-      assert (delete_region (rp))
-    end
-  end
-
-  _this_command = "kill-region"
   deactivate_mark ()
 
   return true
 end
 
-function copy_or_kill_the_region (kill)
-  local rp = calculate_the_region ()
+function kill_region (rp)
+  kill_ring_push (get_buffer_region (cur_bp, rp))
 
-  if rp then
-    maybe_free_kill_ring ()
-    copy_or_kill_region (kill, rp)
-    return true
+  if cur_bp.readonly then
+    minibuf_error ("Read only text copied to kill ring")
+  else
+    assert (delete_region (rp))
   end
 
-  return false
-end
+  deactivate_mark ()
 
-function kill_text (uniarg, mark_func)
-  maybe_free_kill_ring ()
-
-  if warn_if_readonly_buffer () then
-    return false
-  end
-
-  push_mark ()
-  undo_start_sequence ()
-  execute_function (mark_func, uniarg)
-  execute_function ("kill-region")
-  undo_end_sequence ()
-  pop_mark ()
-
-  _this_command = "kill-region"
-  minibuf_write ("") -- Erase "Set mark" message.
   return true
 end
 
 function kill_to_bol ()
   return bolp () or
-    copy_or_kill_region (true, region_new (get_buffer_line_o (cur_bp), get_buffer_pt (cur_bp)))
+    kill_region (region_new (get_buffer_line_o (cur_bp), get_buffer_pt (cur_bp)))
 end
 
 function kill_line (whole_line)
@@ -113,16 +87,15 @@ function kill_line (whole_line)
   undo_start_sequence ()
 
   if not eolp () then
-    ok = copy_or_kill_region (true, region_new (get_buffer_pt (cur_bp), get_buffer_line_o (cur_bp) + buffer_line_len (cur_bp)))
+    ok = kill_region (region_new (get_buffer_pt (cur_bp), get_buffer_line_o (cur_bp) + buffer_line_len (cur_bp)))
   end
 
   if ok and (whole_line or only_blanks_to_end_of_line) and not eobp () then
-    if not execute_function ("delete-char") then
+    if not lisp.execute_function ("delete-char") then
       return false
     end
 
     kill_ring_push (EStr ("\n"))
-    _this_command = "kill-region"
   end
 
   undo_end_sequence ()

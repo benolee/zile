@@ -20,14 +20,12 @@
 -- MA 02111-1301, USA.
 
 
+local M = {}
+
 -- User commands
-usercmd = {}
+local usercmd = {}
 
--- Initialise prefix arg
-prefix_arg = false -- Not nil, so it is picked up in environment table
-current_prefix_arg = false
-
-function Defun (name, argtypes, doc, interactive, func)
+function M.Defun (name, argtypes, doc, interactive, func)
   usercmd[name] = {
     doc = texi (doc:chomp ()),
     interactive = interactive,
@@ -60,22 +58,27 @@ function Defun (name, argtypes, doc, interactive, func)
 end
 
 -- Return function's interactive field, or nil if not found.
-function get_function_interactive (name)
+function M.get_function_interactive (name)
   return usercmd[name] and usercmd[name].interactive or nil
 end
 
-function get_function_doc (name)
+function M.get_function_doc (name)
   return usercmd[name] and usercmd[name].doc or nil
 end
 
-function read_char (s, pos)
+-- Iterator returning (name, entry) for each usercmd.
+function M.commands ()
+  return next, usercmd, nil
+end
+
+local function read_char (s, pos)
   if pos <= #s then
     return s[pos], pos + 1
   end
   return -1, pos
 end
 
-function read_token (s, pos)
+local function read_token (s, pos)
   local c
   local doublequotes = false
   local tok = ""
@@ -125,7 +128,7 @@ function read_token (s, pos)
   until false
 end
 
-function lisp_read (s)
+local function lisp_read (s)
   local pos = 1
   local function append (l, e)
     if l == nil then
@@ -162,25 +165,60 @@ function lisp_read (s)
   return read ()
 end
 
-function evaluateBranch (branch)
-  return branch and branch.data and call_command (branch.data, branch) or nil
-end
 
-function execute_function (name, uniarg)
+-- Execute a function non-interactively.
+function M.execute_function (name, uniarg)
+  local ok
+
   if uniarg ~= nil and type (uniarg) ~= "table" then
     uniarg = {next = {data = uniarg and tostring (uniarg) or nil}}
   end
-  return usercmd[name] and usercmd[name].func and usercmd[name].func (uniarg)
+
+  command.attach_label (nil)
+  ok = usercmd[name] and usercmd[name].func and usercmd[name].func (uniarg)
+  command.next_label ()
+
+  return ok
 end
 
-function leEval (list)
+-- Call an interactive command.
+function M.call_command (f, branch)
+  thisflag = {defining_macro = lastflag.defining_macro}
+
+  -- Execute the command.
+  command.interactive_enter ()
+  local ok = M.execute_function (f, branch)
+  command.interactive_exit ()
+
+  -- Only add keystrokes if we were already in macro defining mode
+  -- before the function call, to cope with start-kbd-macro.
+  if lastflag.defining_macro and thisflag.defining_macro then
+    add_cmd_to_macro ()
+  end
+
+  if cur_bp and not command.was_labelled ":undo" then
+    cur_bp.next_undop = cur_bp.last_undop
+  end
+
+  lastflag = thisflag
+
+  return ok
+end
+
+local function evaluateBranch (branch)
+  return branch and branch.data and M.call_command (branch.data, branch) or nil
+end
+
+local function leEval (list)
   while list do
     evaluateBranch (list.branch)
     list = list.next
   end
 end
 
-function evaluateNode (node)
+-- This needs to be accessible for writing special forms that only
+-- evaluate some of their arguments, e.g. setq.
+function M.evaluateNode (node)
   if node == nil then
     return nil
   end
@@ -197,56 +235,23 @@ function evaluateNode (node)
   return value
 end
 
-function lisp_loadstring (s)
+function M.loadstring (s)
   leEval (lisp_read (s))
 end
 
-function lisp_loadfile (file)
+function M.loadfile (file)
   local s = io.slurp (file)
 
   if s then
-    lisp_loadstring (s)
+    M.loadstring (s)
     return true
   end
 
   return false
 end
 
-function function_exists (f)
+function M.function_exists (f)
   return usercmd[f] ~= nil
 end
 
-function execute_with_uniarg (undo, uniarg, forward, backward)
-  uniarg = uniarg or 1
-
-  if backward and uniarg < 0 then
-    forward = backward
-    uniarg = -uniarg
-  end
-  if undo then
-    undo_start_sequence ()
-  end
-  local ret = true
-  for _ = 1, uniarg do
-    ret = forward ()
-    if not ret then
-      break
-    end
-  end
-  if undo then
-    undo_end_sequence ()
-  end
-
-  return ret
-end
-
-function move_with_uniarg (uniarg, move)
-  local ret = true
-  for uni = 1, math.abs (uniarg) do
-    ret = move (uniarg < 0 and - 1 or 1)
-    if not ret then
-      break
-    end
-  end
-  return ret
-end
+return M

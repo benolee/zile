@@ -37,7 +37,6 @@ man_MANS += zmacs/zmacs.1
 
 dist_zmacsdata_DATA =					\
 	zmacs/default-bindings.el			\
-	zmacs/main.lua					\
 	zmacs/commands/bind.lua				\
 	zmacs/commands/buffer.lua			\
 	zmacs/commands/edit.lua				\
@@ -54,6 +53,8 @@ dist_zmacsdata_DATA =					\
 	zmacs/commands/undo.lua				\
 	zmacs/commands/variables.lua			\
 	zmacs/commands/window.lua			\
+	zmacs/keymaps.lua				\
+	zmacs/main.lua					\
 	zmacs/tbl_vars.lua
 
 zmacs/zmacs: $(dist_pkgdata_DATA) $(dist_zmacsdata_DATA) Makefile

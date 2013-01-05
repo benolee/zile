@@ -135,8 +135,8 @@ function completion_scroll_up ()
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not execute_function ("scroll-up") then
-    execute_function ("beginning-of-buffer")
+  if not lisp.execute_function ("scroll-up") then
+    lisp.execute_function ("beginning-of-buffer")
   end
   set_current_window (old_wp)
 
@@ -150,7 +150,7 @@ function completion_scroll_down ()
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not execute_function ("scroll-down") then
+  if not lisp.execute_function ("scroll-down") then
     gotoeob ()
     window_resync (cur_wp)
   end
@@ -170,7 +170,7 @@ end
 function popup_window ()
   if #windows == 1 then
     -- There is only one window on the screen, so split it.
-    execute_function ("split-window")
+    lisp.execute_function ("split-window")
   end
 
   return window_next (cur_wp)
