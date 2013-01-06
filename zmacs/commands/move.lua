@@ -235,6 +235,26 @@ Precisely, if point is on line I, move to the start of line I + N.
 )
 
 
+local function move_paragraph (uniarg, forward, backward, line_extremum)
+  if uniarg < 0 then
+    uniarg = -uniarg
+    forward = backward
+  end
+
+  for i = uniarg, 1, -1 do
+    repeat until not is_empty_line () or not forward ()
+    repeat until is_empty_line () or not forward ()
+  end
+
+  if is_empty_line () then
+    lisp.execute_function ("beginning-of-line")
+  else
+    lisp.execute_function (line_extremum)
+  end
+  return true
+end
+
+
 Defun ("backward-paragraph",
        {"number"},
 [[
