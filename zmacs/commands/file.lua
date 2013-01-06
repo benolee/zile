@@ -184,7 +184,7 @@ Save some modified file-visiting buffers.  Asks user about each one.
 Defun ("save-buffers-kill-emacs",
        {},
 [[
-Offer to save each buffer, then kill this Zile process.
+Offer to save each buffer, then kill this process.
 ]],
   true,
   function ()

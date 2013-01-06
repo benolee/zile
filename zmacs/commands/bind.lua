@@ -239,7 +239,7 @@ Cancel current command.
 Defun ("suspend-emacs",
        {},
 [[
-Stop Zile and return to superior process.
+Stop and return to superior process.
 ]],
   true,
   suspend

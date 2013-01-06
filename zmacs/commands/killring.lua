@@ -114,12 +114,11 @@ Defun ("kill-region",
 Kill between point and mark.
 The text is deleted but saved in the kill ring.
 The command @kbd{C-y} (yank) can retrieve it from there.
-If the buffer is read-only, Zile will beep and refrain from deleting
-the text, but put the text in the kill ring anyway.  This means that
-you can use the killing commands to copy text from a read-only buffer.
-If the previous command was also a kill command,
-the text killed this time appends to the text killed last time
-to make one entry in the kill ring.
+If the buffer is read-only, beep and refrain from deleting the text, but
+put the text in the kill ring anyway.  This means that you can use the
+killing commands to copy text from a read-only buffer.  If the previous
+command was also a kill command, the text killed this time appends to the
+text killed last time to make one entry in the kill ring.
 ]],
   true,
   function ()
