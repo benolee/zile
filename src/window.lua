@@ -60,6 +60,29 @@ function find_window (name)
   end
 end
 
+function split_window ()
+  -- Windows smaller than 4 lines cannot be split.
+  if cur_wp.fheight < 4 then
+    minibuf_error (string.format ("Window height %d too small (after splitting)", cur_wp.fheight))
+    return false
+  end
+
+  local newwp = table.clone (cur_wp)
+  newwp.fheight = math.floor (cur_wp.fheight / 2) + cur_wp.fheight % 2
+  newwp.eheight = newwp.fheight - 1
+  newwp.saved_pt = point_marker ()
+  table.insert (windows, newwp)
+
+  cur_wp.next = newwp
+  cur_wp.fheight = math.floor (cur_wp.fheight / 2)
+  cur_wp.eheight = cur_wp.fheight - 1
+  if cur_wp.topdelta >= cur_wp.eheight then
+    recenter (cur_wp)
+  end
+
+  return true
+end
+
 function window_o (wp)
   -- The current window uses the current buffer point; all other
   -- windows have a saved point, except that if a window has just been
@@ -129,14 +152,30 @@ function delete_window (del_wp)
 end
 
 
+function scroll_down ()
+  if not window_top_visible (cur_wp) then
+    return move_line (-cur_wp.eheight)
+  end
+
+  return minibuf_error ("Beginning of buffer")
+end
+
+function scroll_up ()
+  if not window_bottom_visible (cur_wp) then
+    return move_line (cur_wp.eheight)
+  end
+
+  return minibuf_error ("End of buffer")
+end
+
 -- Scroll completions up.
 function completion_scroll_up ()
   local old_wp = cur_wp
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not lisp.execute_function ("scroll-up") then
-    lisp.execute_function ("beginning-of-buffer")
+  if not scroll_up () then
+    goto_offset (1)
   end
   set_current_window (old_wp)
 
@@ -150,7 +189,7 @@ function completion_scroll_down ()
   local wp = find_window ("*Completions*")
   assert (wp)
   set_current_window (wp)
-  if not lisp.execute_function ("scroll-down") then
+  if not scroll_down () then
     gotoeob ()
     window_resync (cur_wp)
   end
@@ -170,7 +209,7 @@ end
 function popup_window ()
   if #windows == 1 then
     -- There is only one window on the screen, so split it.
-    lisp.execute_function ("split-window")
+    split_window ()
   end
 
   return window_next (cur_wp)

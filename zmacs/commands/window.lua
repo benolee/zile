@@ -139,28 +139,7 @@ Split current window into two windows, one above the other.
 Both windows display the same buffer now current.
 ]],
   true,
-  function ()
-    -- Windows smaller than 4 lines cannot be split.
-    if cur_wp.fheight < 4 then
-      minibuf_error (string.format ("Window height %d too small (after splitting)", cur_wp.fheight))
-      return false
-    end
-
-    local newwp = table.clone (cur_wp)
-    newwp.fheight = math.floor (cur_wp.fheight / 2) + cur_wp.fheight % 2
-    newwp.eheight = newwp.fheight - 1
-    newwp.saved_pt = point_marker ()
-    table.insert (windows, newwp)
-
-    cur_wp.next = newwp
-    cur_wp.fheight = math.floor (cur_wp.fheight / 2)
-    cur_wp.eheight = cur_wp.fheight - 1
-    if cur_wp.topdelta >= cur_wp.eheight then
-      recenter (cur_wp)
-    end
-
-    return true
-  end
+  split_window
 )
 
 
@@ -170,11 +149,5 @@ Defun ("recenter",
 Center point in selected window and redisplay frame.
 ]],
   true,
-  function ()
-    recenter (cur_wp)
-    term_clear ()
-    term_redisplay ()
-    term_refresh ()
-    return true
-  end
+  interactive_recenter
 )

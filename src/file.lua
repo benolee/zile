@@ -230,7 +230,7 @@ function write_buffer (bp, needname, confirm, name, prompt)
   if needname then
     name = minibuf_read_filename (prompt, bp.dir)
     if not name then
-      return lisp.execute_function ("keyboard-quit")
+      return keyboard_quit ()
     end
     if name == "" then
       return false

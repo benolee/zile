@@ -23,6 +23,20 @@ function insert_string (s, eol)
   return insert_estr (EStr (s, eol or coding_eol_lf))
 end
 
+function delete_horizontal_space ()
+  undo_start_sequence ()
+
+  while not eolp () and following_char ():match ("%s") do
+    delete_char ()
+  end
+
+  while not bolp () and preceding_char ():match ("%s") do
+    backward_delete_char ()
+  end
+
+  undo_end_sequence ()
+end
+
 -- If point is greater than fill-column, then split the line at the
 -- right-most space character at or before fill-column, if there is
 -- one, or at the left-most at or after fill-column, if not. If the
@@ -67,7 +81,7 @@ function fill_break_line ()
 
     if break_col >= 1 then -- Break line.
       goto_offset (get_buffer_line_o (cur_bp) + break_col)
-      lisp.execute_function ("delete-horizontal-space")
+      delete_horizontal_space ()
       insert_newline ()
       goto_offset (m.o)
       break_made = true
@@ -127,7 +141,7 @@ function previous_nonblank_goalc ()
   local cur_goalc = get_goalc ()
 
   -- Find previous non-blank line.
-  while lisp.execute_function ("forward-line", -1) and is_blank_line () do end
+  while move_line (-1) and is_blank_line () do end
 
   -- Go to `cur_goalc' in that non-blank line.
   while not eolp () and get_goalc () < cur_goalc do
@@ -139,8 +153,8 @@ function previous_line_indent ()
   local cur_indent
   local m = point_marker ()
 
-  lisp.execute_function ("previous-line")
-  lisp.execute_function ("beginning-of-line")
+  move_line (-1)
+  beginning_of_line ()
 
   -- Find first non-blank char.
   while not eolp () and following_char ():match ("%s") do

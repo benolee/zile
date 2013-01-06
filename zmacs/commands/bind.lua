@@ -232,10 +232,7 @@ Defun ("keyboard-quit",
 Cancel current command.
 ]],
   true,
-  function ()
-    deactivate_mark ()
-    return minibuf_error ("Quit")
-  end
+  keyboard_quit
 )
 
 
@@ -245,7 +242,5 @@ Defun ("suspend-emacs",
 Stop Zile and return to superior process.
 ]],
   true,
-  function ()
-    posix.raise (posix.SIGTSTP)
-  end
+  suspend
 )

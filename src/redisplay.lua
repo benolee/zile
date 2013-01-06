@@ -27,6 +27,14 @@ function recenter (wp)
   end
 end
 
+function interactive_recenter ()
+  recenter (cur_wp)
+  term_clear ()
+  term_redisplay ()
+  term_refresh ()
+  return true
+end
+
 function resize_windows ()
   local wp
 
@@ -78,5 +86,5 @@ function resize_windows ()
     until decreased == false
   end
 
-  lisp.execute_function ("recenter")
+  interactive_recenter ()
 end

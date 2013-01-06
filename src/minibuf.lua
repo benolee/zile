@@ -52,6 +52,11 @@ function minibuf_error (s)
   return ding ()
 end
 
+function keyboard_quit ()
+  deactivate_mark ()
+  return minibuf_error ("Quit")
+end
+
 -- Read a string from the minibuffer using a completion.
 function minibuf_vread_completion (fmt, value, cp, hp, empty_err, invalid_err)
   local ms
@@ -60,7 +65,7 @@ function minibuf_vread_completion (fmt, value, cp, hp, empty_err, invalid_err)
     ms = term_minibuf_read (fmt, value, -1, cp, hp)
 
     if not ms then -- Cancelled.
-      lisp.execute_function ("keyboard-quit")
+      keyboard_quit ()
       break
     elseif ms == "" then
       minibuf_error (empty_err)
@@ -147,7 +152,7 @@ function minibuf_read_key (fmt, keys, extra)
     local key = getkeystroke (GETKEY_DEFAULT)
 
     if key == keycode "\\C-g" then
-      lisp.execute_function ("keyboard-quit")
+      keyboard_quit ()
       break
     elseif keyset (accept):member (key) then
       return key
@@ -172,7 +177,7 @@ function minibuf_read_number (fmt)
   repeat
     local ms = minibuf_read (fmt, "")
       if not ms then
-        lisp.execute_function ("keyboard-quit")
+        keyboard_quit ()
         break
       elseif #ms == 0 then
         n = ""

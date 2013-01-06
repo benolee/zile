@@ -58,7 +58,7 @@ function write_temp_buffer (name, show, func, ...)
   -- Use the "callback" routine.
   func (...)
 
-  lisp.execute_function ("beginning-of-buffer")
+  goto_offset (1)
   cur_bp.readonly = true
   cur_bp.modified = false
 
@@ -109,7 +109,7 @@ function minibuf_read_shell_command ()
   local ms = minibuf_read ("Shell command: ", "")
 
   if not ms then
-    lisp.execute_function ("keyboard-quit")
+    keyboard_quit ()
     return
   end
   if ms == "" then
@@ -205,9 +205,9 @@ function move_sexp (dir)
       return false
     end
     if dir > 0 then
-      lisp.execute_function ("beginning-of-line")
+      beginning_of_line ()
     else
-      lisp.execute_function ("end-of-line")
+      end_of_line ()
     end
   end
   return false
@@ -311,8 +311,8 @@ local function transpose_subr (move_func)
   if not move_func (1) or not move_func (1) then
     if move_func == move_line then
       -- Add an empty line.
-      lisp.execute_function ("end-of-line")
-      lisp.execute_function ("newline")
+      end_of_line ()
+      insert_newline ()
     else
       pop_mark ()
       goto_offset (m1.o)
@@ -331,7 +331,7 @@ local function transpose_subr (move_func)
   -- Save and delete 1st marked region.
   local as1 = tostring (get_region ())
 
-  lisp.execute_function ("delete-region")
+  delete_region (calculate_the_region ())
 
   -- Forward.
   move_func (1)
@@ -350,7 +350,7 @@ local function transpose_subr (move_func)
 
     -- Save and delete 2nd marked region.
     as2 = tostring (get_region ())
-    lisp.execute_function ("delete-region")
+    delete_region (calculate_the_region ())
   end
 
   -- Insert the first string.

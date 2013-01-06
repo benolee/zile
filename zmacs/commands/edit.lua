@@ -211,13 +211,7 @@ Delete the text between point and mark.
 ]],
   true,
   function ()
-    local rp = calculate_the_region ()
-
-    if not rp or not delete_region (rp) then
-      return false
-    end
-    deactivate_mark ()
-    return true
+    return delete_region (calculate_the_region ())
   end
 )
 

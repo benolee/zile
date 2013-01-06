@@ -55,7 +55,8 @@ function push_mark ()
     table.insert (mark_ring, marker_new (cur_bp, 0))
   end
 
-  lisp.execute_function ("set-mark")
+  set_mark ()
+  activate_mark ()
 end
 
 -- Pop a mark from the mark-ring and make it the current mark.

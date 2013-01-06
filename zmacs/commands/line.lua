@@ -199,19 +199,7 @@ Defun ("delete-horizontal-space",
 Delete all spaces and tabs around point.
 ]],
   true,
-  function ()
-    undo_start_sequence ()
-
-    while not eolp () and following_char ():match ("%s") do
-      delete_char ()
-    end
-
-    while not bolp () and preceding_char ():match ("%s") do
-      backward_delete_char ()
-    end
-
-    undo_end_sequence ()
-  end
+  delete_horizontal_space
 )
 
 

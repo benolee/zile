@@ -102,7 +102,7 @@ function do_search (forward, regexp, pattern)
   end
 
   if not pattern then
-    return lisp.execute_function ("keyboard-quit")
+    return keyboard_quit ()
   end
   if #pattern > 0 then
     last_search = pattern
@@ -160,7 +160,7 @@ function isearch (forward, regexp)
       thisflag.need_resync = true
 
       -- Quit.
-      lisp.execute_function ("keyboard-quit")
+      keyboard_quit ()
 
       -- Restore old mark position.
       if cur_bp.mark then

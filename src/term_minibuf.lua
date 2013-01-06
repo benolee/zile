@@ -49,13 +49,17 @@ function maybe_close_popup (cp)
   if cp and cp.poppedup and wp then
     set_current_window (wp)
     if cp.close then
-      lisp.execute_function ("delete-window")
+      delete_window (cur_wp)
     elseif cp.old_bp then
       switch_to_buffer (cp.old_bp)
     end
     set_current_window (old_wp)
     term_redisplay ()
   end
+end
+
+function suspend ()
+  posix.raise (posix.SIGTSTP)
 end
 
 function term_minibuf_read (prompt, value, pos, cp, hp)
@@ -90,7 +94,7 @@ function term_minibuf_read (prompt, value, pos, cp, hp)
     local c = getkeystroke (GETKEY_DEFAULT)
     if c == nil or c == keycode "\\RET" then
     elseif c == keycode "\\C-z" then
-      lisp.execute_function ("suspend-emacs")
+      suspend ()
     elseif c == keycode "\\C-g" then
       as = nil
       break

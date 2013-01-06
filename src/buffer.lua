@@ -336,7 +336,7 @@ function calculate_the_region ()
 end
 
 function delete_region (r)
-  if warn_if_readonly_buffer () then
+  if not r or warn_if_readonly_buffer () then
     return false
   end
 
@@ -345,6 +345,7 @@ function delete_region (r)
   replace_estr (get_region_size (r), EStr (""))
   goto_offset (m.o)
   unchain_marker (m)
+  deactivate_mark ()
 
   return true
 end
@@ -453,8 +454,7 @@ function check_modified_buffer (bp)
     while true do
       local ans = minibuf_read_yesno (string.format ("Buffer %s modified; kill anyway? (yes or no) ", bp.name))
       if ans == nil then
-        lisp.execute_function ("keyboard-quit")
-        return false
+        return keyboard_quit ()
       elseif not ans then
         return false
       end
@@ -468,12 +468,22 @@ end
 
 -- Basic movement routines
 
+function beginning_of_line ()
+  goto_offset (get_buffer_line_o (cur_bp))
+  cur_bp.goalc = 0
+end
+
+function end_of_line ()
+  goto_offset (get_buffer_line_o (cur_bp) + buffer_line_len (cur_bp))
+  cur_bp.goalc = math.huge
+end
+
 function move_char (offset)
   local dir, ltest, btest, lmove
   if offset >= 0 then
-    dir, ltest, btest, lmove = 1, eolp, eobp, "beginning-of-line"
+    dir, ltest, btest, lmove = 1, eolp, eobp, beginning_of_line
   else
-    dir, ltest, btest, lmove = -1, bolp, bobp, "end-of-line"
+    dir, ltest, btest, lmove = -1, bolp, bobp, end_of_line
   end
   for i = 1, math.abs (offset) do
     if not ltest () then
@@ -481,7 +491,7 @@ function move_char (offset)
     elseif not btest () then
       thisflag.need_resync = true
       set_buffer_pt (cur_bp, get_buffer_pt (cur_bp) + #get_buffer_eol (cur_bp) * dir)
-      lisp.execute_function (lmove)
+      lmove ()
     else
       return false
     end

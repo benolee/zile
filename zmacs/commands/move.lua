@@ -30,10 +30,7 @@ Defun ("beginning-of-line",
 Move point to beginning of current line.
 ]],
   true,
-  function ()
-    goto_offset (get_buffer_line_o (cur_bp))
-    cur_bp.goalc = 0
-  end
+  beginning_of_line
 )
 
 
@@ -43,10 +40,7 @@ Defun ("end-of-line",
 Move point to end of current line.
 ]],
   true,
-  function ()
-    goto_offset (get_buffer_line_o (cur_bp) + buffer_line_len (cur_bp))
-    cur_bp.goalc = math.huge
-  end
+  end_of_line
 )
 
 
@@ -175,22 +169,6 @@ Move point to the end of the buffer; leave mark at previous position.
     goto_offset (get_buffer_size (cur_bp) + 1)
   end
 )
-
-local function scroll_down ()
-  if not window_top_visible (cur_wp) then
-    return move_line (-cur_wp.eheight)
-  end
-
-  return minibuf_error ("Beginning of buffer")
-end
-
-local function scroll_up ()
-  if not window_bottom_visible (cur_wp) then
-    return move_line (cur_wp.eheight)
-  end
-
-  return minibuf_error ("End of buffer")
-end
 
 
 Defun ("scroll-down",

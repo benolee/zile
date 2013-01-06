@@ -91,7 +91,7 @@ function kill_line (whole_line)
   end
 
   if ok and (whole_line or only_blanks_to_end_of_line) and not eobp () then
-    if not lisp.execute_function ("delete-char") then
+    if not delete_char () then
       return false
     end
 
