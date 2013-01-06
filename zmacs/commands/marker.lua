@@ -136,8 +136,8 @@ Put point at beginning and mark at end of buffer.
 ]],
   true,
   function ()
-    lisp.execute_function ("end-of-buffer")
+    goto_offset (get_buffer_size (cur_bp) + 1)
     lisp.execute_function ("set-mark-command")
-    lisp.execute_function ("beginning-of-buffer")
+    goto_offset (1)
   end
 )

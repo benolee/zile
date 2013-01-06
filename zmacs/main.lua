@@ -237,7 +237,7 @@ function main ()
     switch_to_buffer (bp)
     insert_string (splash_str)
     cur_bp.readonly = true
-    lisp.execute_function ("beginning-of-buffer")
+    goto_offset (1)
   end
 
   -- Load files and load files and run functions given on the command line.
@@ -271,7 +271,7 @@ function main ()
   -- Set up screen according to number of files loaded.
   if #buffers == 3 then
     -- *scratch* and two files.
-    lisp.execute_function ("split-window")
+    split_window ()
     switch_to_buffer (buffers[#buffers -1])
     lisp.execute_function ("other-window")
   elseif #buffers > 3 then

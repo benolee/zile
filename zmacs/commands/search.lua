@@ -158,7 +158,7 @@ what to do with it.
   function ()
     local find = minibuf_read ("Query replace string: ", "")
     if not find then
-      return lisp.execute_function ("keyboard-quit")
+      return keyboard_quit ()
     end
     if find == "" then
       return false
@@ -167,7 +167,7 @@ what to do with it.
 
     local repl = minibuf_read (string.format ("Query replace `%s' with: ", find), "")
     if not repl then
-      lisp.execute_function ("keyboard-quit")
+      keyboard_quit ()
     end
 
     local noask = false
@@ -187,7 +187,7 @@ what to do with it.
         if c == keycode "q" then -- Quit immediately.
           break
         elseif c == keycode "\\C-g" then
-          ok = lisp.execute_function ("keyboard-quit")
+          ok = keyboard_quit ()
           break
         elseif c == keycode "!" then -- Replace all without asking.
           noask = true

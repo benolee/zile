@@ -39,7 +39,7 @@ With a nil argument, kill the current buffer.
       buffer = minibuf_read (string.format ("Kill buffer (default %s): ", cur_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = lisp.execute_function ("keyboard-quit")
+        ok = keyboard_quit ()
       end
     end
 
@@ -83,7 +83,7 @@ Select buffer @i{buffer} in the current window.
                              "", cp, buffer_name_history)
 
       if not buffer then
-        ok = lisp.execute_function ("keyboard-quit")
+        ok = keyboard_quit ()
       end
     end
 

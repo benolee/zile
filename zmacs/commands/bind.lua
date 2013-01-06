@@ -172,7 +172,7 @@ by 4 each time.
 
       -- Cancelled.
       if key == keycode "\\C-g" then
-        ok = lisp.execute_function ("keyboard-quit")
+        ok = keyboard_quit ()
         break
       -- Digit pressed.
       elseif string.match (string.char (key.key), "%d") then

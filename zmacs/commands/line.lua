@@ -211,7 +211,7 @@ Delete all spaces and tabs around point, leaving one space.
   true,
   function ()
     undo_start_sequence ()
-    lisp.execute_function ("delete-horizontal-space")
+    delete_horizontal_space ()
     insert_char (' ')
     undo_end_sequence ()
   end

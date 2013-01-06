@@ -37,7 +37,7 @@ Copy region into register @i{register}.
     end
 
     if reg == 7 then
-      return lisp.execute_function ("keyboard-quit")
+      return keyboard_quite ()
     else
       minibuf_clear ()
       local rp = calculate_the_region ()
@@ -73,7 +73,7 @@ Puts point before and mark after the inserted text.
     end
 
     if reg == 7 then
-      ok = lisp.execute_function ("keyboard-quit")
+      ok = keyboard_quite ()
     else
       minibuf_clear ()
       if register_isempty (reg) then

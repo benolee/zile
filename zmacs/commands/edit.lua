@@ -96,13 +96,13 @@ Fill paragraph at or after point.
     end
 
     while buffer_end_of_line (cur_bp, get_buffer_pt (cur_bp)) < m_end.o do
-      lisp.execute_function ("end-of-line")
+    end_of_line ()
       delete_char ()
       lisp.execute_function ("just-one-space")
     end
     unchain_marker (m_end)
 
-    lisp.execute_function ("end-of-line")
+    end_of_line ()
     while get_goalc () > get_variable_number ("fill-column") + 1 and fill_break_line () do end
 
     goto_offset (m.o)
@@ -231,11 +231,11 @@ On nonblank line, delete any immediately following blank lines.
     undo_start_sequence ()
 
     -- Find following blank lines.
-    if lisp.execute_function ("forward-line") and is_blank_line () then
+    if move_line (1) and is_blank_line () then
       r.start = get_buffer_pt (cur_bp)
       repeat
         r.finish = buffer_next_line (cur_bp, get_buffer_pt (cur_bp))
-      until not lisp.execute_function ("forward-line") or not is_blank_line ()
+      until not move_line (1) or not is_blank_line ()
     end
     goto_offset (m.o)
 
@@ -245,7 +245,7 @@ On nonblank line, delete any immediately following blank lines.
       r.finish = math.max (r.finish, buffer_next_line (cur_bp, get_buffer_pt (cur_bp) or math.huge))
       repeat
         r.start = get_buffer_line_o (cur_bp)
-      until not lisp.execute_function ("forward-line", -1) or not is_blank_line ()
+      until not move_line (-1) or not is_blank_line ()
 
       goto_offset (m.o)
       if r.start ~= get_buffer_line_o (cur_bp) or r.finish > buffer_next_line (cur_bp, get_buffer_pt (cur_bp)) then

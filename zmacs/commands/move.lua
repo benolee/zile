@@ -109,7 +109,7 @@ Goto @i{line}, counting from line 1 at beginning of buffer.
 
     if type (n) == "number" then
       move_line ((math.max (n, 1) - 1) - offset_to_line (cur_bp, get_buffer_pt (cur_bp)))
-      lisp.execute_function ("beginning-of-line")
+      beginning_of_line ()
     else
       return false
     end
@@ -205,7 +205,7 @@ Precisely, if point is on line I, move to the start of line I + N.
   function (n)
     n = n or current_prefix_arg or 1
     if n ~= 0 then
-      lisp.execute_function ("beginning-of-line")
+      beginning_of_line ()
       return move_line (n)
     end
     return false
@@ -225,9 +225,9 @@ local function move_paragraph (uniarg, forward, backward, line_extremum)
   end
 
   if is_empty_line () then
-    lisp.execute_function ("beginning-of-line")
+    beginning_of_line ()
   else
-    lisp.execute_function (line_extremum)
+    line_extremum ()
   end
   return true
 end
@@ -240,7 +240,7 @@ Move backward to start of paragraph.  With argument N, do it N times.
 ]],
   true,
   function (n)
-    return move_paragraph (n or 1, previous_line, next_line, "beginning-of-line")
+    return move_paragraph (n or 1, previous_line, next_line, beginning_of_line)
   end
 )
 
@@ -252,7 +252,7 @@ Move forward to end of paragraph.  With argument N, do it N times.
 ]],
   true,
   function (n)
-    return move_paragraph (n or 1, next_line, previous_line, "end-of-line")
+    return move_paragraph (n or 1, next_line, previous_line, end_of_line)
   end
 )
 

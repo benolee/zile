@@ -40,7 +40,7 @@ creating one if none already exists.
     end
 
     if not filename then
-      ok = lisp.execute_function ("keyboard-quit")
+      ok = keyboard_quit ()
     elseif filename ~= "" then
       ok = find_file (filename)
     end
@@ -88,7 +88,7 @@ If the current buffer now contains an empty file that you just visited
 
     local ok = false
     if not ms then
-      ok = lisp.execute_function ("keyboard-quit")
+      ok = keyboard_quit ()
     elseif ms ~= "" and check_modified_buffer (cur_bp ()) then
       kill_buffer (cur_bp)
       ok = find_file (ms)
@@ -116,7 +116,7 @@ Set mark after the inserted text.
     if not file then
       file = minibuf_read_filename ("Insert file: ", cur_bp.dir)
       if not file then
-        ok = lisp.execute_function ("keyboard-quit")
+        ok = keyboard_quit ()
       end
     end
 
@@ -197,7 +197,7 @@ Offer to save each buffer, then kill this process.
         while true do
           local ans = minibuf_read_yesno ("Modified buffers exist; exit anyway? (yes or no) ")
           if ans == nil then
-            return lisp.execute_function ("keyboard-quit")
+            return keyboard_quit ()
           elseif not ans then
             return false
           end
@@ -223,7 +223,7 @@ Make DIR become the current buffer's default directory.
     end
 
     if not dir then
-      return lisp.execute_function ("keyboard-quit")
+      return keyboard_quit ()
     end
 
     if dir ~= "" then
@@ -268,7 +268,7 @@ Puts mark after the inserted text.
       buffer = minibuf_read (string.format ("Insert buffer (default %s): ", def_bp.name),
                              "", cp, buffer_name_history)
       if not buffer then
-        ok = lisp.execute_function ("keyboard-quit")
+        ok = keyboard_quit ()
       end
     end
 
