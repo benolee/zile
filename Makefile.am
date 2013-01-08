@@ -89,12 +89,6 @@ uninstall-hook:
 	@test -d $(DESTDIR)$(datadir) && rmdir $(DESTDIR)$(datadir) || :
 	@test -d $(DESTDIR)$(prefix) && rmdir $(DESTDIR)$(prefix) || :
 
-# welease woger!
-welease:
-	agrep -d '^\* Note' $(VERSION) NEWS | tail -n +3 | head -n -1 | grep -v '^\*\*' > release-notes && \
-	woger freecode,gnu upload=alpha.gnu.org package=$(PACKAGE) package_name="$(PACKAGE_NAME)" version=$(VERSION) description="the tiny Emacs clone" notes=release-notes email=~/announce-$(PACKAGE)-$(VERSION) dist_type="tar.gz" && \
-	rm -f release-notes
-
 ## An empty target to depend on when a rule needs to always run
 ## whenever it is visited.
 FORCE:
