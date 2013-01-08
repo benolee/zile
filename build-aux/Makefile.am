@@ -18,7 +18,5 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 EXTRA_DIST +=						\
-	build-aux/extract-trace				\
-	build-aux/options-parser			\
 	build-aux/mkdotzile.lua				\
 	build-aux/zile-help2man-wrapper
