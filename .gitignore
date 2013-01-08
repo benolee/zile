@@ -1,6 +1,7 @@
 *.patch
 *~
 .sc-start*
+.version
 /COPYING
 /ChangeLog
 /GNUmakefile

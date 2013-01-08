@@ -16,3 +16,4 @@
 /funclib.sh
 /inline-source
 /options-parser
+/git-version-gen
