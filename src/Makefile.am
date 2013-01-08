@@ -19,8 +19,6 @@
 
 doc_DATA += src/dotzile.sample
 
-BUILT_SOURCES = src/loadlua.lua
-
 bin_SCRIPTS = src/zile
 
 src_zile_LUA =						\
