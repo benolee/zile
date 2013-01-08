@@ -48,8 +48,8 @@ Zile is written in Lua 5.2 using POSIX APIs, and hence requires a Lua
    (the curses module must be built)
  * alien <http://mascarenhas.github.com/alien/>
 
-For exact version dependencies, see `src/loadlua.lua.in`. These are
-most easily installed using [LuaRocks][].
+For exact version dependencies, see require_version statments in
+`src/zile`. These are most easily installed using [LuaRocks][].
 
   [Emacs]:   http://www.gnu.org/s/emacs
   [gnulib]:  http://www.gnu.org/s/gnulib

@@ -53,12 +53,7 @@ dist_pkgdata_DATA =					\
 	src/term_curses.lua				\
 	src/term_minibuf.lua				\
 	src/term_redisplay.lua				\
-	src/loadlua.lua					\
 	src/default-bindings.el
-
-src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
-	$(AM_V_at)cp src/loadlua.lua.in $@
-	$(AM_V_GEN)for i in $(dist_pkgdata_DATA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"'|sed -e '/loadlua/d' -e '/default-bindings/d' >> $@; done
 
 src/zile: $(dist_pkgdata_DATA) Makefile
 	@rm -f $@ $@.tmp
@@ -79,7 +74,6 @@ install-exec-hook:
 
 EXTRA_DIST +=						\
 	src/zile.lua.in					\
-	src/loadlua.lua.in				\
 	src/dotzile.sample
 
 CLEANFILES +=						\
