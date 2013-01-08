@@ -142,13 +142,14 @@ EXTRA_DIST +=						\
 
 CLEANFILES +=						\
 	zmacs/zmacs					\
-	zmacs/zmacs.lua					\
-	$(NOTHING_ELSE)
-
-DISTCLEANFILES +=					\
 	zmacs/zmacs.1					\
 	$(NOTHING_ELSE)
 
+DISTCLEANFILES +=					\
+	zmacs/zmacs.lua					\
+	$(NOTHING_ELSE)
+
 MAINTAINERCLEANFILES +=					\
+	$(srcdir)/zmacs/zmacs.lua.in			\
 	$(srcdir)/zmacs/zmacs.1.in			\
 	$(NOTHING_ELSE)
