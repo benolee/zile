@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CLOC = cloc --autoconf
-
 ACLOCAL_AMFLAGS = -I m4
 
 LUA_PATH ?= ;
@@ -48,14 +46,6 @@ include doc/Makefile.am
 include src/Makefile.am
 include tests/Makefile.am
 
-loc:
-	$(CLOC) $(PRODUCTIONSOURCES)
-
-loc-tests:
-	$(CLOC) $(LISP_ALL_TESTS)
-
-loc-all:
-	$(CLOC) $(LISP_ALL_TESTS) $(PRODUCTIONSOURCES) $(srcdir)/tests/run-lisp-tests.lua
 
 ## ------------- ##
 ## Distribution. ##

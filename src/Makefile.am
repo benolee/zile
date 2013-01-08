@@ -59,19 +59,11 @@ dist_pkgdata_DATA =					\
 	src/loadlua.lua					\
 	src/default-bindings.el
 
-PRODUCTIONSOURCES =					\
-	$(src_zile_LUA)					\
-	$(top_srcdir)/src/zile.lua			\
-	$(top_srcdir)/src/loadlua.lua			\
-	$(top_srcdir)/src/Makefile.am			\
-	$(top_srcdir)/src/*.el				\
-	$(top_srcdir)/Makefile.am $(top_srcdir)/configure.ac
-
 src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
 	$(AM_V_at)cp src/loadlua.lua.in $@
 	$(AM_V_GEN)for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
 
-$(top_builddir)/src/zile: $(PRODUCTIONSOURCES) Makefile
+$(top_builddir)/src/zile: $(dist_pkgdata_DATA) Makefile
 	@rm -f $@ $@.tmp
 	$(AM_V_GEN)$(inplace_edit) '$@.lua' >$@.tmp
 	$(AM_V_at)mv $@.tmp $@
