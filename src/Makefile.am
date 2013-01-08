@@ -81,7 +81,6 @@ install-exec-hook:
 	@rm -f $@.tmp
 
 EXTRA_DIST +=						\
-	$(src_zile_LUA)					\
 	src/zile.lua.in					\
 	src/loadlua.lua.in				\
 	src/dotzile.sample
