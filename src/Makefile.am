@@ -18,20 +18,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 dist_pkgdata_DATA =					\
-	src/lib.lua					\
 	src/astr.lua					\
-	src/estr.lua					\
-	src/history.lua					\
-	src/variables.lua				\
 	src/bind.lua					\
 	src/buffer.lua					\
 	src/completion.lua				\
 	src/editfns.lua					\
+	src/estr.lua					\
+	src/file.lua					\
 	src/funcs.lua					\
 	src/getkey.lua					\
-	src/file.lua					\
+	src/history.lua					\
 	src/keycode.lua					\
 	src/killring.lua				\
+	src/lib.lua					\
 	src/line.lua					\
 	src/macro.lua					\
 	src/marker.lua					\
@@ -39,8 +38,10 @@ dist_pkgdata_DATA =					\
 	src/redisplay.lua				\
 	src/registers.lua				\
 	src/search.lua					\
-	src/undo.lua					\
-	src/window.lua					\
 	src/term_curses.lua				\
 	src/term_minibuf.lua				\
-	src/term_redisplay.lua
+	src/term_redisplay.lua				\
+	src/undo.lua					\
+	src/variables.lua				\
+	src/window.lua					\
+	$(NOTHING_ELSE)

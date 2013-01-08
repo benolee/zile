@@ -17,17 +17,34 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+## ------------ ##
+## Environment. ##
+## ------------ ##
+
 ZMACS_PATH = $(abs_srcdir)/zmacs/?.lua
+
+
+## ------------- ##
+## Declarations. ##
+## ------------- ##
 
 zmacsdatadir = $(datadir)/zmacs
 
 zmacs_install_edit =					\
 	$(install_edit)					\
-	-e 's|@zmacsdatadir[@]|$(zmacsdatadir)|g'
+	-e 's|@zmacsdatadir[@]|$(zmacsdatadir)|g'	\
+	$(NOTHING_ELSE)
 
 zmacs_inplace_edit =					\
 	$(inplace_edit)					\
-	-e 's|@zmacsdatadir[@]|$(abs_top_srcdir)/zmacs|g'
+	-e 's|@zmacsdatadir[@]|$(abs_top_srcdir)/zmacs|g' \
+	$(NOTHING_ELSE)
+
+
+## ------ ##
+## Build. ##
+## ------ ##
 
 doc_DATA += zmacs/dotzmacs.sample
 
@@ -57,7 +74,8 @@ dist_zmacsdata_DATA =					\
 	zmacs/keymaps.lua				\
 	zmacs/lisp.lua					\
 	zmacs/main.lua					\
-	zmacs/tbl_vars.lua
+	zmacs/tbl_vars.lua				\
+	$(NOTHING_ELSE)
 
 zmacs/zmacs: $(dist_pkgdata_DATA) $(dist_zmacsdata_DATA) Makefile
 	@rm -f $@ $@.tmp
@@ -80,9 +98,22 @@ zmacs/zmacs.1: $(srcdir)/zmacs/zmacs.1.in zmacs/Makefile.am config.status
 $(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
 	@test -d zmacs || mkdir zmacs
 ## Exit gracefully if zmacs.1.in is not writeable, such as during distcheck!
-	$(AM_V_GEN)if ( touch $@.w && rm -f $@.w; ) >/dev/null 2>&1; then \
-	  builddir='$(builddir)' $(srcdir)/build-aux/missing --run $(HELP2MAN) --output='$@' --no-info --name="Zmacs" --include '$(srcdir)/zmacs/man-extras' '$(srcdir)/zmacs/help2man-wrapper'; \
+	$(AM_V_GEN)if ( touch $@.w && rm -f $@.w; ) >/dev/null 2>&1; \
+	then						\
+	  builddir='$(builddir)'			\
+	  $(srcdir)/build-aux/missing --run		\
+	    $(HELP2MAN)					\
+	      '--output=$@'				\
+	      '--no-info'				\
+	      '--name=Zmacs'				\
+	      --include '$(srcdir)/zmacs/man-extras'	\
+	      '$(srcdir)/zmacs/help2man-wrapper';	\
 	fi
+
+
+## ------------- ##
+## Installation. ##
+## ------------- ##
 
 install_exec_hooks += install-zmacs-hook
 install-zmacs-hook:
@@ -91,19 +122,33 @@ install-zmacs-hook:
 	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zmacs
 	@rm -f $@.tmp
 
+
+## ------------- ##
+## Distribution. ##
+## ------------- ##
+
 EXTRA_DIST +=						\
 	zmacs/dotzmacs.sample				\
 	zmacs/help2man-wrapper				\
 	zmacs/man-extras				\
 	zmacs/mkdotzmacs.lua				\
-	zmacs/zmacs.1.in
+	zmacs/zmacs.1.in				\
+	$(NOTHING_ELSE)
+
+
+## ------------ ##
+## Maintenance. ##
+## ------------ ##
 
 CLEANFILES +=						\
 	zmacs/zmacs					\
-	zmacs/zmacs.lua
+	zmacs/zmacs.lua					\
+	$(NOTHING_ELSE)
 
 DISTCLEANFILES +=					\
-	zmacs/zmacs.1
+	zmacs/zmacs.1					\
+	$(NOTHING_ELSE)
 
 MAINTAINERCLEANFILES +=					\
-	$(srcdir)/zmacs/zmacs.1.in
+	$(srcdir)/zmacs/zmacs.1.in			\
+	$(NOTHING_ELSE)

@@ -17,37 +17,63 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4
+
+## ------------ ##
+## Environment. ##
+## ------------ ##
 
 LUA_PATH ?= ;
 ZILE_PATH = $(abs_srcdir)/src/?.lua
 
-CLEANFILES =
-DISTCLEANFILES =
-MAINTAINERCLEANFILES =
 
-bin_SCRIPTS =
-install_exec_hooks =
-man_MANS =
+## ---------- ##
+## Bootstrap. ##
+## ---------- ##
 
-install_edit = sed \
-	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g' \
-	-e 's|@pkgdocdir[@]|$(docdir)|g'
+ACLOCAL_AMFLAGS = -I m4
 
-inplace_edit = sed \
-	-e 's|@pkgdatadir[@]|$(abs_top_srcdir)/src|g' \
-	-e 's|@pkgdocdir[@]|$(abs_top_srcdir)|g'
 
-EXTRA_DIST =						\
-	FAQ						\
-	GNUmakefile					\
-	maint.mk
+## ------------- ##
+## Declarations. ##
+## ------------- ##
 
-doc_DATA = AUTHORS FAQ NEWS
+CLEANFILES		=
+DISTCLEANFILES		=
+EXTRA_DIST		=
+MAINTAINERCLEANFILES	=
+NOTHING_ELSE		=
+
+bin_SCRIPTS		=
+doc_DATA		=
+install_exec_hooks	=
+man_MANS		=
+
+install_edit = sed					\
+	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g'		\
+	-e 's|@pkgdocdir[@]|$(docdir)|g'		\
+	$(NOTHING_ELSE)
+
+inplace_edit = sed					\
+	-e 's|@pkgdatadir[@]|$(abs_top_srcdir)/src|g'	\
+	-e 's|@pkgdocdir[@]|$(abs_top_srcdir)|g'	\
+	$(NOTHING_ELSE)
 
 include src/Makefile.am
 include zmacs/Makefile.am
 include tests/Makefile.am
+
+
+## ------------- ##
+## Installation. ##
+## ------------- ##
+
+doc_DATA +=						\
+	AUTHORS						\
+	FAQ						\
+	NEWS						\
+	$(NOTHING_ELSE)
+
+install-exec-hook: $(install_exec_hooks)
 
 
 ## ------------- ##
@@ -56,23 +82,26 @@ include tests/Makefile.am
 
 gitlog_to_changelog	= $(srcdir)/build-aux/gitlog-to-changelog
 git_log_fix		= $(srcdir)/build-aux/git-log-fix
-changelog		= $(srcdir)/ChangeLog
 
-# Changes before this date are from before Lua was used for any of Zile.
-changelog_start_date = 2009-03-30
-$(changelog): FORCE
-	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then \
-	  $(gitlog_to_changelog) --amend=$(git_log_fix) \
-	      --since=$(changelog_start_date) > '$@T'; \
-	  rm -f '$@'; mv '$@T' '$@'; \
+dist-hook: ChangeLog
+ChangeLog: FORCE
+	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then	\
+	  $(gitlog_to_changelog) --amend=$(git_log_fix)	\
+	      --since=2009-03-30 > '$@T';		\
+	  rm -f '$@'; mv '$@T' '$@';			\
 	fi
 
-dist-hook: $(changelog)
+EXTRA_DIST +=						\
+	FAQ						\
+	GNUmakefile					\
+	maint.mk					\
+	$(NOTHING_ELSE)
 
 distcheck-hook: syntax-check
 
-install-exec-hook: $(install_exec_hooks)
 
-## An empty target to depend on when a rule needs to always run
-## whenever it is visited.
+## ------------ ##
+## Maintenance. ##
+## ------------ ##
+
 FORCE:
