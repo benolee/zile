@@ -21,7 +21,7 @@ doc_DATA += src/dotzile.sample
 
 bin_SCRIPTS = src/zile
 
-src_zile_LUA =						\
+dist_pkgdata_DATA =					\
 	src/lib.lua					\
 	src/astr.lua					\
 	src/estr.lua					\
@@ -52,16 +52,13 @@ src_zile_LUA =						\
 	src/window.lua					\
 	src/term_curses.lua				\
 	src/term_minibuf.lua				\
-	src/term_redisplay.lua
-
-dist_pkgdata_DATA =					\
-	$(src_zile_LUA)					\
+	src/term_redisplay.lua				\
 	src/loadlua.lua					\
 	src/default-bindings.el
 
 src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
 	$(AM_V_at)cp src/loadlua.lua.in $@
-	$(AM_V_GEN)for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
+	$(AM_V_GEN)for i in $(dist_pkgdata_DATA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"'|sed -e '/loadlua/d' -e '/default-bindings/d' >> $@; done
 
 src/zile: $(dist_pkgdata_DATA) Makefile
 	@rm -f $@ $@.tmp
