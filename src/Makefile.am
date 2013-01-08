@@ -63,7 +63,7 @@ src/loadlua.lua: src/Makefile.am src/loadlua.lua.in
 	$(AM_V_at)cp src/loadlua.lua.in $@
 	$(AM_V_GEN)for i in $(src_zile_LUA); do echo 'require "'`echo $$i | sed -e 's|^src/||;s|\\.lua$$||'`'"' >> $@; done
 
-$(top_builddir)/src/zile: $(dist_pkgdata_DATA) Makefile
+src/zile: $(dist_pkgdata_DATA) Makefile
 	@rm -f $@ $@.tmp
 	$(AM_V_GEN)$(inplace_edit) '$@.lua' >$@.tmp
 	$(AM_V_at)mv $@.tmp $@
@@ -75,7 +75,7 @@ src/dotzile.sample: src/tbl_vars.lua build-aux/mkdotzile.lua
 	  $(LUA) $(srcdir)/build-aux/mkdotzile.lua $(srcdir)/src/tbl_vars.lua
 
 install-exec-hook:
-	@$(install_edit) '$(top_builddir)/src/zile.lua' >$@.tmp
+	@$(install_edit) 'src/zile.lua' >$@.tmp
 	@echo $(INSTALL_SCRIPT) $@ $(DESTDIR)$(bindir)/zile
 	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zile
 	@rm -f $@.tmp
