@@ -38,6 +38,7 @@
 (global-set-key "\C-e" 'end-of-line)
 (global-set-key "\END" 'end-of-line)
 (global-set-key "\C-x^" 'enlarge-window)
+(global-set-key "\M-:" 'eval-expression)
 (global-set-key "\C-x\C-x" 'exchange-point-and-mark)
 (global-set-key "\M-x" 'execute-extended-command)
 (global-set-key "\M-q" 'fill-paragraph)

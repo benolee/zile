@@ -117,3 +117,25 @@ means use current buffer).
     return lisp.loadstring (get_buffer_pre_point (bp) .. get_buffer_post_point (bp))
   end
 )
+
+
+local exprs_history = history_new ()
+
+Defun ("eval-expression",
+       {"string"},
+[[
+Evaluate a lisp expression and print result in the minibuffer.
+]],
+  true,
+  function (expr)
+    if not expr then
+      expr = minibuf_read ("Eval: ", "", nil, exprs_history)
+    end
+
+    lisp.loadstring (expr)
+
+    if expr then
+      add_history_element (exprs_history, expr)
+    end
+  end
+)
