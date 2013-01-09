@@ -196,7 +196,7 @@ function M.call_command (f, branch)
     add_cmd_to_macro ()
   end
 
-  if cur_bp and not command.was_labelled ":undo" then
+  if cur_bp and not command.was_labelled (":undo") then
     cur_bp.next_undop = cur_bp.last_undop
   end
 

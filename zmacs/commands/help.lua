@@ -19,7 +19,7 @@
 
 
 
-local lisp = require "lisp"
+local lisp = require "eval"
 
 
 local Defun = lisp.Defun

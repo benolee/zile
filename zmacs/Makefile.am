@@ -72,7 +72,7 @@ dist_zmacsdata_DATA =					\
 	zmacs/commands/variables.lua			\
 	zmacs/commands/window.lua			\
 	zmacs/keymaps.lua				\
-	zmacs/lisp.lua					\
+	zmacs/eval.lua					\
 	zmacs/main.lua					\
 	zmacs/tbl_vars.lua				\
 	$(NOTHING_ELSE)

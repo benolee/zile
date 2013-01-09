@@ -20,7 +20,7 @@
 -- MA 02111-1301, USA.
 
 
-local lisp = require "lisp"
+local lisp = require "eval"
 
 
 local Defun = lisp.Defun
