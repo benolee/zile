@@ -177,6 +177,11 @@ function term_init ()
   posix.signal (posix.SIGCONT, function () resumed = true end)
 end
 
+function term_resize (nlines, ncols)
+  -- With a traditional curses, resizeterm is not implemented.
+  return pcall (curses.resizeterm, nlines, ncols)
+end
+
 function term_close ()
   -- Revert terminal to cursor mode before exiting.
   keypad (false)
