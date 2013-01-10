@@ -151,3 +151,79 @@ Center point in selected window and redisplay frame.
   true,
   interactive_recenter
 )
+
+
+Defun ("screen-height",
+       {},
+[[
+The total number of lines available for display on the screen.
+]],
+  true,
+  function ()
+    minibuf_write (tostring (term_height ()))
+  end
+)
+
+
+Defun ("screen-width",
+       {},
+[[
+The total number of lines available for display on the screen.
+]],
+  true,
+  function ()
+    minibuf_write (tostring (term_width ()))
+  end
+)
+
+
+Defun ("set-screen-height",
+       {"number"},
+[[
+Set the usable number of lines for display on the screen.
+]],
+  true,
+  function (lines)
+    local ok, errmsg = term_resize (lines or term_height (), term_width ())
+
+    if not ok then
+      minibuf_error (errmsg)
+    end
+    return ok
+  end
+)
+
+
+Defun ("set-screen-size",
+       {"number", "number"},
+[[
+Set the number of usable lines and columns for display on the screen.
+]],
+  true,
+  function (lines, cols)
+    local ok, errmsg = term_resize (lines or term_height (),
+                                    cols or term_width ())
+
+    if not ok then
+      minibuf_error (errmsg)
+    end
+    return ok
+  end
+)
+
+
+Defun ("set-screen-width",
+       {"number"},
+[[
+Set the usable number of columns for display on the screen.
+]],
+  true,
+  function (cols)
+    local ok, errmsg = term_resize (term_height (), cols or term_width ())
+
+    if not ok then
+      minibuf_error (errmsg)
+    end
+    return ok
+  end
+)
