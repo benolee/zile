@@ -54,5 +54,5 @@ if test -n "$EMACSPROG"; then
 fi
 
 dnl Generate output
-AC_CONFIG_FILES([Makefile zmacs/zmacs.lua])
+AC_CONFIG_FILES([Makefile src/version.lua zmacs/zmacs.lua])
 AC_OUTPUT

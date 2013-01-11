@@ -17,38 +17,27 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
--- Derived constants
-local PROGRAM_STRING    = PROGRAM_NAME .. " (GNU " .. PACKAGE_NAME .. ")"
-local VERSION_STRING    = PROGRAM_STRING .. " " .. VERSION
-local COPYRIGHT_STRING  = "Copyright (C) 2013 Free Software Foundation, Inc."
 
-local COPYRIGHT_NOTICE  = [[
-]] .. PROGRAM_STRING .. [[ comes with ABSOLUTELY NO WARRANTY.
-]] .. PROGRAM_NAME .. [[ is Free Software--Free as in Freedom--so you can redistribute copies
-of ]] .. PROGRAM .. [[ and modify it; see the file COPYING. Otherwise, a copy can be
-downloaded from http://www.gnu.org/licenses/gpl.html.
-]]
+prog = require "version"
 
-splash_str = "Welcome to " .. PROGRAM_STRING .. [[.
+splash_str = "Welcome to " .. prog.program .. [[.
 
-Undo changes	C-x u        Exit ]] .. PROGRAM_NAME .. [[	C-x C-c
+Undo changes	C-x u        Exit ]] .. prog.Name .. [[	C-x C-c
 (`C-' means use the CTRL key.  `M-' means hold the Meta (or Alt) key.
 If you have no Meta key, you may type ESC followed by the character.)
 Combinations like `C-x u' mean first press `C-x', then `u'.
 
 Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ
 
-]] .. VERSION_STRING .. [[
+]] .. prog.version .. [[
 
-]] .. COPYRIGHT_STRING .. [[
+]] .. prog.COPYRIGHT_STRING .. [[
 
 
-]] .. COPYRIGHT_NOTICE
+]] .. prog.COPYRIGHT_NOTICE
 
 
 -- Runtime constants
--- The executable name
-program_name = posix.basename (arg[0] or PROGRAM)
 
 -- Zi display attributes
 display = {}
@@ -89,9 +78,9 @@ lastflag = {}
 local options = {
   {"doc", "Initialization options:"},
   {"doc", ""},
-  {"opt", "no-init-file", 'q', "optional", "", "do not load ~/." .. PROGRAM},
-  {"opt", "funcall", 'f', "required", "FUNC", "call " .. PROGRAM_NAME .. " Lisp function FUNC with no arguments"},
-  {"opt", "load", 'l', "required", "FILE", "load " .. PROGRAM_NAME .. " Lisp FILE using the load function"},
+  {"opt", "no-init-file", 'q', "optional", "", "do not load ~/." .. prog.name},
+  {"opt", "funcall", 'f', "required", "FUNC", "call " .. prog.Name .. " Lisp function FUNC with no arguments"},
+  {"opt", "load", 'l', "required", "FILE", "load " .. prog.Name .. " Lisp FILE using the load function"},
   {"opt", "help", '\0', "optional", "", "display this help message and exit"},
   {"opt", "version", '\0', "optional", "", "display version information and exit"},
   {"doc", ""},
@@ -125,7 +114,7 @@ function process_args ()
       minibuf_error (string.format ("Unknown option `%s'", arg[this_optind]))
     elseif c == string.byte (':') then -- Missing argument
       io.stderr:write (string.format ("%s: Option `%s' requires an argument\n",
-                                      program_name, arg[this_optind]))
+                                      prog.name, arg[this_optind]))
       os.exit (1)
     elseif c == string.byte ('q') then
       longindex = 0
@@ -144,7 +133,7 @@ function process_args ()
     elseif longindex == 3 then
       io.write ("Usage: " .. arg[0] .. " [OPTION-OR-FILENAME]...\n" ..
                 "\n" ..
-                "Run " .. PROGRAM_NAME .. ", a lightweight Emacs clone.\n" ..
+                "Run " .. prog.Name .. ", a lightweight Emacs clone.\n" ..
                 "\n")
 
       for _, v in ipairs (options) do
@@ -163,9 +152,9 @@ function process_args ()
                 "Report bugs to " .. PACKAGE_BUGREPORT .. ".\n")
       os.exit (0)
     elseif longindex == 4 then
-      io.write (VERSION_STRING .. "\n" ..
-                COPYRIGHT_STRING .. "\n" ..
-                COPYRIGHT_NOTICE .. "\n")
+      io.write (prog.version .. "\n" ..
+                prog.COPYRIGHT_STRING .. "\n" ..
+                prog.COPYRIGHT_NOTICE .. "\n")
       os.exit (0)
     elseif longindex == 5 then
       if optarg[1] == '+' then
@@ -181,14 +170,14 @@ function process_args ()
 end
 
 local function segv_sig_handler (signo)
-  io.stderr:write (program_name .. ": " .. PROGRAM_NAME ..
+  io.stderr:write (prog.name .. ": " .. prog.Name ..
                    " crashed.  Please send a bug report to <" ..
-                   PACKAGE_BUGREPORT .. ">.\r\n")
+                   prog.PACKAGE_BUGREPORT .. ">.\r\n")
   zile_exit (true)
 end
 
 local function other_sig_handler (signo)
-  local msg = program_name .. ": terminated with signal " .. signo .. ".\n" .. debug.traceback ()
+  local msg = prog.name .. ": terminated with signal " .. signo .. ".\n" .. debug.traceback ()
   io.stderr:write (msg:gsub ("\n", "\r\n"))
   zile_exit (false)
 end
@@ -225,7 +214,7 @@ function main ()
   if not qflag then
     local s = os.getenv ("HOME")
     if s then
-      lisp.loadfile (s .. "/." .. PROGRAM)
+      lisp.loadfile (s .. "/." .. prog.name)
     end
   end
 
@@ -233,7 +222,7 @@ function main ()
   -- load file is specified on the command line, and there has been no
   -- error.
   if #zarg == 0 and not minibuf_contents and not get_variable_bool ("inhibit-splash-screen") then
-    local bp = create_auto_buffer ("*GNU " .. PROGRAM_NAME .. "*")
+    local bp = create_auto_buffer ("*GNU " .. prog.Name .. "*")
     switch_to_buffer (bp)
     insert_string (splash_str)
     cur_bp.readonly = true

@@ -43,5 +43,6 @@ dist_pkgdata_DATA =					\
 	src/term_redisplay.lua				\
 	src/undo.lua					\
 	src/variables.lua				\
+	src/version.lua					\
 	src/window.lua					\
 	$(NOTHING_ELSE)
