@@ -24,6 +24,34 @@ local M = {}
 
 
 
+--[[ ----------- ]]--
+--[[ Cons Cells. ]]--
+--[[ ----------- ]]--
+
+
+local Cons = {}
+local metatable = { __index = Cons }
+
+
+-- Construct and return a new cons cell:
+--   new = M.cons (car, cdr)
+function M.cons (car, cdr)
+  return setmetatable ({car = car, cdr = cdr}, metatable)
+end
+
+
+-- Return a non-destructive reversed cons list.
+function Cons:reverse ()
+  local rev = nil
+  while self ~= nil do
+    rev = M.cons (self.car, rev)
+    self = self.cdr
+  end
+  return rev
+end
+
+
+
 --[[ ========================= ]]--
 --[[ ZLisp scanner and parser. ]]--
 --[[ ========================= ]]--
@@ -79,7 +107,7 @@ local function lex (s, i)
       end
     until c == '"'
 
-    return token, "string", i
+    return token, "word", i
   end
 
   -- Anything else is a `word' - up to the next whitespace or delimiter.
@@ -101,38 +129,30 @@ end
 -- representation of the ZLisp code in `s'.
 local function parse (s)
   local i = 0
-  local function append (ast, e)
-    if ast == nil then
-      ast = e
-    else
-      local l2 = ast
-      while l2.next ~= nil do
-        l2 = l2.next
-      end
-      l2.next = e
-    end
-    return ast
+
+  -- New nodes are pushed onto the front of the list for speed...
+  local function push (ast, value, kind, quoted)
+    return M.cons ({value = value, kind = kind, quoted = quoted}, ast)
   end
+
   local function read ()
-    local ast = nil
-    local quoted = false
+    local ast, token, kind, quoted
     repeat
-      local token, kind
       token, kind, i = lex (s, i)
       if kind == "'" then
-        quoted = true
+        quoted = kind
       else
         if kind == "(" then
-          ast = append (ast, {branch = read (), quoted = quoted})
-        elseif kind == "word" then
-          ast = append (ast, {data = token, quoted = quoted})
-	elseif kind == "string" then
-          ast = append (ast, {data = token, string = true, quoted = quoted})
+          ast = push (ast, read (), nil, quoted)
+        elseif kind == "word" or kind == "string" then
+          ast = push (ast, token, kind, quoted)
         end
-        quoted = false
+        quoted = nil
       end
     until kind == ")" or kind == "eof"
-    return ast
+
+    -- ...and then the whole list is reversed once completed.
+    return ast and ast:reverse () or nil
   end
 
   return read ()
@@ -157,18 +177,18 @@ function M.Defun (name, argtypes, doc, interactive, func)
     func = function (arglist)
              local args = {}
              local i = 1
-             while arglist and arglist.next do
-               local val = arglist.next
+             while arglist and arglist.car do
+               local val = arglist.car
                local ty = argtypes[i]
                if ty == "number" then
-                 val = tonumber (val.data, 10)
+                 val = tonumber (val.value, 10)
                elseif ty == "boolean" then
-                 val = val.data ~= "nil"
+                 val = val.value ~= "nil"
                elseif ty == "string" then
-                 val = tostring (val.data)
+                 val = tostring (val.value)
                end
                table.insert (args, val)
-               arglist = arglist.next
+               arglist = arglist.cdr
                i = i + 1
              end
              current_prefix_arg = prefix_arg
@@ -218,7 +238,7 @@ function M.execute_function (name, uniarg)
   local ok
 
   if uniarg ~= nil and type (uniarg) ~= "table" then
-    uniarg = {next = {data = uniarg and tostring (uniarg) or nil}}
+    uniarg = M.cons ({value = uniarg and tostring (uniarg) or nil})
   end
 
   command.attach_label (nil)
@@ -229,12 +249,12 @@ function M.execute_function (name, uniarg)
 end
 
 -- Call an interactive command.
-function M.call_command (f, branch)
+function M.call_command (name, list)
   thisflag = {defining_macro = lastflag.defining_macro}
 
   -- Execute the command.
   command.interactive_enter ()
-  local ok = M.execute_function (f, branch)
+  local ok = M.execute_function (name, list)
   command.interactive_exit ()
 
   -- Only add keystrokes if we were already in macro defining mode
@@ -253,44 +273,33 @@ function M.call_command (f, branch)
 end
 
 
--- Evalute one branch of the AST.
-local function evaluateBranch (branch)
-  return branch and branch.data and M.call_command (branch.data, branch) or nil
+-- Evalute one command expression.
+local function evalcommand (list)
+  return list and list.car and M.call_command (list.car.value, list.cdr) or nil
 end
 
 
--- Evaluate an AST.
-local function leEval (list)
+-- Evaluate one arbitrary expression.
+function M.evalexpr (node)
+  if M.function_exists (node.value) then
+    return node.quoted and node or evalcommand (node)
+  end
+  return M.cons (get_variable (node.value) or node)
+end
+
+
+-- Evaluate a list of command expressions.
+local function eval (list)
   while list do
-    evaluateBranch (list.branch)
-    list = list.next
+    evalcommand (list.car.value)
+    list = list.cdr
   end
-end
-
-
--- This needs to be accessible for writing special forms that only
--- evaluate some of their arguments, e.g. setq.
-function M.evaluateNode (node)
-  if node == nil then
-    return nil
-  end
-  local value
-  if node.branch ~= nil then
-    if node.quoted then
-      value = node.branch
-    else
-      value = evaluateBranch (node.branch)
-    end
-  else
-    value = {data = get_variable (node.data) or node.data}
-  end
-  return value
 end
 
 
 -- Evaluate a string of ZLisp.
 function M.loadstring (s)
-  leEval (parse (s))
+  eval (parse (s))
 end
 
 

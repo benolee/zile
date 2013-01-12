@@ -54,8 +54,8 @@ The values val are expressions; they are evaluated.
     local ret
     local l = {...}
     for i = 1, #l/2 do
-      ret = lisp.evaluateNode (l[i + 1])
-      set_variable (l[i].data, ret.data)
+      ret = lisp.evaluateexpr (l[i + 1])
+      set_variable (l[i].value, ret.value)
     end
     return ret
   end
