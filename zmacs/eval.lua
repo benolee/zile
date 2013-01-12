@@ -23,10 +23,10 @@
 local M = {}
 
 -- User commands
-local usercmd = {}
+local symbol = {}
 
 function M.Defun (name, argtypes, doc, interactive, func)
-  usercmd[name] = {
+  symbol[name] = {
     doc = texi (doc:chomp ()),
     interactive = interactive,
     func = function (arglist)
@@ -59,16 +59,16 @@ end
 
 -- Return function's interactive field, or nil if not found.
 function M.get_function_interactive (name)
-  return usercmd[name] and usercmd[name].interactive or nil
+  return symbol[name] and symbol[name].interactive or nil
 end
 
 function M.get_function_doc (name)
-  return usercmd[name] and usercmd[name].doc or nil
+  return symbol[name] and symbol[name].doc or nil
 end
 
--- Iterator returning (name, entry) for each usercmd.
+-- Iterator returning (name, entry) for each symbol.
 function M.commands ()
-  return next, usercmd, nil
+  return next, symbol, nil
 end
 
 local function read_char (s, pos)
@@ -175,7 +175,7 @@ function M.execute_function (name, uniarg)
   end
 
   command.attach_label (nil)
-  ok = usercmd[name] and usercmd[name].func and usercmd[name].func (uniarg)
+  ok = symbol[name] and symbol[name].func and symbol[name].func (uniarg)
   command.next_label ()
 
   return ok
@@ -251,7 +251,7 @@ function M.loadfile (file)
 end
 
 function M.function_exists (f)
-  return usercmd[f] ~= nil
+  return symbol[f] ~= nil
 end
 
 return M
