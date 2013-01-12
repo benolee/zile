@@ -30,11 +30,8 @@ local M = {}
 
 
 -- Increment index into s and return that character.
-local function read_char (s, pos)
-  if pos <= #s then
-    return s[pos], pos + 1
-  end
-  return -1, pos
+local function nextch (s, i)
+  return i < #s and s[i + 1] or nil, i + 1
 end
 
 
@@ -42,91 +39,100 @@ end
 -- `token' is the content of the just scanned token, `kind' is the
 -- type of token returned, and `i' is the index of the next unscanned
 -- character in `s'.
-local function read_token (s, pos)
+local function lex (s, i)
+  -- Skip initial whitespace and comments.
   local c
-  local doublequotes = false
-  local tok = ""
-
-  -- Chew space to next token
   repeat
-    c, pos = read_char (s, pos)
+    c, i = nextch (s, i)
 
-    -- Munch comments
-    if c == ";" then
+    -- Comments start with `;'.
+    if c == ';' then
       repeat
-        c, pos = read_char (s, pos)
-      until c == -1 or c == "\n"
+        c, i = nextch (s, i)
+      until c == '\n' or c == '\r' or c == nil
     end
-  until c ~= " " and c ~= "\t"
 
-  -- Snag token
-  if c == "(" or c == ")" or c == "'" or c == "\n" or c == -1 then
-    return tok, c, pos
+    -- Continue skipping, additional lines of comments and whitespace.
+  until c ~= ' ' and c ~= '\t' and c ~= '\n' and c ~= '\r'
+
+  -- Return end-of-file immediately.
+  if c == nil then return nil, "eof", i end
+
+  -- Return delimiter tokens.
+  -- These are returned in the kind field so we can immediately tell
+  -- the difference between a ')' delimiter and a ")" string token.
+  if c == '(' or c == ')' or c == "'" then
+    return "", c, i
   end
 
-  -- It looks like a string. Snag to the next whitespace.
-  if c == "\"" then
-    doublequotes = true
-    c, pos = read_char (s, pos)
+  -- Strings start and end with `"'.
+  -- Note we read another character immediately to skip the opening
+  -- quote, and don't append the closing quote to the returned token.
+  local token = ''
+  if c == '"' then
+    repeat
+      c, i = nextch (s, i)
+      if c == nil then
+        return token, "incomplete string", i - 1
+      elseif c ~= '"' then
+        token = token .. c
+      end
+    until c == '"'
+
+    return token, "string", i
   end
 
+  -- Anything else is a `word' - up to the next whitespace or delimiter.
+  -- Try to compare common characters first to minimise time spent
+  -- checking.
   repeat
-    tok = tok .. c
-    if not doublequotes then
-      if c == ")" or c == "(" or c == ";" or c == " " or c == "\n"
-        or c == "\r" or c == -1 then
-        pos = pos - 1
-        tok = string.sub (tok, 1, -2)
-        return tok, "word", pos
-      end
-    else
-      if c == "\n" or c == "\r" or c == -1 then
-        pos = pos - 1
-      end
-      if c == "\"" then
-        tok = string.sub (tok, 1, -2)
-        return tok, "word", pos
-      end
+    token = token .. c
+    c, i = nextch (s, i)
+    if c == ')' or c == '(' or c == ';' or c == ' ' or c == '\t'
+       or c == '\n' or c == '\r' or c == "'" or c == nil
+    then
+      return token, "word", i - 1
     end
-    c, pos = read_char (s, pos)
   until false
 end
 
 
--- Call scanner  repeatedly to build and return an abstract syntax-tree
+-- Call `lex' repeatedly to build and return an abstract syntax-tree
 -- representation of the ZLisp code in `s'.
-local function lisp_read (s)
-  local pos = 1
-  local function append (l, e)
-    if l == nil then
-      l = e
+local function parse (s)
+  local i = 0
+  local function append (ast, e)
+    if ast == nil then
+      ast = e
     else
-      local l2 = l
+      local l2 = ast
       while l2.next ~= nil do
         l2 = l2.next
       end
       l2.next = e
     end
-    return l
+    return ast
   end
   local function read ()
-    local l = nil
+    local ast = nil
     local quoted = false
     repeat
-      local tok, tokenid
-      tok, tokenid, pos = read_token (s, pos)
-      if tokenid == "'" then
+      local token, kind
+      token, kind, i = lex (s, i)
+      if kind == "'" then
         quoted = true
       else
-        if tokenid == "(" then
-          l = append (l, {branch = read (), quoted = quoted})
-        elseif tokenid == "word" then
-          l = append (l, {data = tok, quoted = quoted})
+        if kind == "(" then
+          ast = append (ast, {branch = read (), quoted = quoted})
+        elseif kind == "word" then
+          ast = append (ast, {data = token, quoted = quoted})
+	elseif kind == "string" then
+          ast = append (ast, {data = token, string = true, quoted = quoted})
         end
         quoted = false
       end
-    until tokenid == ")" or tokenid == -1
-    return l
+    until kind == ")" or kind == "eof"
+    return ast
   end
 
   return read ()
@@ -284,7 +290,7 @@ end
 
 -- Evaluate a string of ZLisp.
 function M.loadstring (s)
-  leEval (lisp_read (s))
+  leEval (parse (s))
 end
 
 
