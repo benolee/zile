@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+prog = require "version"
+
 -- FIXME: Warn when file changes on disk
 
 function exist_file (filename)
@@ -370,7 +372,7 @@ function zile_exit (doabort)
       local buf, as = ""
       local i
       local fname = bp.filename or bp.name
-      buf = fname .. string.upper (PACKAGE) .. "SAVE"
+      buf = fname .. string.upper (prog.name) .. "SAVE"
       io.stderr:write (string.format ("Saving %s...\r\n", buf))
       write_to_disk (bp, buf, "rw-------")
     end

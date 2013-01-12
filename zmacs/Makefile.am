@@ -77,9 +77,9 @@ dist_zmacsdata_DATA =					\
 	zmacs/tbl_vars.lua				\
 	$(NOTHING_ELSE)
 
-zmacs/zmacs: $(dist_pkgdata_DATA) $(dist_zmacsdata_DATA) Makefile
+zmacs/zmacs: zmacs/zmacs.in Makefile
 	@rm -f $@ $@.tmp
-	$(AM_V_GEN)$(zmacs_inplace_edit) '$@.lua' >'$@.tmp'
+	$(AM_V_GEN)$(zmacs_inplace_edit) '$(srcdir)/$@.in' >'$@.tmp'
 	$(AM_V_at)mv $@.tmp $@
 	$(AM_V_at)chmod +x $@
 	$(AM_V_at)$@ --version >/dev/null || rm $@
@@ -89,7 +89,7 @@ zmacs/dotzmacs.sample: zmacs/tbl_vars.lua zmacs/mkdotzmacs.lua
 	LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)' \
 	  $(LUA) $(srcdir)/zmacs/mkdotzmacs.lua > '$@'
 
-zmacs/zmacs.1: $(srcdir)/zmacs/zmacs.1.in zmacs/Makefile.am config.status
+zmacs/zmacs.1: $(srcdir)/zmacs/zmacs.1.in Makefile config.status
 	@test -d zmacs || mkdir zmacs
 	$(AM_V_at)rm -f $@ $@.tmp
 	$(AM_V_GEN)$(zmacs_install_edit) '$(srcdir)/$@.in' >'$@.tmp'
@@ -117,7 +117,7 @@ $(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
 
 install_exec_hooks += install-zmacs-hook
 install-zmacs-hook:
-	@$(zmacs_install_edit) zmacs/zmacs.lua >'$@.tmp'
+	@$(zmacs_install_edit) $(srcdir)/zmacs/zmacs.in >'$@.tmp'
 	@echo $(INSTALL_SCRIPT) zmacs/zmacs $(DESTDIR)$(bindir)/zmacs
 	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zmacs
 	@rm -f $@.tmp
@@ -133,6 +133,7 @@ EXTRA_DIST +=						\
 	zmacs/man-extras				\
 	zmacs/mkdotzmacs.lua				\
 	zmacs/zmacs.1.in				\
+	zmacs/zmacs.in					\
 	$(NOTHING_ELSE)
 
 
@@ -145,11 +146,6 @@ CLEANFILES +=						\
 	zmacs/zmacs.1					\
 	$(NOTHING_ELSE)
 
-DISTCLEANFILES +=					\
-	zmacs/zmacs.lua					\
-	$(NOTHING_ELSE)
-
 MAINTAINERCLEANFILES +=					\
-	$(srcdir)/zmacs/zmacs.lua.in			\
 	$(srcdir)/zmacs/zmacs.1.in			\
 	$(NOTHING_ELSE)
