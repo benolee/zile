@@ -22,55 +22,14 @@
 
 local M = {}
 
--- User commands
-local symbol = {}
 
-function M.Defun (name, argtypes, doc, interactive, func)
-  symbol[name] = {
-    doc = texi (doc:chomp ()),
-    interactive = interactive,
-    func = function (arglist)
-             local args = {}
-             local i = 1
-             while arglist and arglist.next do
-               local val = arglist.next
-               local ty = argtypes[i]
-               if ty == "number" then
-                 val = tonumber (val.data, 10)
-               elseif ty == "boolean" then
-                 val = val.data ~= "nil"
-               elseif ty == "string" then
-                 val = tostring (val.data)
-               end
-               table.insert (args, val)
-               arglist = arglist.next
-               i = i + 1
-             end
-             current_prefix_arg = prefix_arg
-             prefix_arg = false
-             local ret = func (unpack (args))
-             if ret == nil then
-               ret = true
-             end
-             return ret
-           end
-  }
-end
 
--- Return function's interactive field, or nil if not found.
-function M.get_function_interactive (name)
-  return symbol[name] and symbol[name].interactive or nil
-end
+--[[ ========================= ]]--
+--[[ ZLisp scanner and parser. ]]--
+--[[ ========================= ]]--
 
-function M.get_function_doc (name)
-  return symbol[name] and symbol[name].doc or nil
-end
 
--- Iterator returning (name, entry) for each symbol.
-function M.commands ()
-  return next, symbol, nil
-end
-
+-- Increment index into s and return that character.
 local function read_char (s, pos)
   if pos <= #s then
     return s[pos], pos + 1
@@ -78,6 +37,11 @@ local function read_char (s, pos)
   return -1, pos
 end
 
+
+-- Lexical scanner: Return three values: `token', `kind', `i', where
+-- `token' is the content of the just scanned token, `kind' is the
+-- type of token returned, and `i' is the index of the next unscanned
+-- character in `s'.
 local function read_token (s, pos)
   local c
   local doublequotes = false
@@ -128,6 +92,9 @@ local function read_token (s, pos)
   until false
 end
 
+
+-- Call scanner  repeatedly to build and return an abstract syntax-tree
+-- representation of the ZLisp code in `s'.
 local function lisp_read (s)
   local pos = 1
   local function append (l, e)
@@ -164,6 +131,80 @@ local function lisp_read (s)
 
   return read ()
 end
+
+
+
+--[[ ======================== ]]--
+--[[ Symbol Table Management. ]]--
+--[[ ======================== ]]--
+
+
+-- ZLisp symbols.
+local symbol = {}
+
+
+-- Define symbols for the evaluator.
+function M.Defun (name, argtypes, doc, interactive, func)
+  symbol[name] = {
+    doc = texi (doc:chomp ()),
+    interactive = interactive,
+    func = function (arglist)
+             local args = {}
+             local i = 1
+             while arglist and arglist.next do
+               local val = arglist.next
+               local ty = argtypes[i]
+               if ty == "number" then
+                 val = tonumber (val.data, 10)
+               elseif ty == "boolean" then
+                 val = val.data ~= "nil"
+               elseif ty == "string" then
+                 val = tostring (val.data)
+               end
+               table.insert (args, val)
+               arglist = arglist.next
+               i = i + 1
+             end
+             current_prefix_arg = prefix_arg
+             prefix_arg = false
+             local ret = func (unpack (args))
+             if ret == nil then
+               ret = true
+             end
+             return ret
+           end
+  }
+end
+
+
+-- Return true if there is a symbol `name' in the symbol-table.
+function M.function_exists (name)
+  return symbol[name] ~= nil
+end
+
+
+-- Return function's interactive field, or nil if not found.
+function M.get_function_interactive (name)
+  return symbol[name] and symbol[name].interactive or nil
+end
+
+
+-- Return the docstring for symbol `name'.
+function M.get_function_doc (name)
+  return symbol[name] and symbol[name].doc or nil
+end
+
+
+-- Iterator returning (name, entry) for each symbol.
+function M.commands ()
+  return next, symbol, nil
+end
+
+
+
+--[[ ================ ]]--
+--[[ ZLisp Evaluator. ]]--
+--[[ ================ ]]--
 
 
 -- Execute a function non-interactively.
@@ -205,16 +246,21 @@ function M.call_command (f, branch)
   return ok
 end
 
+
+-- Evalute one branch of the AST.
 local function evaluateBranch (branch)
   return branch and branch.data and M.call_command (branch.data, branch) or nil
 end
 
+
+-- Evaluate an AST.
 local function leEval (list)
   while list do
     evaluateBranch (list.branch)
     list = list.next
   end
 end
+
 
 -- This needs to be accessible for writing special forms that only
 -- evaluate some of their arguments, e.g. setq.
@@ -235,10 +281,14 @@ function M.evaluateNode (node)
   return value
 end
 
+
+-- Evaluate a string of ZLisp.
 function M.loadstring (s)
   leEval (lisp_read (s))
 end
 
+
+-- Evaluate a file of ZLisp.
 function M.loadfile (file)
   local s = io.slurp (file)
 
@@ -250,8 +300,5 @@ function M.loadfile (file)
   return false
 end
 
-function M.function_exists (f)
-  return symbol[f] ~= nil
-end
 
 return M
