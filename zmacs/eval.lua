@@ -19,144 +19,16 @@
 -- Free Software Foundation, Fifth Floor, 51 Franklin Street, Boston,
 -- MA 02111-1301, USA.
 
-
-local M = {}
-
+zz = require "zlisp"
 
 
---[[ ----------- ]]--
---[[ Cons Cells. ]]--
---[[ ----------- ]]--
+local M = {
+  -- Copy some commands into our namespace directly.
+  commands  = zz.symbols,
+  cons      = zz.cons,
+}
 
-
-local Cons = {}
-local metatable = { __index = Cons }
-
-
--- Construct and return a new cons cell:
---   new = M.cons (car, cdr)
-function M.cons (car, cdr)
-  return setmetatable ({car = car, cdr = cdr}, metatable)
-end
-
-
--- Return a non-destructive reversed cons list.
-function Cons:reverse ()
-  local rev = nil
-  while self ~= nil do
-    rev = M.cons (self.car, rev)
-    self = self.cdr
-  end
-  return rev
-end
-
-
-
---[[ ========================= ]]--
---[[ ZLisp scanner and parser. ]]--
---[[ ========================= ]]--
-
-
--- Increment index into s and return that character.
-local function nextch (s, i)
-  return i < #s and s[i + 1] or nil, i + 1
-end
-
-
--- Lexical scanner: Return three values: `token', `kind', `i', where
--- `token' is the content of the just scanned token, `kind' is the
--- type of token returned, and `i' is the index of the next unscanned
--- character in `s'.
-local function lex (s, i)
-  -- Skip initial whitespace and comments.
-  local c
-  repeat
-    c, i = nextch (s, i)
-
-    -- Comments start with `;'.
-    if c == ';' then
-      repeat
-        c, i = nextch (s, i)
-      until c == '\n' or c == '\r' or c == nil
-    end
-
-    -- Continue skipping, additional lines of comments and whitespace.
-  until c ~= ' ' and c ~= '\t' and c ~= '\n' and c ~= '\r'
-
-  -- Return end-of-file immediately.
-  if c == nil then return nil, "eof", i end
-
-  -- Return delimiter tokens.
-  -- These are returned in the kind field so we can immediately tell
-  -- the difference between a ')' delimiter and a ")" string token.
-  if c == '(' or c == ')' or c == "'" then
-    return "", c, i
-  end
-
-  -- Strings start and end with `"'.
-  -- Note we read another character immediately to skip the opening
-  -- quote, and don't append the closing quote to the returned token.
-  local token = ''
-  if c == '"' then
-    repeat
-      c, i = nextch (s, i)
-      if c == nil then
-        return token, "incomplete string", i - 1
-      elseif c ~= '"' then
-        token = token .. c
-      end
-    until c == '"'
-
-    return token, "word", i
-  end
-
-  -- Anything else is a `word' - up to the next whitespace or delimiter.
-  -- Try to compare common characters first to minimise time spent
-  -- checking.
-  repeat
-    token = token .. c
-    c, i = nextch (s, i)
-    if c == ')' or c == '(' or c == ';' or c == ' ' or c == '\t'
-       or c == '\n' or c == '\r' or c == "'" or c == nil
-    then
-      return token, "word", i - 1
-    end
-  until false
-end
-
-
--- Call `lex' repeatedly to build and return an abstract syntax-tree
--- representation of the ZLisp code in `s'.
-local function parse (s)
-  local i = 0
-
-  -- New nodes are pushed onto the front of the list for speed...
-  local function push (ast, value, kind, quoted)
-    return M.cons ({value = value, kind = kind, quoted = quoted}, ast)
-  end
-
-  local function read ()
-    local ast, token, kind, quoted
-    repeat
-      token, kind, i = lex (s, i)
-      if kind == "'" then
-        quoted = kind
-      else
-        if kind == "(" then
-          ast = push (ast, read (), nil, quoted)
-        elseif kind == "word" or kind == "string" then
-          ast = push (ast, token, kind, quoted)
-        end
-        quoted = nil
-      end
-    until kind == ")" or kind == "eof"
-
-    -- ...and then the whole list is reversed once completed.
-    return ast and ast:reverse () or nil
-  end
-
-  return read ()
-end
+local cons = M.cons
 
 
 
@@ -165,13 +37,11 @@ end
 --[[ ======================== ]]--
 
 
--- ZLisp symbols.
-local symbol = {}
-
+local symbol = zz.symbol
 
 -- Define symbols for the evaluator.
 function M.Defun (name, argtypes, doc, interactive, func)
-  symbol[name] = {
+  zz.define (name, {
     doc = texi (doc:chomp ()),
     interactive = interactive,
     func = function (arglist)
@@ -199,7 +69,7 @@ function M.Defun (name, argtypes, doc, interactive, func)
              end
              return ret
            end
-  }
+  })
 end
 
 
@@ -211,19 +81,15 @@ end
 
 -- Return function's interactive field, or nil if not found.
 function M.get_function_interactive (name)
-  return symbol[name] and symbol[name].interactive or nil
+  local value = symbol[name]
+  return value and value.interactive or nil
 end
 
 
 -- Return the docstring for symbol `name'.
 function M.get_function_doc (name)
-  return symbol[name] and symbol[name].doc or nil
-end
-
-
--- Iterator returning (name, entry) for each symbol.
-function M.commands ()
-  return next, symbol, nil
+  local value = symbol[name]
+  return value and value.doc or nil
 end
 
 
@@ -238,11 +104,12 @@ function M.execute_function (name, uniarg)
   local ok
 
   if uniarg ~= nil and type (uniarg) ~= "table" then
-    uniarg = M.cons ({value = uniarg and tostring (uniarg) or nil})
+    uniarg = cons ({value = uniarg and tostring (uniarg) or nil})
   end
 
   command.attach_label (nil)
-  ok = symbol[name] and symbol[name].func and symbol[name].func (uniarg)
+  local value = symbol[name]
+  ok = value and value.func and value.func (uniarg)
   command.next_label ()
 
   return ok
@@ -284,22 +151,17 @@ function M.evalexpr (node)
   if M.function_exists (node.value) then
     return node.quoted and node or evalcommand (node)
   end
-  return M.cons (get_variable (node.value) or node)
-end
-
-
--- Evaluate a list of command expressions.
-local function eval (list)
-  while list do
-    evalcommand (list.car.value)
-    list = list.cdr
-  end
+  return cons (get_variable (node.value) or node)
 end
 
 
 -- Evaluate a string of ZLisp.
 function M.loadstring (s)
-  eval (parse (s))
+  local list = zz.parse (s)
+  while list do
+    evalcommand (list.car.value)
+    list = list.cdr
+  end
 end
 
 

@@ -75,6 +75,7 @@ dist_zmacsdata_DATA =					\
 	zmacs/eval.lua					\
 	zmacs/main.lua					\
 	zmacs/tbl_vars.lua				\
+	zmacs/zlisp.lua					\
 	$(NOTHING_ELSE)
 
 zmacs/zmacs: zmacs/zmacs.in Makefile
