@@ -40,12 +40,26 @@ function M.cons (car, cdr)
 end
 
 
+-- For iterator over a list of cons cells.
+--   for _, car in list:cars () do ... end
+function Cons:cars ()
+  -- Lua `for' always passes the entire list on every iteration, so
+  -- we have to return sublist containing the actual value each time
+  -- to get it back in `rest' on the following call.
+  local function iter (list, rest)
+    if rest == nil then return list, list.car end
+    if rest.cdr ~= nil then return rest.cdr, rest.cdr.car end
+    return nil, rest.car
+  end
+  return iter, self, nil
+end
+
+
 -- Return a non-destructive reversed cons list.
 function Cons:reverse ()
   local rev = nil
-  while self ~= nil do
-    rev = M.cons (self.car, rev)
-    self = self.cdr
+  for _, car in self:cars () do
+    rev = M.cons (car, rev)
   end
   return rev
 end
@@ -202,10 +216,8 @@ end
 
 -- Evaluate a string of ZLisp.
 function M.evalstring (s)
-  local list = M.parse (s)
-  while list do
-    evalexpr (list.car.value)
-    list = list.cdr
+  for _, car in Cons.cars (M.parse (s)) do
+    evalexpr (car.value)
   end
 end
 

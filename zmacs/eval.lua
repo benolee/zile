@@ -157,10 +157,9 @@ end
 
 -- Evaluate a string of ZLisp.
 function M.loadstring (s)
-  local list = zz.parse (s)
-  while list do
-    evalcommand (list.car.value)
-    list = list.cdr
+  local exprs = zz.parse (s)
+  for _, car in exprs:cars () do
+    evalcommand (car.value)
   end
 end
 
