@@ -209,3 +209,115 @@ Scroll text of current window upward near full screen.
     return execute_with_uniarg (false, n or 1, scroll_up, scroll_down)
   end
 )
+
+
+Defun ("forward-line",
+       {"number"},
+[[
+Move N lines forward (backward if N is negative).
+Precisely, if point is on line I, move to the start of line I + N.
+]],
+  true,
+  function (n)
+    n = n or current_prefix_arg or 1
+    if n ~= 0 then
+      execute_function ("beginning-of-line")
+      return move_line (n)
+    end
+    return false
+  end
+)
+
+
+Defun ("backward-paragraph",
+       {"number"},
+[[
+Move backward to start of paragraph.  With argument N, do it N times.
+]],
+  true,
+  function (n)
+    return move_paragraph (n or 1, previous_line, next_line, "beginning-of-line")
+  end
+)
+
+
+Defun ("forward-paragraph",
+       {"number"},
+[[
+Move forward to end of paragraph.  With argument N, do it N times.
+]],
+  true,
+  function (n)
+    return move_paragraph (n or 1, next_line, previous_line, "end-of-line")
+  end
+)
+
+
+Defun ("forward-sexp",
+       {"number"},
+[[
+Move forward across one balanced expression (sexp).
+With argument, do it that many times.  Negative arg -N means
+move backward across N balanced expressions.
+]],
+  true,
+  function (n)
+    return move_with_uniarg (n or 1, move_sexp)
+  end
+)
+
+
+Defun ("backward-sexp",
+       {"number"},
+[[
+Move backward across one balanced expression (sexp).
+With argument, do it that many times.  Negative arg -N means
+move forward across N balanced expressions.
+]],
+  true,
+  function (n)
+    return move_with_uniarg (-(n or 1), move_sexp)
+  end
+)
+
+
+Defun ("back-to-indentation",
+       {},
+[[
+Move point to the first non-whitespace character on this line.
+]],
+  true,
+  function ()
+    goto_offset (get_buffer_line_o (cur_bp))
+    while not eolp () and following_char ():match ("%s") do
+      move_char (1)
+    end
+  end
+)
+
+
+Defun ("forward-word",
+       {"number"},
+[[
+Move point forward one word (backward if the argument is negative).
+With argument, do this that many times.
+]],
+  true,
+  function (n)
+    return move_with_uniarg (n or 1, move_word)
+  end
+)
+
+
+Defun ("backward-word",
+       {"number"},
+[[
+Move backward until encountering the end of a word (forward if the
+argument is negative).
+With argument, do this that many times.
+]],
+  true,
+  function (n)
+    return move_with_uniarg (-(n or 1), move_word)
+  end
+)

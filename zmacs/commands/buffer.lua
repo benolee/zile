@@ -98,3 +98,81 @@ Select buffer @i{buffer} in the current window.
     return ok
   end
 )
+
+
+Defun ("toggle-read-only",
+       {},
+[[
+Change whether this buffer is visiting its file read-only.
+]],
+  true,
+  function ()
+    cur_bp.readonly = not cur_bp.readonly
+  end
+)
+
+
+Defun ("auto-fill-mode",
+       {},
+[[
+Toggle Auto Fill mode.
+In Auto Fill mode, inserting a space at a column beyond `fill-column'
+automatically breaks the line at a previous space.
+]],
+  true,
+  function ()
+    cur_bp.autofill = not cur_bp.autofill
+  end
+)
+
+
+local function write_buffers_list (old_wp)
+  -- FIXME: Underline next line properly.
+  insert_string ("CRM Buffer                Size  Mode             File\n")
+  insert_string ("--- ------                ----  ----             ----\n")
+
+  -- Rotate buffer list to get current buffer at head.
+  local bufs = table.clone (buffers)
+  for i = #buffers, 1, -1 do
+    if buffers[i] == old_wp.bp then
+      break
+    end
+    table.insert (bufs, 1, table.remove (bufs))
+  end
+
+  -- Print buffers.
+  for _, bp in ripairs (bufs) do
+    -- Print all buffers whose names don't start with space except
+    -- this one (the *Buffer List*).
+    if cur_bp ~= bp and bp.name[1] ~= ' ' then
+      insert_string (string.format ("%s%s%s %-19s %6u  %-17s",
+                                    old_wp.bp == bp and '.' or ' ',
+                                    bp.readonly and '%' or ' ',
+                                    bp.modified and '*' or ' ',
+                                    bp.name, get_buffer_size (bp), "Fundamental"))
+      if bp.filename then
+        insert_string (compact_path (bp.filename))
+      end
+      insert_newline ()
+    end
+  end
+end
+
+
+Defun ("list-buffers",
+       {},
+[[
+Display a list of names of existing buffers.
+The list is displayed in a buffer named `*Buffer List*'.
+
+The C column has a `.' for the buffer from which you came.
+The R column has a `%' if the buffer is read-only.
+The M column has a `*' if it is modified.
+After this come the buffer name, its size in characters,
+its major mode, and the visited file name (if any).
+]],
+  true,
+  function ()
+    write_temp_buffer ("*Buffer List*", true, write_buffers_list, cur_wp)
+  end
+)

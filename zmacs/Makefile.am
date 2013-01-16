@@ -38,17 +38,17 @@ man_MANS += zmacs/zmacs.1
 dist_zmacsdata_DATA =					\
 	zmacs/default-bindings.el			\
 	zmacs/main.lua					\
-	zmacs/commands/basic.lua			\
 	zmacs/commands/bind.lua				\
 	zmacs/commands/buffer.lua			\
+	zmacs/commands/edit.lua				\
 	zmacs/commands/file.lua				\
-	zmacs/commands/funcs.lua			\
 	zmacs/commands/killring.lua			\
 	zmacs/commands/help.lua				\
 	zmacs/commands/line.lua				\
 	zmacs/commands/lisp.lua				\
 	zmacs/commands/macro.lua			\
-	zmacs/commands/redisplay.lua			\
+	zmacs/commands/marker.lua			\
+	zmacs/commands/move.lua				\
 	zmacs/commands/registers.lua			\
 	zmacs/commands/search.lua			\
 	zmacs/commands/undo.lua				\

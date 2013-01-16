@@ -135,3 +135,111 @@ Read key sequence and unbind any function already bound to that sequence.
     return true
   end
 )
+
+
+Defun ("universal-argument",
+       {},
+[[
+Begin a numeric argument for the following command.
+Digits or minus sign following @kbd{C-u} make up the numeric argument.
+@kbd{C-u} following the digits or minus sign ends the argument.
+@kbd{C-u} without digits or minus sign provides 4 as argument.
+Repeating @kbd{C-u} without digits or minus sign multiplies the argument
+by 4 each time.
+]],
+  true,
+  function ()
+    local ok = true
+
+    -- Need to process key used to invoke universal-argument.
+    pushkey (lastkey ())
+
+    thisflag.uniarg_empty = true
+
+    local i = 0
+    local arg = 1
+    local sgn = 1
+    local keys = {}
+    while true do
+      local as = ""
+      local key = do_binding_completion (table.concat (keys, " "))
+
+      -- Cancelled.
+      if key == keycode "\\C-g" then
+        ok = execute_function ("keyboard-quit")
+        break
+      -- Digit pressed.
+      elseif string.match (string.char (key.key), "%d") then
+        local digit = key.key - string.byte ('0')
+        thisflag.uniarg_empty = false
+
+        if key.META then
+          as = "ESC "
+        end
+
+        as = as .. string.format ("%d", digit)
+
+        if i == 0 then
+          arg = digit
+        else
+          arg = arg * 10 + digit
+        end
+
+        i = i + 1
+      elseif key == keycode "\\C-u" then
+        as = as .. "C-u"
+        if i == 0 then
+          arg = arg * 4
+        else
+          break
+        end
+      elseif key == keycode "\\M--" and i == 0 then
+        if sgn > 0 then
+          sgn = -sgn
+          as = as .. "-"
+          -- The default negative arg is -1, not -4.
+          arg = 1
+          thisflag.uniarg_empty = false
+        end
+      else
+        ungetkey (key)
+        break
+      end
+
+      table.insert (keys, as)
+    end
+
+    if ok then
+      prefix_arg = arg * sgn
+      thisflag.set_uniarg = true
+      minibuf_clear ()
+    end
+
+    return ok
+  end
+)
+
+
+Defun ("keyboard-quit",
+       {},
+[[
+Cancel current command.
+]],
+  true,
+  function ()
+    deactivate_mark ()
+    return minibuf_error ("Quit")
+  end
+)
+
+
+Defun ("suspend-emacs",
+       {},
+[[
+Stop Zile and return to superior process.
+]],
+  true,
+  function ()
+    posix.raise (posix.SIGTSTP)
+  end
+)

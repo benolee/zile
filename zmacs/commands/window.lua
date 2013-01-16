@@ -156,3 +156,19 @@ Both windows display the same buffer now current.
     return true
   end
 )
+
+
+Defun ("recenter",
+       {},
+[[
+Center point in selected window and redisplay frame.
+]],
+  true,
+  function ()
+    recenter (cur_wp)
+    term_clear ()
+    term_redisplay ()
+    term_refresh ()
+    return true
+  end
+)
