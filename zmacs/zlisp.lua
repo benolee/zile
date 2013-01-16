@@ -40,6 +40,19 @@ function M.cons (car, cdr)
 end
 
 
+-- Return the nth element of a list of cons cells.
+function Cons:nth (n)
+  if type (n) ~= "number" or n < 1 or self == nil then
+    return nil
+  elseif n == 1 then
+    return self.car
+  end
+
+  -- Weird calling convention to enable tail call elimination.
+  return Cons.nth (self.cdr, n - 1)
+end
+
+
 -- For iterator over a list of cons cells.
 --   for _, car in list:cars () do ... end
 function Cons:cars ()
@@ -52,6 +65,16 @@ function Cons:cars ()
     return nil, rest.car
   end
   return iter, self, nil
+end
+
+
+-- Equivalent to table.concat for lists of cons cells.  Concatenates
+-- value field of each car if available, otherwise all of car itself.
+function Cons:concat (delim)
+  delim = delim or ""
+  local s = tostring (self.car.value or self.car)
+  if self.cdr == nil then return s end
+  return s .. delim .. Cons.concat (self.cdr, delim)
 end
 
 

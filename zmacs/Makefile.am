@@ -22,7 +22,7 @@
 ## Environment. ##
 ## ------------ ##
 
-ZMACS_PATH = $(abs_srcdir)/zmacs/?.lua
+ZMACS_PATH = $(abs_buiddir)/zmacs/?.lua;$(abs_srcdir)/zmacs/?.lua
 
 
 ## ------------- ##
@@ -30,15 +30,18 @@ ZMACS_PATH = $(abs_srcdir)/zmacs/?.lua
 ## ------------- ##
 
 zmacsdatadir = $(datadir)/zmacs
+zmacscmdsdir = $(zmacsdatadir)/commands
 
 zmacs_install_edit =					\
 	$(install_edit)					\
 	-e 's|@zmacsdatadir[@]|$(zmacsdatadir)|g'	\
+	-e 's|@builddir[@]/?.lua;||'			\
 	$(NOTHING_ELSE)
 
 zmacs_inplace_edit =					\
 	$(inplace_edit)					\
-	-e 's|@zmacsdatadir[@]|$(abs_top_srcdir)/zmacs|g' \
+	-e 's|@zmacsdatadir[@]|$(abs_srcdir)/zmacs|g'	\
+	-e 's|@builddir[@]|$(abs_builddir)/zmacs|g'	\
 	$(NOTHING_ELSE)
 
 
@@ -52,33 +55,63 @@ bin_SCRIPTS += zmacs/zmacs
 
 man_MANS += zmacs/zmacs.1
 
+## $(srcdir) prefixes are required when passing $(dist_zmacscmds_DATA)
+## to zlc in the build tree with a VPATH build, otherwise it fails to
+## find them in $(builddir)/zmacs/commands/*.
+dist_zmacscmds_DATA =					\
+	$(srcdir)/zmacs/commands/bind.zl		\
+	$(srcdir)/zmacs/commands/buffer.zl		\
+	$(srcdir)/zmacs/commands/edit.zl		\
+	$(srcdir)/zmacs/commands/file.zl		\
+	$(srcdir)/zmacs/commands/killring.zl		\
+	$(srcdir)/zmacs/commands/help.zl		\
+	$(srcdir)/zmacs/commands/line.zl		\
+	$(srcdir)/zmacs/commands/lisp.zl		\
+	$(srcdir)/zmacs/commands/macro.zl		\
+	$(srcdir)/zmacs/commands/marker.zl		\
+	$(srcdir)/zmacs/commands/move.zl		\
+	$(srcdir)/zmacs/commands/registers.zl		\
+	$(srcdir)/zmacs/commands/search.zl		\
+	$(srcdir)/zmacs/commands/undo.zl		\
+	$(srcdir)/zmacs/commands/variables.zl		\
+	$(srcdir)/zmacs/commands/window.zl		\
+	$(NOTHING_ELSE)
+
+nodist_zmacsdata_DATA =					\
+	zmacs/commands.lua				\
+	$(NOTHING_ELSE)
+
 dist_zmacsdata_DATA =					\
 	zmacs/default-bindings.el			\
 	zmacs/callbacks.lua				\
-	zmacs/commands/bind.lua				\
-	zmacs/commands/buffer.lua			\
-	zmacs/commands/edit.lua				\
-	zmacs/commands/file.lua				\
-	zmacs/commands/killring.lua			\
-	zmacs/commands/help.lua				\
-	zmacs/commands/line.lua				\
-	zmacs/commands/lisp.lua				\
-	zmacs/commands/macro.lua			\
-	zmacs/commands/marker.lua			\
-	zmacs/commands/move.lua				\
-	zmacs/commands/registers.lua			\
-	zmacs/commands/search.lua			\
-	zmacs/commands/undo.lua				\
-	zmacs/commands/variables.lua			\
-	zmacs/commands/window.lua			\
 	zmacs/keymaps.lua				\
 	zmacs/eval.lua					\
 	zmacs/main.lua					\
 	zmacs/tbl_vars.lua				\
 	zmacs/zlisp.lua					\
+	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)
 
-zmacs/zmacs: zmacs/zmacs.in Makefile
+zmacs_zmacs_DEPS =					\
+	Makefile					\
+	zmacs/zmacs.in					\
+	$(nodist_zmacsdata_DATA)			\
+	$(dist_zmacsdata_DATA)				\
+	$(NOTHING_ELSE)
+
+
+# AM_SILENT_RULES pretty printing.
+ZM_V_ZLC    = $(zm__v_ZLC_@AM_V@)
+zm__v_ZLC_  = $(zm__v_ZLC_@AM_DEFAULT_V@)
+zm__v_ZLC_0 = @echo "  ZLC     " $@;
+zm__v_ZLC_1 =
+
+zmacs/commands.lua: $(dist_zmacscmds_DATA)
+	$(AM_V_at)test -d zmacs || mkdir zmacs
+	$(ZM_V_ZLC)LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)' \
+	  $(LUA) $(srcdir)/zmacs/zlc $(dist_zmacscmds_DATA) > $@
+
+zmacs/zmacs: $(zmacs_zmacs_DEPS)
 	@rm -f $@ $@.tmp
 	$(AM_V_GEN)$(zmacs_inplace_edit) '$(srcdir)/$@.in' >'$@.tmp'
 	$(AM_V_at)mv $@.tmp $@
@@ -133,6 +166,7 @@ EXTRA_DIST +=						\
 	zmacs/help2man-wrapper				\
 	zmacs/man-extras				\
 	zmacs/mkdotzmacs.lua				\
+	zmacs/zlc					\
 	zmacs/zmacs.1.in				\
 	zmacs/zmacs.in					\
 	$(NOTHING_ELSE)
@@ -145,6 +179,10 @@ EXTRA_DIST +=						\
 CLEANFILES +=						\
 	zmacs/zmacs					\
 	zmacs/zmacs.1					\
+	$(NOTHING_ELSE)
+
+DISTCLEANFILES +=					\
+	zmacs/commands.lua				\
 	$(NOTHING_ELSE)
 
 MAINTAINERCLEANFILES +=					\

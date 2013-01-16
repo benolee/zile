@@ -29,7 +29,7 @@ package.path = package.path:gsub (";%./%?.lua;", ";")
 package.path = package.path:gsub ("^%./%?.lua;", "")
 package.path = package.path:gsub (";%./%?.lua$", "")
 
-package.path = "@zmacsdatadir@/?.lua;@pkgdatadir@/?.lua;" .. package.path
+package.path = "@builddir@/?.lua;@zmacsdatadir@/?.lua;@pkgdatadir@/?.lua;" .. package.path
 
 -- Load external modules:
 require "std" -- load std
@@ -73,22 +73,7 @@ require "term_redisplay"
 
 -- Zmacs modules:
 require "callbacks"
-require "commands.bind"
-require "commands.buffer"
-require "commands.edit"
-require "commands.file"
-require "commands.help"
-require "commands.killring"
-require "commands.line"
-require "commands.lisp"
-require "commands.macro"
-require "commands.marker"
-require "commands.move"
-require "commands.registers"
-require "commands.search"
-require "commands.undo"
-require "commands.variables"
-require "commands.window"
+require "commands"
 require "keymaps"
 require "tbl_vars"
 

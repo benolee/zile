@@ -36,6 +36,9 @@ translation_project_ = ""
 # separate line, interactively)
 local-checks-to-skip = sc_error_message_uppercase
 
+# Allow AM_V machinery for ZLC with AM_SILENT_RULES
+_makefile_at_at_check_exceptions = '&& !/AM(_DEFAULT)?_V/'
+
 define _sc_search_regexp_or_exclude
   files=$$($(VC_LIST_EXCEPT));						\
   if test -n "$$files"; then						\

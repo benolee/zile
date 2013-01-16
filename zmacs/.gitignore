@@ -2,6 +2,7 @@
 /*.[123456789].in
 /TAGS
 /.deps
+/commands.lua
 /zmacs
 /zmacs.lua
 /dotzmacs.sample

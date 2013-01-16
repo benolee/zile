@@ -191,3 +191,21 @@ function minibuf_read_number (fmt)
 
   return n
 end
+
+
+-- Read a function name from the minibuffer.
+local functions_history = history_new ()
+
+function minibuf_read_function_name (fmt)
+  local cp = completion_new ()
+
+  for name, func in lisp.commands () do
+    if func.interactive then
+      table.insert (cp.completions, name)
+    end
+  end
+
+  return minibuf_vread_completion (fmt, "", cp, functions_history,
+                                   "No function name given",
+                                   "Undefined function name `%s'")
+end
