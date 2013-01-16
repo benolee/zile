@@ -24,7 +24,6 @@ dist_pkgdata_DATA =					\
 	src/history.lua					\
 	src/lisp.lua					\
 	src/variables.lua				\
-	src/basic.lua					\
 	src/bind.lua					\
 	src/buffer.lua					\
 	src/completion.lua				\

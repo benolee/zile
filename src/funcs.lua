@@ -119,6 +119,14 @@ function minibuf_read_shell_command ()
   return ms
 end
 
+function previous_line ()
+  return move_line (-1)
+end
+
+function next_line ()
+  return move_line (1)
+end
+
 function move_paragraph (uniarg, forward, backward, line_extremum)
   if uniarg < 0 then
     uniarg = -uniarg
