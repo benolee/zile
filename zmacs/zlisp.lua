@@ -154,7 +154,7 @@ local function lex (s, i)
     token = token .. c
     c, i = nextch (s, i)
     if c == ')' or c == '(' or c == ';' or c == ' ' or c == '\t'
-       or c == '\n' or c == '\r' or c == "'" or c == nil
+       or c == '\n' or c == '\r' or c == "'" or c == '"' or c == nil
     then
       return token, "word", i - 1
     end
