@@ -94,6 +94,14 @@ end
 --[[ ========================= ]]--
 
 
+-- Return the 1-based line number at which offset `o' occurs in `s'.
+local function iton (s, i)
+  local n = 1
+  for _ in string.gmatch (s:sub (1, i), "\n") do n = n + 1 end
+  return n
+end
+
+
 -- Increment index into s and return that character.
 local function nextch (s, i)
   return i < #s and s[i + 1] or nil, i + 1
@@ -172,7 +180,7 @@ function M.parse (s)
     return M.cons ({value = value, kind = kind, quoted = quoted}, ast)
   end
 
-  local function read ()
+  local function read (nested, openparen)
     local ast, token, kind, quoted
     repeat
       token, kind, i = lex (s, i)
@@ -180,19 +188,37 @@ function M.parse (s)
         quoted = kind
       else
         if kind == "(" then
-          ast = push (ast, read (), nil, quoted)
+	  local subtree, errmsg = read (true, i)
+	  if errmsg ~= nil then return ok, errmsg end
+          ast = push (ast, subtree, nil, quoted)
+
         elseif kind == "word" or kind == "string" then
           ast = push (ast, token, kind, quoted)
+
+	elseif kind == ")" then
+          if not nested then
+            return nil, iton (s, i) .. ": unmatched close parenthesis"
+	  end
+	  openparen = nil
+	  break
+
+        elseif kind == "incomplete string" then
+          return nil, iton (s, i) .. ": incomplete string"
         end
         quoted = nil
       end
-    until kind == ")" or kind == "eof"
+    until kind == "eof"
+
+    if openparen ~= nil then
+      return nil, iton (s, openparen) .. ": unmatched open parenthesis"
+    end
 
     -- ...and then the whole list is reversed once completed.
     return ast and ast:reverse () or nil
   end
 
-  return read ()
+  -- `false' argument allows detection of unmatched outer `)' tokens.
+  return read (false)
 end
 
 
@@ -239,22 +265,27 @@ end
 
 -- Evaluate a string of ZLisp.
 function M.evalstring (s)
-  for _, car in Cons.cars (M.parse (s)) do
+  local ast, errmsg = M.parse (s)
+  if ast == nil then
+    return nil, errmsg
+  end
+
+  for _, car in Cons.cars (ast) do
     evalexpr (car.value)
   end
+  return true
 end
 
 
 -- Evaluate a file of ZLisp.
 function M.evalfile (file)
-  local s = io.slurp (file)
+  local s, errmsg = io.slurp (file)
 
   if s then
-    M.evalstring (s)
-    return true
+    s, errmsg = M.evalstring (s)
   end
 
-  return false
+  return s, errmsg
 end
 
 
