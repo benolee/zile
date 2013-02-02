@@ -124,7 +124,7 @@ local function lex (s, i)
   if c == nil then return nil, "eof", i end
 
   -- Return delimiter tokens.
-  -- These are returned in the kind field so we can immediately tell
+  -- These are returned in the `kind' field so we can immediately tell
   -- the difference between a ')' delimiter and a ")" string token.
   if c == '(' or c == ')' or c == "'" then
     return "", c, i
