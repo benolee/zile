@@ -89,9 +89,45 @@ end
 
 
 
+--[[ --------------------------- ]]--
+--[[ Sets that work with strict. ]]--
+--[[ --------------------------- ]]--
+
+
+local _mt, Set
+
+_mt = {
+  -- Return a new set containing the union of values from s and t.
+  __add = function (s, t)
+    local r = Set ()
+    for k in pairs (s) do rawset (r, k, true) end
+    for k in pairs (t) do rawset (r, k, true) end
+    return r
+ end,
+}
+
+
+Set = setmetatable ({}, {
+  -- Return a new set containing values from t.
+  __call = function (s, t)
+    local r = setmetatable ({}, _mt)
+    if t ~= nil then
+      for _, v in pairs (t) do rawset (r, v, true) end
+    end
+    return r
+  end,
+})
+
+
+
 --[[ ========================= ]]--
 --[[ ZLisp scanner and parser. ]]--
 --[[ ========================= ]]--
+
+
+local isskipped   = Set { ";", " ", "\t", "\n", "\r" }
+local isoperator  = Set { "(", ")", "'" }
+local isdelimiter = Set { '"' } + isskipped + isoperator
 
 
 -- Return the 1-based line number at which offset `o' occurs in `s'.
@@ -126,15 +162,15 @@ local function lex (s, i)
     end
 
     -- Continue skipping additional lines of comments and whitespace.
-  until c ~= ' ' and c ~= '\t' and c ~= '\n' and c ~= '\r'
+  until c == nil or not isskipped[c]
 
   -- Return end-of-file immediately.
   if c == nil then return nil, "eof", i end
 
-  -- Return delimiter tokens.
+  -- Return operator tokens.
   -- These are returned in the `kind' field so we can immediately tell
   -- the difference between a ')' delimiter and a ")" string token.
-  if c == '(' or c == ')' or c == "'" then
+  if isoperator[c] then
     return "", c, i
   end
 
@@ -156,14 +192,10 @@ local function lex (s, i)
   end
 
   -- Anything else is a `word' - up to the next whitespace or delimiter.
-  -- Try to compare common characters first to minimise time spent
-  -- checking.
   repeat
     token = token .. c
     c, i = nextch (s, i)
-    if c == ')' or c == '(' or c == ';' or c == ' ' or c == '\t'
-       or c == '\n' or c == '\r' or c == "'" or c == '"' or c == nil
-    then
+    if isdelimiter[c] or c == nil then
       return token, "word", i - 1
     end
   until false
