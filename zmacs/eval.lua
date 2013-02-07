@@ -157,23 +157,26 @@ end
 
 -- Evaluate a string of ZLisp.
 function M.loadstring (s)
-  local exprs = zz.parse (s)
-  for _, car in exprs:cars () do
-    evalcommand (car.value)
+  local ok, value = pcall (zz.parse, s)
+  if not ok then return nil, value end
+
+  local result = true
+  for _, car in value:cars () do
+    result = evalcommand (car.value)
   end
+  return result
 end
 
 
 -- Evaluate a file of ZLisp.
 function M.loadfile (file)
-  local s = io.slurp (file)
+  local s, errmsg = io.slurp (file)
 
   if s then
-    M.loadstring (s)
-    return true
+    s, errmsg = M.loadstring (s)
   end
 
-  return false
+  return s, errmsg
 end
 
 

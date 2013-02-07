@@ -182,7 +182,7 @@ local function lex (s, i)
     repeat
       c, i = nextch (s, i)
       if c == nil then
-        return token, "incomplete string", i - 1
+        error (iton (s, i - 1) .. ': incomplete string "' .. token, 0)
       elseif c ~= '"' then
         token = token .. c
       end
@@ -229,20 +229,17 @@ function M.parse (s)
 
 	elseif kind == ")" then
           if not nested then
-            return nil, iton (s, i) .. ": unmatched close parenthesis"
+            error (iton (s, i) .. ": unmatched close parenthesis", 0)
 	  end
 	  openparen = nil
 	  break
-
-        elseif kind == "incomplete string" then
-          return nil, iton (s, i) .. ": incomplete string"
         end
         quoted = nil
       end
     until kind == "eof"
 
     if openparen ~= nil then
-      return nil, iton (s, openparen) .. ": unmatched open parenthesis"
+      error (iton (s, openparen) .. ": unmatched open parenthesis", 0)
     end
 
     -- ...and then the whole list is reversed once completed.
@@ -297,12 +294,11 @@ end
 
 -- Evaluate a string of ZLisp.
 function M.evalstring (s)
-  local ast, errmsg = M.parse (s)
-  if ast == nil then
-    return nil, errmsg
-  end
+  -- convert error calls in M.parse to `nil, "errmsg"' return value.
+  local ok, value = pcall (M.parse, s)
+  if not ok then return nil, value end
 
-  for _, car in Cons.cars (ast) do
+  for _, car in Cons.cars (value) do
     evalexpr (car.value)
   end
   return true
