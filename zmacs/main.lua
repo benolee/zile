@@ -78,6 +78,7 @@ lastflag = {}
 local options = {
   {"doc", "Initialization options:"},
   {"doc", ""},
+  {"opt", "batch", '\0', "optional", "", "do not do interactive display; implies -q"},
   {"opt", "no-init-file", 'q', "optional", "", "do not load ~/." .. prog.name},
   {"opt", "funcall", 'f', "required", "FUNC", "call " .. prog.Name .. " Lisp function FUNC with no arguments"},
   {"opt", "load", 'l', "required", "FILE", "load " .. prog.Name .. " Lisp FILE using the load function"},
@@ -100,6 +101,7 @@ end
 
 zarg = {}
 qflag = false
+bflag = false
 
 function process_args ()
   -- Leading `-' means process all arguments in order, treating
@@ -109,7 +111,7 @@ function process_args ()
   local this_optind = 1
   for c, longindex, optind, optarg in posix.getopt_long (arg, "-:f:l:q", longopts) do
     if c == 1 then -- Non-option (assume file name)
-      longindex = 5
+      longindex = 6
     elseif c == string.byte ('?') then -- Unknown option
       minibuf_error (string.format ("Unknown option `%s'", arg[this_optind]))
     elseif c == string.byte (':') then -- Missing argument
@@ -117,20 +119,23 @@ function process_args ()
                                       prog.name, arg[this_optind]))
       os.exit (1)
     elseif c == string.byte ('q') then
-      longindex = 0
-    elseif c == string.byte ('f') then
       longindex = 1
-    elseif c == string.byte ('l') then
+    elseif c == string.byte ('f') then
       longindex = 2
+    elseif c == string.byte ('l') then
+      longindex = 3
     end
 
     if longindex == 0 then
+      bflag = true
       qflag = true
     elseif longindex == 1 then
-      table.insert (zarg, {'function', optarg})
+      qflag = true
     elseif longindex == 2 then
-      table.insert (zarg, {'loadfile', canonicalize_filename (optarg)})
+      table.insert (zarg, {'function', optarg})
     elseif longindex == 3 then
+      table.insert (zarg, {'loadfile', canonicalize_filename (optarg)})
+    elseif longindex == 4 then
       io.write ("Usage: " .. arg[0] .. " [OPTION-OR-FILENAME]...\n" ..
                 "\n" ..
                 "Run " .. prog.Name .. ", a lightweight Emacs clone.\n" ..
@@ -151,12 +156,12 @@ function process_args ()
       io.write ("\n" ..
                 "Report bugs to " .. PACKAGE_BUGREPORT .. ".\n")
       os.exit (0)
-    elseif longindex == 4 then
+    elseif longindex == 5 then
       io.write (prog.version .. "\n" ..
                 prog.COPYRIGHT_STRING .. "\n" ..
                 prog.COPYRIGHT_NOTICE .. "\n")
       os.exit (0)
-    elseif longindex == 5 then
+    elseif longindex == 6 then
       if optarg[1] == '+' then
         line = tonumber (optarg, 10)
       else
@@ -200,7 +205,7 @@ function main ()
 
   os.setlocale ("")
 
-  term_init ()
+  if not bflag then term_init () end
 
   init_default_bindings ()
 
@@ -253,6 +258,10 @@ function main ()
     if thisflag.quit then
       break
     end
+  end
+
+  if bflag then
+    return
   end
 
   lastflag.need_resync = true
