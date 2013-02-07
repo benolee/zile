@@ -161,6 +161,7 @@ testsuite	= $(tests_dir)/testsuite
 TESTSUITE	= zmacs/tests/testsuite
 TESTSUITE_AT	= $(tests_dir)/testsuite.at \
 		  $(tests_dir)/message.at \
+		  $(tests_dir)/write-file.at \
 		  $(NOTHING_ELSE)
 
 EXTRA_DIST	+= $(testsuite) $(TESTSUITE_AT) $(package_m4)

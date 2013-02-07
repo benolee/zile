@@ -121,16 +121,16 @@ previous version into a backup file if this is the first save."
     "return save_buffer (cur_bp)"))
 
 
-(defun write-file ()
+(defun write-file (string)
   "Write current buffer into file @i{filename}.
 This makes the buffer visit that file, and marks it as not modified.
 
 Interactively, confirmation is required unless you supply a prefix argument."
   (interactive)
-  (lambda ()
-    "return write_buffer (cur_bp, true,
+  (lambda (filename)
+    "return write_buffer (cur_bp, filename == nil,
                          command.is_interactive () and not lastflag.set_uniarg,
-                         nil, 'Write file: ')"))
+                         filename, 'Write file: ')"))
 
 
 (defun save-some-buffers ()
