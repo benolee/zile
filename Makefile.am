@@ -44,6 +44,7 @@ MAINTAINERCLEANFILES	=
 NOTHING_ELSE		=
 
 bin_SCRIPTS		=
+check_local		=
 doc_DATA		=
 install_exec_hooks	=
 man_MANS		=
@@ -63,6 +64,15 @@ inplace_edit = sed					\
 include src/Makefile.am
 include zmacs/Makefile.am
 include tests/Makefile.am
+
+
+
+## ------------ ##
+## Local Tests. ##
+## ------------ ##
+
+check-local: $(check_local)
+
 
 
 ## ------------- ##
