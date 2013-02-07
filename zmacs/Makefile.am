@@ -146,6 +146,61 @@ $(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
 	fi
 
 
+
+## ----------- ##
+## Test suite. ##
+## ----------- ##
+
+
+CD_TESTDIR	= abs_srcdir=`$(am__cd) $(srcdir) && pwd`; cd $(tests_dir)
+
+tests_dir	= $(srcdir)/zmacs/tests
+package_m4	= $(tests_dir)/package.m4
+testsuite	= $(tests_dir)/testsuite
+
+TESTSUITE	= zmacs/tests/testsuite
+TESTSUITE_AT	= $(tests_dir)/testsuite.at \
+		  $(tests_dir)/message.at \
+		  $(NOTHING_ELSE)
+
+EXTRA_DIST	+= $(testsuite) $(TESTSUITE_AT) $(package_m4)
+
+TESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/zmacs/zmacs"
+
+$(testsuite): $(package_m4) $(TESTSUITE_AT) Makefile.am
+	$(AM_V_GEN)$(AUTOTEST) -I '$(srcdir)' -I '$(tests_dir)' \
+	  $(TESTSUITE_AT) -o '$@'
+
+$(package_m4): $(dotversion) zmacs/Makefile.am
+	$(AM_V_GEN){ \
+	  echo '# Signature of the current package.'; \
+	  echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
+	  echo 'm4_define([AT_PACKAGE_TARNAME],   [$(PACKAGE_TARNAME)])'; \
+	  echo 'm4_define([AT_PACKAGE_VERSION],   [$(PACKAGE_VERSION)])'; \
+	  echo 'm4_define([AT_PACKAGE_STRING],    [$(PACKAGE_STRING)])'; \
+	  echo 'm4_define([AT_PACKAGE_BUGREPORT], [$(PACKAGE_BUGREPORT)])'; \
+	  echo 'm4_define([AT_PACKAGE_URL],       [$(PACKAGE_URL)])'; \
+	} > '$@'
+
+$(tests_dir)/atconfig: config.status
+	$(AM_V_GEN)$(SHELL) config.status '$@'
+
+DISTCLEANFILES	+= $(tests_dir)/atconfig
+
+# Hook the test suite into the check rule
+check_local += zmacs-check-local
+zmacs-check-local: $(tests_dir)/atconfig $(testsuite)
+	$(AM_V_at)$(CD_TESTDIR); \
+	CONFIG_SHELL='$(SHELL)' '$(SHELL)' "$$abs_srcdir/$(TESTSUITE)" \
+	  $(TESTS_ENVIRONMENT) $(BUILDCHECK_ENVIRONMENT) $(TESTSUITEFLAGS)
+
+# Remove any file droppings left behind by testsuite.
+clean-local:
+	-$(CD_TESTDIR); \
+	test -f "$$abs_srcdir/$(TESTSUITE)" && \
+	  '$(SHELL)' "$$abs_srcdir/$(TESTSUITE)" --clean
+
+
 ## ------------- ##
 ## Installation. ##
 ## ------------- ##

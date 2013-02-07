@@ -25,6 +25,10 @@ AC_INIT([Zile],
 	[bug-zile@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 
+AC_CONFIG_TESTDIR([zmacs/tests])
+AC_SUBST([AUTOM4TE], [${AUTOM4TE="autom4te"}])
+AC_SUBST([AUTOTEST], ['$(AUTOM4TE) --language=autotest'])
+
 AS_BOX([Configuring AC_PACKAGE_TARNAME AC_PACKAGE_VERSION])
 echo
 
