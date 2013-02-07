@@ -117,7 +117,7 @@ local function lex (s, i)
       until c == '\n' or c == '\r' or c == nil
     end
 
-    -- Continue skipping, additional lines of comments and whitespace.
+    -- Continue skipping additional lines of comments and whitespace.
   until c ~= ' ' and c ~= '\t' and c ~= '\n' and c ~= '\r'
 
   -- Return end-of-file immediately.
