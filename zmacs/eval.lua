@@ -157,12 +157,13 @@ end
 
 -- Evaluate a string of ZLisp.
 function M.loadstring (s)
-  local ok, value = pcall (zz.parse, s)
-  if not ok then return nil, value end
+  local ok, list = pcall (zz.parse, s)
+  if not ok then return nil, list end
 
   local result = true
-  for _, car in value:cars () do
-    result = evalcommand (car.value)
+  while list do
+    result = evalcommand (list.car.value)
+    list = list.cdr
   end
   return result
 end

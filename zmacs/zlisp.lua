@@ -53,21 +53,6 @@ function Cons:nth (n)
 end
 
 
--- For iterator over a list of cons cells.
---   for _, car in list:cars () do ... end
-function Cons:cars ()
-  -- Lua `for' always passes the entire list on every iteration, so
-  -- we have to return sublist containing the actual value each time
-  -- to get it back in `rest' on the following call.
-  local function iter (list, rest)
-    if rest == nil then return list, list.car end
-    if rest.cdr ~= nil then return rest.cdr, rest.cdr.car end
-    return nil, rest.car
-  end
-  return iter, self, nil
-end
-
-
 -- Equivalent to table.concat for lists of cons cells.  Concatenates
 -- value field of each car if available, otherwise all of car itself.
 function Cons:concat (delim)
@@ -81,8 +66,9 @@ end
 -- Return a non-destructive reversed cons list.
 function Cons:reverse ()
   local rev = nil
-  for _, car in self:cars () do
-    rev = M.cons (car, rev)
+  while self ~= nil do
+    rev = M.cons (self.car, rev)
+    self = self.cdr
   end
   return rev
 end
@@ -295,11 +281,12 @@ end
 -- Evaluate a string of ZLisp.
 function M.evalstring (s)
   -- convert error calls in M.parse to `nil, "errmsg"' return value.
-  local ok, value = pcall (M.parse, s)
-  if not ok then return nil, value end
+  local ok, list = pcall (M.parse, s)
+  if not ok then return nil, list end
 
-  for _, car in Cons.cars (value) do
-    evalexpr (car.value)
+  while list do
+    evalexpr (list.car.value)
+    list = list.cdr
   end
   return true
 end
