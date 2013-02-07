@@ -69,6 +69,7 @@ dist_zmacscmds_DATA =					\
 	$(srcdir)/zmacs/commands/lisp.zl		\
 	$(srcdir)/zmacs/commands/macro.zl		\
 	$(srcdir)/zmacs/commands/marker.zl		\
+	$(srcdir)/zmacs/commands/minibuf.zl		\
 	$(srcdir)/zmacs/commands/move.zl		\
 	$(srcdir)/zmacs/commands/registers.zl		\
 	$(srcdir)/zmacs/commands/search.zl		\
