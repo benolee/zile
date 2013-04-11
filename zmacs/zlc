@@ -19,11 +19,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'getopt'
-require 'io_ext'
+local getopt = require "std.getopt"
+local io     = require "std.io_ext"
 
-zz   = require "zlisp"
-prog = require "version"
+local zz   = require "zlisp"
+local prog = require "version"
 
 
 
@@ -61,7 +61,7 @@ zz.define ("defun",
 
     io.write (string.format (
       '\n\nDefun ("%s",\n  {%s},\n[[\n%s\n]],\n  %s,\n  %s\n)\n',
-      arglist:nth (1).value, params, arglist:nth (3).value, interactive, impl))
+      arglist:nth (1).value, params, arglist:nth (3).value, tostring (interactive), tostring (impl)))
   end
 )
 
@@ -133,7 +133,7 @@ prog.banner = prog.version .. "\n" ..
   prog.COPYRIGHT_STRING .. "\n" ..
   prog.COPYRIGHT_NOTICE .. "\n"
 
-getopt.processArgs ()
+getopt.processArgs (prog)
 
 if #arg == 0 then
   getopt.usage ()

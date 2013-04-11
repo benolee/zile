@@ -20,6 +20,8 @@
 -- MA 02111-1301, USA.
 
 
+local io = require "std.io_ext"
+
 local M = {}
 
 

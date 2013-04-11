@@ -17,6 +17,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local Object = require "std.object"
+
 -- Formats of end-of-line
 coding_eol_lf = "\n"
 coding_eol_crlf = "\r\n"
