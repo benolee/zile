@@ -38,12 +38,12 @@ local zile_cmd = io.catfile (builddir, "zmacs", "zmacs")
 local srcdir_pat = string.escapePattern (srcdir)
 
 function run_test (test, name, editor_name, edit_file, cmd, args)
-  posix.system ("cp", io.catfile (srcdir, "tests", "test.input"), edit_file)
-  posix.system ("chmod", "+w", edit_file)
-  local status = posix.system (cmd, unpack (args))
+  posix.spawn ({"cp", io.catfile (srcdir, "tests", "test.input"), edit_file})
+  posix.spawn ({"chmod", "+w", edit_file})
+  local status = posix.spawn ({cmd, unpack (args)})
   if status == 0 then
-    if posix.system ("diff", test .. ".output", edit_file) == 0 then
-      posix.system ("rm", "-f", edit_file, edit_file .. "~")
+    if posix.spawn ({"diff", test .. ".output", edit_file}) == 0 then
+      posix.spawn ({"rm", "-f", edit_file, edit_file .. "~"})
       return true
     else
       print (editor_name .. " " .. name .. " failed to produce correct output")
@@ -60,7 +60,7 @@ for _, name in ipairs (arg) do
     local edit_file = test:gsub ("^" .. srcdir_pat, builddir) .. ".input"
     local args = {"--no-init-file", edit_file, "--load", test:gsub ("^" .. srcdir_pat, abs_srcdir) .. ".el"}
 
-    posix.system ("mkdir", "-p", posix.dirname (edit_file))
+    posix.spawn ({"mkdir", "-p", posix.dirname (edit_file)})
 
     if EMACSPROG ~= "" then
       if run_test (test, name, "Emacs", edit_file, EMACSPROG, list.concat (args, {"--quick", "--batch"})) then
