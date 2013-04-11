@@ -18,6 +18,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+local lisp = require "eval"
+
 prog = require "version"
 
 splash_str = "Welcome to " .. prog.program .. [[.

@@ -17,6 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+local lisp = require "eval"
 
 -- Used to process keyboard macros, and to maintain identical behaviour
 -- between the user typing and a keyboard macro sending keys, also used
@@ -31,4 +32,22 @@ function get_and_run_command ()
   else
     minibuf_error (tostring (keys) .. " is undefined")
   end
+end
+
+
+-- Read a function name from the minibuffer.
+local functions_history = history_new ()
+
+function minibuf_read_function_name (fmt)
+  local cp = completion_new ()
+
+  for name, func in lisp.commands () do
+    if func.interactive then
+      table.insert (cp.completions, name)
+    end
+  end
+
+  return minibuf_vread_completion (fmt, "", cp, functions_history,
+                                   "No function name given",
+                                   "Undefined function name `%s'")
 end
