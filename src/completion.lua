@@ -134,8 +134,7 @@ function completion_try (cp, search)
   local fullmatch = false
   for _, v in ipairs (cp.completions) do
     if type (v) == "string" then
-      local len = math.min (#v, #search)
-      if string.sub (v, 1, len) == string.sub (search, 1, len) then
+      if string.sub (v, 1, #search) == search then
         table.insert (cp.matches, v)
         if #v == #search then
           fullmatch = true
