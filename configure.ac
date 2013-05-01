@@ -32,7 +32,7 @@ AC_SUBST([AUTOTEST], ['$(AUTOM4TE) --language=autotest'])
 AS_BOX([Configuring AC_PACKAGE_TARNAME AC_PACKAGE_VERSION])
 echo
 
-AM_INIT_AUTOMAKE([-Wall -Werror std-options])
+AM_INIT_AUTOMAKE([-Wall std-options])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl Set up gnulib
