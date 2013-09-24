@@ -97,7 +97,7 @@ local options = {
 local longopts = {}
 for _, v in ipairs (options) do
   if v[1] == "opt" then
-    table.insert (longopts, {v[2], v[4], string.byte (v[3])})
+    table.insert (longopts, {v[2], v[4], v[3]})
   end
 end
 
@@ -111,20 +111,20 @@ function process_args ()
   -- Leading `:' so as to return ':' for a missing arg, not '?'
   local line = 1
   local this_optind = 1
-  for c, longindex, optind, optarg in posix.getopt_long (arg, "-:f:l:q", longopts) do
+  for c, optind, optarg, longindex in posix.getopt (arg, "-:f:l:q", longopts) do
     if c == 1 then -- Non-option (assume file name)
       longindex = 6
-    elseif c == string.byte ('?') then -- Unknown option
+    elseif c == '?' then -- Unknown option
       minibuf_error (string.format ("Unknown option `%s'", arg[this_optind]))
-    elseif c == string.byte (':') then -- Missing argument
+    elseif c == ':' then -- Missing argument
       io.stderr:write (string.format ("%s: Option `%s' requires an argument\n",
                                       prog.name, arg[this_optind]))
       os.exit (1)
-    elseif c == string.byte ('q') then
+    elseif c == 'q' then
       longindex = 1
-    elseif c == string.byte ('f') then
+    elseif c == 'f' then
       longindex = 2
-    elseif c == string.byte ('l') then
+    elseif c == 'l' then
       longindex = 3
     end
 
