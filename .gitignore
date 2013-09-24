@@ -35,6 +35,7 @@
 /configure.lineno
 /m4/
 /maint.mk
+/zile-*.rockspec
 /zile*.tar.gz
 /zile*.tar.gz.directive*
 /zile*.tar.gz.sig
