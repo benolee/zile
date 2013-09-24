@@ -24,6 +24,7 @@ AC_INIT([Zile],
         m4_esyscmd([build-aux/git-version-gen .tarball-version]),
 	[bug-zile@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIRS([m4])
 
 AC_CONFIG_TESTDIR([zmacs/tests])
 AC_SUBST([AUTOM4TE], [${AUTOM4TE="autom4te"}])
@@ -35,18 +36,14 @@ echo
 AM_INIT_AUTOMAKE([-Wall std-options])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-dnl Set up gnulib
-gl_EARLY
-gl_INIT
-
 dnl Lua 5.2
-AX_PROG_LUA([502])
+AX_PROG_LUA([5.2])
 
 dnl help2man
-AX_WITH_PROG([HELP2MAN], [help2man], [false])
+AC_PATH_PROG([HELP2MAN], [help2man], [false])
 
 dnl Emacs >= 23.1 (optional)
-AX_WITH_PROG([EMACSPROG], [emacs])
+AC_PATH_PROG([EMACSPROG], [emacs])
 if test -n "$EMACSPROG"; then
   emacs_min_version=23.1
   emacs_version=$($EMACSPROG --version 2>&1 | head -n 1 | cut -d' ' -f3)

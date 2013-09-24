@@ -22,32 +22,13 @@
 ## Environment. ##
 ## ------------ ##
 
-LUA_PATH ?= ;
 ZILE_PATH = $(abs_srcdir)/src/?.lua
-
-
-## ---------- ##
-## Bootstrap. ##
-## ---------- ##
-
-ACLOCAL_AMFLAGS = -I m4
 
 
 ## ------------- ##
 ## Declarations. ##
 ## ------------- ##
 
-CLEANFILES		=
-DISTCLEANFILES		=
-EXTRA_DIST		=
-MAINTAINERCLEANFILES	=
-NOTHING_ELSE		=
-
-bin_SCRIPTS		=
-check_local		=
-doc_DATA		=
-install_exec_hooks	=
-man_MANS		=
 
 install_edit = sed					\
 	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g'		\
@@ -67,14 +48,6 @@ include tests/Makefile.am
 
 
 
-## ------------ ##
-## Local Tests. ##
-## ------------ ##
-
-check-local: $(check_local)
-
-
-
 ## ------------- ##
 ## Installation. ##
 ## ------------- ##
@@ -85,23 +58,16 @@ doc_DATA +=						\
 	NEWS						\
 	$(NOTHING_ELSE)
 
-install-exec-hook: $(install_exec_hooks)
-
 
 ## ------------- ##
 ## Distribution. ##
 ## ------------- ##
 
-gitlog_to_changelog	= $(srcdir)/build-aux/gitlog-to-changelog
-git_log_fix		= $(srcdir)/build-aux/git-log-fix
+git_log_fix	= $(srcdir)/build-aux/git-log-fix
+git_log_args	= --amend=$(git_log_fix) --since=2009-03-30
 
-dist-hook: ChangeLog
-ChangeLog: FORCE
-	$(AM_V_GEN)if test -d '$(srcdir)/.git'; then	\
-	  $(gitlog_to_changelog) --amend=$(git_log_fix)	\
-	      --since=2009-03-30 > '$@T';		\
-	  rm -f '$@'; mv '$@T' '$@';			\
-	fi
+# Elide travis features.
+_travis_yml	= $(NOTHING_ELSE)
 
 EXTRA_DIST +=						\
 	FAQ						\
