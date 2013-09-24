@@ -18,30 +18,34 @@ _This file is marked up in [MultiMarkdown][] syntax_.
 Contents
 ========
 
-1. [INTRODUCTION][]
-   * [Source Layout][]
-   * [Web Pages][]
-   * [Mailing Lists][]
-2. [OBTAINING THE LATEST SOURCES][]
-   * [Official Release][]
-   * [Development Sources][]
-3. [REPORTING BUGS][]
+1. [INTRODUCTION]
+   * [Source Layout]
+   * [Web Pages]
+   * [Mailing Lists]
+2. [OBTAINING THE LATEST SOURCES]
+   * [Official Release]
+   * [Development Sources]
+3. [REPORTING BUGS]
 
 ------------------------------------------------------------------------
 
 INTRODUCTION
 ============
 
-GNU Zile (_Zile Is Lossy Emacs_) is a lightweight [Emacs][] clone. Every
-Emacs user should feel at home with Zile. Zile is aimed at small
-footprint systems and quick editing sessions (it starts up and shuts
-down instantly).
+GNU Zile (_Zile Implements Lua Editors_) is a text editor development
+kit, so that you can (relatively) quickly develop your own ideal text
+editor without reinventing the wheel for many of the common algorithms
+and structures needed to do so.
 
-Zile is written in Lua 5.2 using POSIX APIs, and hence requires a Lua
-5.2 runtime and a few additional Lua modules:
+It comes with an example implementation of a lightweight [Emacs][]
+clone, called Zmacs. Every Emacs user should feel at home with Zmacs.
+Zmacs is aimed at small footprint systems and quick editing sessions
+(it starts up and shuts down instantly).
 
- * Lua stdlib <https://github.com/rrthomas/lua-stdlib>
- * Lua BitOp <http://bitop.luajit.org/>
+Zile and Zmacs are written in Lua 5.2 using POSIX APIs, and hence
+requires a Lua 5.2 runtime and a few additional Lua modules:
+
+ * Lua-stdlib <https://github.com/rrthomas/lua-stdlib>
  * lrexlib <http://rrthomas.github.com/lrexlib/>
    (the rex_gnu module must be built)
  * luaposix <https://github.com/luaposix/luaposix>
@@ -68,7 +72,7 @@ Source Layout
  * See file `THANKS` for a list of important contributors.
 
 The rest of the files in the top-level directory are part of the
-[Autotools]() build system used to compile and install Zile.
+[Autotools]() build system used to compile and install Zile and Zmacs.
 
  * Directory `build-aux` contains helper scripts used to build Zile.
  * Directory `doc` contains files used to create Zile's documentation.
@@ -76,7 +80,7 @@ The rest of the files in the top-level directory are part of the
    specific macros for rebuilding the `configure' script.
  * Directory `src` contains the source code used to build Zile.
  * Directory `tests` contains a suite of tests used by `make check` to
-   sanity check a newly built `src/zile` binary.
+   sanity check a newly built `zmacs/zmacs` binary.
 
   [Autotools]: http://sourceware.org/autobook/
 
