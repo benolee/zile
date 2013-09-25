@@ -63,8 +63,8 @@ doc_DATA +=						\
 ## Distribution. ##
 ## ------------- ##
 
-git_log_fix	= $(srcdir)/build-aux/git-log-fix
-git_log_args	= --amend=$(git_log_fix) --since=2009-03-30
+gitlog_fix	= $(srcdir)/build-aux/git-log-fix
+gitlog_args	= --amend=$(gitlog_fix) --since=2009-03-30
 
 # Elide travis features.
 _travis_yml	= $(NOTHING_ELSE)
