@@ -36,5 +36,14 @@ function init_default_bindings ()
             end,
             {"\\SPC", "\\TAB", "\\RET", "\\\\"})
 
-  lisp.loadfile (PATH_DATA .. "/default-bindings.el")
+  -- Search package.path for default-bindings.el, and load it.
+  local ok, errmsg
+  package.path:gsub ("[^;]+",
+                    function (path)
+                      if ok == nil then
+                        path = path:gsub ("%?%.lua", "zmacs/default-bindings.el", 1)
+                        ok, errmsg = lisp.loadfile (path)
+                      end
+                    end)
+  return ok, errmsg
 end

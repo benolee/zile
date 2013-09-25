@@ -21,7 +21,6 @@ A=--[[ exec @LUA@ "$0" "$@"  # -*- mode: lua; -*- ]]A
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -- Constants set by configure
-PATH_DATA   = "@zmacsdatadir@"
 PATH_DOCDIR = "@pkgdocdir@"
 
 -- Remove current directory from package search path
