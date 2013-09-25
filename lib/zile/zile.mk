@@ -46,3 +46,7 @@ dist_pkgdata_DATA =				\
 	lib/zile/version.lua			\
 	lib/zile/window.lua			\
 	$(NOTHING_ELSE)
+
+EXTRA_DIST +=					\
+	lib/zile/version.lua			\
+	$(NOTHING_ELSE)
