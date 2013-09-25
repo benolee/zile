@@ -111,8 +111,8 @@ function process_args ()
   -- Leading `:' so as to return ':' for a missing arg, not '?'
   local line = 1
   local this_optind = 1
-  for c, optind, optarg, longindex in posix.getopt (arg, "-:f:l:q", longopts) do
-    if c == 1 then -- Non-option (assume file name)
+  for c, optarg, optind, longindex in posix.getopt (arg, "-:f:l:q", longopts) do
+    if string.byte (c) == 1 then -- Non-option (assume file name)
       longindex = 6
     elseif c == '?' then -- Unknown option
       minibuf_error (string.format ("Unknown option `%s'", arg[this_optind]))
