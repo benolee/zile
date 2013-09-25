@@ -82,6 +82,6 @@ EXTRA_DIST +=						\
 update_copyright_env = UPDATE_COPYRIGHT_USE_INTERVALS=1
 
 # Set format of NEWS
-old_NEWS_hash = 40a4c6ac8e6b133a341fecbce7f875a6
+old_NEWS_hash = 42b62d1dc98f4d243f36ed6047e2f473
 
 FORCE:
