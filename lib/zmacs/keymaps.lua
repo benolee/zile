@@ -17,7 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local lisp  = require "eval"
+local lisp  = require "zmacs.eval"
 local posix = require "posix"
 
 root_bindings = tree.new ()

@@ -29,7 +29,7 @@ package.path = package.path:gsub (";%./%?.lua;", ";")
 package.path = package.path:gsub ("^%./%?.lua;", "")
 package.path = package.path:gsub (";%./%?.lua$", "")
 
-package.path = "@builddir@/?.lua;@zmacsdatadir@/?.lua;@pkgdatadir@/?.lua;" .. package.path
+package.path = "@builddir@/?.lua;@pkgdatadir@/?.lua;" .. package.path
 
 -- Load external modules:
 require "std" -- load std
@@ -41,41 +41,41 @@ rex_gnu    = require_version ("rex_gnu", "2.7.1", nil, "[%S]+%s*([%S]+)")
 require_version ("alien", "0.7.0")
 
 -- Load Zile modules:
-require "lib"
-require "astr"
-require "estr"
-require "history"
-require "main"
-require "variables"
-require "bind"
-require "buffer"
-require "completion"
-require "editfns"
-require "funcs"
-require "getkey"
-require "file"
-require "keycode"
-require "killring"
-require "line"
-require "macro"
-require "marker"
-require "minibuf"
-require "redisplay"
-require "registers"
-require "search"
-require "undo"
-require "window"
+require "zile.lib"
+require "zile.astr"
+require "zile.estr"
+require "zile.history"
+require "zile.variables"
+require "zile.bind"
+require "zile.buffer"
+require "zile.completion"
+require "zile.editfns"
+require "zile.funcs"
+require "zile.getkey"
+require "zile.file"
+require "zile.keycode"
+require "zile.killring"
+require "zile.line"
+require "zile.macro"
+require "zile.marker"
+require "zile.minibuf"
+require "zile.redisplay"
+require "zile.registers"
+require "zile.search"
+require "zile.undo"
+require "zile.window"
 
 -- Zile terminal handling
-require "term_curses"
-require "term_minibuf"
-require "term_redisplay"
+require "zile.term_curses"
+require "zile.term_minibuf"
+require "zile.term_redisplay"
 
 -- Zmacs modules:
-require "callbacks"
-require "commands"
-require "keymaps"
-require "tbl_vars"
+require "zmacs.callbacks"
+require "zmacs.commands"
+require "zmacs.keymaps"
+require "zmacs.main"
+require "zmacs.tbl_vars"
 
 
 local function err (err)

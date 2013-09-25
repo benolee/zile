@@ -18,9 +18,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-local lisp = require "eval"
+local lisp = require "zmacs.eval"
 
-prog = require "version"
+prog = require "zile.version"
 
 splash_str = "Welcome to " .. prog.program .. [[.
 

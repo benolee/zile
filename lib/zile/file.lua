@@ -17,7 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-prog = require "version"
+prog = require "zile.version"
 
 -- FIXME: Warn when file changes on disk
 

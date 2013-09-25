@@ -22,7 +22,7 @@
 ## Environment. ##
 ## ------------ ##
 
-ZILE_PATH = $(abs_srcdir)/src/?.lua
+ZILE_PATH = $(abs_srcdir)/lib/?.lua
 
 
 ## ------------- ##
@@ -31,20 +31,20 @@ ZILE_PATH = $(abs_srcdir)/src/?.lua
 
 
 install_edit = sed					\
-	-e 's|@pkgdatadir[@]|$(pkgdatadir)|g'		\
+	-e 's|@pkgdatadir[@]|$(datadir)|g'		\
 	-e 's|@pkgdocdir[@]|$(docdir)|g'		\
 	-e 's|@LUA[@]|$(LUA)|g'				\
 	$(NOTHING_ELSE)
 
 inplace_edit = sed					\
-	-e 's|@pkgdatadir[@]|$(abs_top_srcdir)/src|g'	\
+	-e 's|@pkgdatadir[@]|$(abs_top_srcdir)/lib|g'	\
 	-e 's|@pkgdocdir[@]|$(abs_top_srcdir)|g'	\
 	-e 's|@LUA[@]|$(LUA)|g'				\
 	$(NOTHING_ELSE)
 
-include src/Makefile.am
-include zmacs/Makefile.am
-include tests/Makefile.am
+include lib/zile/zile.mk
+include lib/zmacs/zmacs.mk
+include tests/tests.mk
 
 
 
@@ -71,11 +71,7 @@ _travis_yml	= $(NOTHING_ELSE)
 
 EXTRA_DIST +=						\
 	FAQ						\
-	GNUmakefile					\
-	maint.mk					\
 	$(NOTHING_ELSE)
-
-distcheck-hook: syntax-check
 
 
 ## ------------ ##

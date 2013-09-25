@@ -22,7 +22,7 @@
 ## Environment. ##
 ## ------------ ##
 
-ZMACS_PATH = $(abs_buiddir)/zmacs/?.lua;$(abs_srcdir)/zmacs/?.lua
+ZMACS_PATH = $(abs_buiddir)/lib/?.lua;$(abs_srcdir)/lib/?.lua
 
 
 ## ------------- ##
@@ -34,14 +34,14 @@ zmacscmdsdir = $(zmacsdatadir)/commands
 
 zmacs_install_edit =					\
 	$(install_edit)					\
-	-e 's|@zmacsdatadir[@]|$(zmacsdatadir)|g'	\
+	-e 's|@zmacsdatadir[@]|$(datadir)|g'		\
 	-e 's|@builddir[@]/?.lua;||'			\
 	$(NOTHING_ELSE)
 
-zmacs_inplace_edit =					\
-	$(inplace_edit)					\
-	-e 's|@zmacsdatadir[@]|$(abs_srcdir)/zmacs|g'	\
-	-e 's|@builddir[@]|$(abs_builddir)/zmacs|g'	\
+zmacs_inplace_edit =						\
+	$(inplace_edit)						\
+	-e 's|@zmacsdatadir[@]|$(abs_srcdir)/lib/zmacs|g'	\
+	-e 's|@builddir[@]|$(abs_builddir)/lib|g'		\
 	$(NOTHING_ELSE)
 
 
@@ -49,53 +49,53 @@ zmacs_inplace_edit =					\
 ## Build. ##
 ## ------ ##
 
-doc_DATA += zmacs/dotzmacs.sample
+doc_DATA += doc/dotzmacs.sample
 
-bin_SCRIPTS += zmacs/zmacs
+bin_SCRIPTS += bin/zmacs
 
-man_MANS += zmacs/zmacs.1
+man_MANS += doc/zmacs.1
 
 ## $(srcdir) prefixes are required when passing $(dist_zmacscmds_DATA)
 ## to zlc in the build tree with a VPATH build, otherwise it fails to
 ## find them in $(builddir)/zmacs/commands/*.
 dist_zmacscmds_DATA =					\
-	$(srcdir)/zmacs/commands/bind.zl		\
-	$(srcdir)/zmacs/commands/buffer.zl		\
-	$(srcdir)/zmacs/commands/edit.zl		\
-	$(srcdir)/zmacs/commands/file.zl		\
-	$(srcdir)/zmacs/commands/killring.zl		\
-	$(srcdir)/zmacs/commands/help.zl		\
-	$(srcdir)/zmacs/commands/line.zl		\
-	$(srcdir)/zmacs/commands/lisp.zl		\
-	$(srcdir)/zmacs/commands/macro.zl		\
-	$(srcdir)/zmacs/commands/marker.zl		\
-	$(srcdir)/zmacs/commands/minibuf.zl		\
-	$(srcdir)/zmacs/commands/move.zl		\
-	$(srcdir)/zmacs/commands/registers.zl		\
-	$(srcdir)/zmacs/commands/search.zl		\
-	$(srcdir)/zmacs/commands/undo.zl		\
-	$(srcdir)/zmacs/commands/variables.zl		\
-	$(srcdir)/zmacs/commands/window.zl		\
+	$(srcdir)/lib/zmacs/commands/bind.zl		\
+	$(srcdir)/lib/zmacs/commands/buffer.zl		\
+	$(srcdir)/lib/zmacs/commands/edit.zl		\
+	$(srcdir)/lib/zmacs/commands/file.zl		\
+	$(srcdir)/lib/zmacs/commands/killring.zl	\
+	$(srcdir)/lib/zmacs/commands/help.zl		\
+	$(srcdir)/lib/zmacs/commands/line.zl		\
+	$(srcdir)/lib/zmacs/commands/lisp.zl		\
+	$(srcdir)/lib/zmacs/commands/macro.zl		\
+	$(srcdir)/lib/zmacs/commands/marker.zl		\
+	$(srcdir)/lib/zmacs/commands/minibuf.zl		\
+	$(srcdir)/lib/zmacs/commands/move.zl		\
+	$(srcdir)/lib/zmacs/commands/registers.zl	\
+	$(srcdir)/lib/zmacs/commands/search.zl		\
+	$(srcdir)/lib/zmacs/commands/undo.zl		\
+	$(srcdir)/lib/zmacs/commands/variables.zl	\
+	$(srcdir)/lib/zmacs/commands/window.zl		\
 	$(NOTHING_ELSE)
 
 nodist_zmacsdata_DATA =					\
-	zmacs/commands.lua				\
+	lib/zmacs/commands.lua				\
 	$(NOTHING_ELSE)
 
 dist_zmacsdata_DATA =					\
-	zmacs/default-bindings.el			\
-	zmacs/callbacks.lua				\
-	zmacs/keymaps.lua				\
-	zmacs/eval.lua					\
-	zmacs/main.lua					\
-	zmacs/tbl_vars.lua				\
-	zmacs/zlisp.lua					\
+	lib/zmacs/default-bindings.el			\
+	lib/zmacs/callbacks.lua				\
+	lib/zmacs/keymaps.lua				\
+	lib/zmacs/eval.lua					\
+	lib/zmacs/main.lua					\
+	lib/zmacs/tbl_vars.lua				\
+	lib/zmacs/zlisp.lua					\
 	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)
 
 zmacs_zmacs_DEPS =					\
 	Makefile					\
-	zmacs/zmacs.in					\
+	lib/zmacs/zmacs.in					\
 	$(nodist_zmacsdata_DATA)			\
 	$(dist_zmacsdata_DATA)				\
 	$(NOTHING_ELSE)
@@ -107,30 +107,38 @@ zm__v_ZLC_  = $(zm__v_ZLC_@AM_DEFAULT_V@)
 zm__v_ZLC_0 = @echo "  ZLC     " $@;
 zm__v_ZLC_1 =
 
-zmacs/commands.lua: $(dist_zmacscmds_DATA)
-	$(AM_V_at)test -d zmacs || mkdir zmacs
+lib/zmacs/commands.lua: $(dist_zmacscmds_DATA)
+	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
+	test -d "$$d" || $(MKDIR_P) "$$d"
 	$(ZM_V_ZLC)LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)' \
-	  $(LUA) $(srcdir)/zmacs/zlc $(dist_zmacscmds_DATA) > $@
+	  $(LUA) $(srcdir)/lib/zmacs/zlc $(dist_zmacscmds_DATA) > $@
 
-zmacs/zmacs: $(zmacs_zmacs_DEPS)
+RM = rm
+
+bin/zmacs: $(zmacs_zmacs_DEPS)
+	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
+	test -d "$$d" || $(MKDIR_P) "$$d"
 	@rm -f $@ $@.tmp
-	$(AM_V_GEN)$(zmacs_inplace_edit) '$(srcdir)/$@.in' >'$@.tmp'
+	$(AM_V_GEN)$(zmacs_inplace_edit) '$(srcdir)/lib/zmacs/zmacs.in' >'$@.tmp'
 	$(AM_V_at)mv $@.tmp $@
 	$(AM_V_at)chmod +x $@
-	$(AM_V_at)$@ --version >/dev/null || rm $@
+	$(AM_V_at)$@ --version >/dev/null || $(RM) $@
 
-zmacs/dotzmacs.sample: zmacs/tbl_vars.lua zmacs/mkdotzmacs.lua
-	$(AM_V_GEN)PACKAGE='$(PACKAGE)'			\
-	LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)' \
-	  $(LUA) $(srcdir)/zmacs/mkdotzmacs.lua > '$@'
+doc/dotzmacs.sample: lib/zmacs/tbl_vars.lua lib/zmacs/mkdotzmacs.lua
+	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
+	test -d "$$d" || $(MKDIR_P) "$$d"
+	$(AM_V_GEN)PACKAGE='$(PACKAGE)'				\
+	LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)'	\
+	  $(LUA) $(srcdir)/lib/zmacs/mkdotzmacs.lua > '$@'
 
-zmacs/zmacs.1: $(srcdir)/zmacs/zmacs.1.in Makefile config.status
-	@test -d zmacs || mkdir zmacs
+doc/zmacs.1: $(srcdir)/lib/zmacs/zmacs.1.in Makefile config.status
+	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
+	test -d "$$d" || $(MKDIR_P) "$$d"
 	$(AM_V_at)rm -f $@ $@.tmp
-	$(AM_V_GEN)$(zmacs_install_edit) '$(srcdir)/$@.in' >'$@.tmp'
+	$(AM_V_GEN)$(zmacs_install_edit) '$(srcdir)/lib/zmacs/zmacs.1.in' >'$@.tmp'
 	$(AM_V_at)mv '$@.tmp' '$@'
 
-$(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
+$(srcdir)/lib/zmacs/zmacs.1.in: lib/zmacs/man-extras lib/zmacs/help2man-wrapper configure.ac
 	@test -d zmacs || mkdir zmacs
 ## Exit gracefully if zmacs.1.in is not writeable, such as during distcheck!
 	$(AM_V_GEN)if ( touch $@.w && rm -f $@.w; ) >/dev/null 2>&1; \
@@ -141,8 +149,8 @@ $(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
 	      '--output=$@'				\
 	      '--no-info'				\
 	      '--name=Zmacs'				\
-	      --include '$(srcdir)/zmacs/man-extras'	\
-	      '$(srcdir)/zmacs/help2man-wrapper';	\
+	      --include '$(srcdir)/lib/zmacs/man-extras'	\
+	      '$(srcdir)/lib/zmacs/help2man-wrapper';	\
 	fi
 
 
@@ -154,11 +162,11 @@ $(srcdir)/zmacs/zmacs.1.in: zmacs/man-extras zmacs/help2man-wrapper configure.ac
 
 CD_TESTDIR	= abs_srcdir=`$(am__cd) $(srcdir) && pwd`; cd $(tests_dir)
 
-tests_dir	= $(srcdir)/zmacs/tests
+tests_dir	= lib/zmacs/tests
 package_m4	= $(tests_dir)/package.m4
 testsuite	= $(tests_dir)/testsuite
 
-TESTSUITE	= zmacs/tests/testsuite
+TESTSUITE	= lib/zmacs/tests/testsuite
 TESTSUITE_AT	= $(tests_dir)/testsuite.at \
 		  $(tests_dir)/message.at \
 		  $(tests_dir)/write-file.at \
@@ -166,13 +174,13 @@ TESTSUITE_AT	= $(tests_dir)/testsuite.at \
 
 EXTRA_DIST	+= $(testsuite) $(TESTSUITE_AT) $(package_m4)
 
-TESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/zmacs/zmacs"
+TESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/bin/zmacs"
 
 $(testsuite): $(package_m4) $(TESTSUITE_AT) Makefile.am
 	$(AM_V_GEN)$(AUTOTEST) -I '$(srcdir)' -I '$(tests_dir)' \
 	  $(TESTSUITE_AT) -o '$@'
 
-$(package_m4): $(dotversion) zmacs/Makefile.am
+$(package_m4): $(dotversion) lib/zmacs/zmacs.mk
 	$(AM_V_GEN){ \
 	  echo '# Signature of the current package.'; \
 	  echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
@@ -208,8 +216,8 @@ clean-local:
 
 install_exec_hooks += install-zmacs-hook
 install-zmacs-hook:
-	@$(zmacs_install_edit) $(srcdir)/zmacs/zmacs.in >'$@.tmp'
-	@echo $(INSTALL_SCRIPT) zmacs/zmacs $(DESTDIR)$(bindir)/zmacs
+	@$(zmacs_install_edit) $(srcdir)/lib/zmacs/zmacs.in >'$@.tmp'
+	@echo $(INSTALL_SCRIPT) bin/zmacs $(DESTDIR)$(bindir)/zmacs
 	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zmacs
 	@rm -f $@.tmp
 
@@ -219,13 +227,13 @@ install-zmacs-hook:
 ## ------------- ##
 
 EXTRA_DIST +=						\
-	zmacs/dotzmacs.sample				\
-	zmacs/help2man-wrapper				\
-	zmacs/man-extras				\
-	zmacs/mkdotzmacs.lua				\
-	zmacs/zlc					\
-	zmacs/zmacs.1.in				\
-	zmacs/zmacs.in					\
+	doc/dotzmacs.sample				\
+	lib/zmacs/help2man-wrapper			\
+	lib/zmacs/man-extras				\
+	lib/zmacs/mkdotzmacs.lua			\
+	lib/zmacs/zlc					\
+	lib/zmacs/zmacs.1.in				\
+	lib/zmacs/zmacs.in				\
 	$(NOTHING_ELSE)
 
 
@@ -234,14 +242,14 @@ EXTRA_DIST +=						\
 ## ------------ ##
 
 CLEANFILES +=						\
-	zmacs/zmacs					\
-	zmacs/zmacs.1					\
+	bin/zmacs					\
+	doc/zmacs.1					\
 	$(NOTHING_ELSE)
 
 DISTCLEANFILES +=					\
-	zmacs/commands.lua				\
+	lib/zmacs/commands.lua				\
 	$(NOTHING_ELSE)
 
 MAINTAINERCLEANFILES +=					\
-	$(srcdir)/zmacs/zmacs.1.in			\
+	$(srcdir)/lib/zmacs/zmacs.1.in			\
 	$(NOTHING_ELSE)

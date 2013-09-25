@@ -18,10 +18,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require "std"
-require "lib"
+require "zile.lib"
 
 -- Load variables
-require "tbl_vars"
+require "zmacs.tbl_vars"
 
 io.stdout:write (
   [[

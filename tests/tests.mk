@@ -59,8 +59,8 @@ EXTRA_DIST +=						\
 	tests/run-lisp-tests.lua
 
 check_local += tests-check-local
-tests-check-local: $(builddir)/zmacs/zmacs
+tests-check-local: $(builddir)/bin/zmacs
 	echo $(LISP_TESTS) | $(LUA_ENV) EMACSPROG="$(EMACSPROG)" $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
 	echo $(LISP_TESTS_ZILE_ONLY_FIXED_SCREEN) | COLUMNS=80 LINES=24 $(LISP_TESTS_ENVIRONMENT) EMACSPROG= xargs $(RUNLISPTESTS)
 	echo $(LISP_TESTS_ZILE_ONLY) | $(LUA_ENV) EMACSPROG= $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
-	$(LISP_TESTS_ENVIRONMENT) $(builddir)/zmacs/zmacs --unknown-flag --load $(srcdir)/tests/quit.el
+	$(LISP_TESTS_ENVIRONMENT) $(builddir)/bin/zmacs --unknown-flag --load $(srcdir)/tests/quit.el

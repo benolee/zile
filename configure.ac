@@ -24,7 +24,7 @@ AC_INIT([Zile], [3], [bug-zile@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIRS([m4])
 
-AC_CONFIG_TESTDIR([zmacs/tests])
+AC_CONFIG_TESTDIR([lib/zmacs/tests])
 AC_SUBST([AUTOM4TE], [${AUTOM4TE="autom4te"}])
 AC_SUBST([AUTOTEST], ['$(AUTOM4TE) --language=autotest'])
 
@@ -53,5 +53,5 @@ if test -n "$EMACSPROG"; then
 fi
 
 dnl Generate output
-AC_CONFIG_FILES([Makefile src/version.lua])
+AC_CONFIG_FILES([Makefile lib/zile/version.lua])
 AC_OUTPUT

@@ -17,7 +17,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local lisp = require "eval"
+local lisp = require "zmacs.eval"
 
 -- Used to process keyboard macros, and to maintain identical behaviour
 -- between the user typing and a keyboard macro sending keys, also used
