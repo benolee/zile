@@ -17,20 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-GNULIB_SRCDIR ?= $(srcdir)/gnulib
-gnulib_dir = $(GNULIB_SRCDIR)
-
-# Set format of NEWS
-old_NEWS_hash := 40a4c6ac8e6b133a341fecbce7f875a6
-
 # Don't check test outputs or diffs
 VC_LIST_ALWAYS_EXCLUDE_REGEX = \.(output|diff)$$
-
-# Use dashes instead of lists when updating copyright headers
-update-copyright-env = UPDATE_COPYRIGHT_USE_INTERVALS=1
-
-# We aren't internationalised
-translation_project_ = ""
 
 # Allow errors to start with a capital (they are displayed on a
 # separate line, interactively)

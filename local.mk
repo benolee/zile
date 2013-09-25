@@ -78,4 +78,10 @@ EXTRA_DIST +=						\
 ## Maintenance. ##
 ## ------------ ##
 
+# Use dashes instead of lists when updating copyright headers
+update_copyright_env = UPDATE_COPYRIGHT_USE_INTERVALS=1
+
+# Set format of NEWS
+old_NEWS_hash = 40a4c6ac8e6b133a341fecbce7f875a6
+
 FORCE:

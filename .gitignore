@@ -18,6 +18,7 @@
 /bin/
 /build-aux/
 !/build-aux/git-log-fix
+!/build-aux/sanity-cfg.mk
 /config.cache
 /config.log
 /config.status
