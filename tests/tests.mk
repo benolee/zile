@@ -58,7 +58,9 @@ EXTRA_DIST +=						\
 	tests/test.input				\
 	tests/run-lisp-tests.lua
 
-check_local += tests-check-local
+## Temporarily disable automatic running of these tests
+##check_local += tests-check-local
+
 tests-check-local: $(builddir)/bin/zmacs
 	echo $(LISP_TESTS) | $(LUA_ENV) EMACSPROG="$(EMACSPROG)" $(LISP_TESTS_ENVIRONMENT) xargs $(RUNLISPTESTS)
 	echo $(LISP_TESTS_ZILE_ONLY_FIXED_SCREEN) | COLUMNS=80 LINES=24 $(LISP_TESTS_ENVIRONMENT) EMACSPROG= xargs $(RUNLISPTESTS)
