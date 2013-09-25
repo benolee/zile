@@ -52,6 +52,9 @@ if test -n "$EMACSPROG"; then
     unset EMACSPROG])
 fi
 
+AC_PROG_SED
+AC_PROG_EGREP
+
 dnl Generate output
 AC_CONFIG_FILES([Makefile lib/zile/version.lua])
 AC_OUTPUT
