@@ -9,7 +9,7 @@
 # provided the copyright notice and this notice are preserved.
 
 if test "$1" = "--help"; then
-  $builddir/bin/zmacs $1 | sed 's/^\([-+F]\)/  \1/'
+  $builddir/lib/zmacs/zmacs $1 | sed 's/^\([-+F]\)/  \1/'
 else
-  $builddir/bin/zmacs $1
+  $builddir/lib/zmacs/zmacs $1
 fi

@@ -59,13 +59,10 @@ dist_zmacscmds_DATA =					\
 	$(srcdir)/lib/zmacs/commands/window.zl		\
 	$(NOTHING_ELSE)
 
-nodist_zmacsdata_DATA =					\
-	lib/zmacs/commands.lua				\
-	$(NOTHING_ELSE)
-
 dist_zmacsdata_DATA =					\
 	lib/zmacs/default-bindings-el.lua		\
 	lib/zmacs/callbacks.lua				\
+	lib/zmacs/commands.lua				\
 	lib/zmacs/keymaps.lua				\
 	lib/zmacs/eval.lua				\
 	lib/zmacs/main.lua				\
@@ -131,21 +128,25 @@ doc/zmacs.1: lib/zmacs/man-extras lib/zmacs/help2man-wrapper configure.ac
 zmacsdocdatadir = $(zmacsdatadir)/doc
 
 dist_zmacsdocdata_DATA =					\
-	lib/zmacs/doc/COPYING.lua				\
-	lib/zmacs/doc/FAQ.lua					\
-	lib/zmacs/doc/NEWS.lua					\
+	$(srcdir)/lib/zmacs/doc/COPYING.lua			\
+	$(srcdir)/lib/zmacs/doc/FAQ.lua				\
+	$(srcdir)/lib/zmacs/doc/NEWS.lua			\
 	$(NOTHING_ELSE)
 
-lib/zmacs/doc:
+$(srcdir)/lib/zmacs/doc:
 	@test -d '$@' || $(MKDIR_P) '$@'
 
-$(dist_zmacsdocdata_DATA): lib/zmacs/doc
-	$(AM_V_GEN){						\
-	  src=`echo '$@' |sed -e 's|^.*/||' -e 's|\.lua$$||'`;	\
-	  echo 'return [==[';					\
-	  cat "$(srcdir)/$$src";				\
-	  echo ']==]';						\
-	} > '$@'
+$(dist_zmacsdocdata_DATA): $(srcdir)/lib/zmacs/doc
+## Exit gracefully if target is not writeable, such as during distcheck!
+	$(AM_V_GEN)if ( touch $@.w && rm -f $@.w; ) >/dev/null 2>&1; \
+	then							\
+	  {							\
+	    src=`echo '$@' |sed -e 's|^.*/||' -e 's|\.lua$$||'`;\
+	    echo 'return [==[';					\
+	    cat "$(srcdir)/$$src";				\
+	    echo ']==]';					\
+	  } > '$@';						\
+	fi
 
 
 
@@ -168,7 +169,7 @@ TESTSUITE_AT	= $(tests_dir)/testsuite.at \
 
 EXTRA_DIST	+= $(testsuite) $(TESTSUITE_AT) $(package_m4)
 
-TESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/bin/zmacs"
+TESTS_ENVIRONMENT = ZMACS="$(abs_builddir)/lib/zmacs/zmacs"
 
 $(testsuite): $(package_m4) $(TESTSUITE_AT) Makefile.am
 	$(AM_V_GEN)$(AUTOTEST) -I '$(srcdir)' -I '$(tests_dir)' \
@@ -215,7 +216,6 @@ EXTRA_DIST +=						\
 	lib/zmacs/man-extras				\
 	lib/zmacs/mkdotzmacs.lua			\
 	lib/zmacs/zlc					\
-	lib/zmacs/zmacs.1.in				\
 	lib/zmacs/zmacs.in				\
 	$(NOTHING_ELSE)
 
