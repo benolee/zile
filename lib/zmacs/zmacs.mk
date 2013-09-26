@@ -139,7 +139,8 @@ doc/zmacs.1: $(srcdir)/lib/zmacs/zmacs.1.in Makefile config.status
 	$(AM_V_at)mv '$@.tmp' '$@'
 
 $(srcdir)/lib/zmacs/zmacs.1.in: lib/zmacs/man-extras lib/zmacs/help2man-wrapper configure.ac
-	@test -d zmacs || mkdir zmacs
+	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
+	test -d "$$d" || $(MKDIR_P) "$$d"
 ## Exit gracefully if zmacs.1.in is not writeable, such as during distcheck!
 	$(AM_V_GEN)if ( touch $@.w && rm -f $@.w; ) >/dev/null 2>&1; \
 	then						\
@@ -205,9 +206,9 @@ zmacs-check-local: $(tests_dir)/atconfig $(testsuite)
 
 # Remove any file droppings left behind by testsuite.
 clean-local:
-	-$(CD_TESTDIR); \
+	$(CD_TESTDIR); \
 	test -f "$$abs_srcdir/$(TESTSUITE)" && \
-	  '$(SHELL)' "$$abs_srcdir/$(TESTSUITE)" --clean
+	  '$(SHELL)' "$$abs_srcdir/$(TESTSUITE)" --clean || :
 
 
 ## ------------- ##
