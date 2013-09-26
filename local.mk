@@ -46,6 +46,8 @@ include lib/zile/zile.mk
 include lib/zmacs/zmacs.mk
 include tests/tests.mk
 
+## Use a builtin rockspec build with root at $(srcdir)/lib
+mkrockspecs_args = --module-dir $(srcdir)/lib
 
 
 ## ------------- ##

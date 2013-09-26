@@ -83,19 +83,19 @@ nodist_zmacsdata_DATA =					\
 	$(NOTHING_ELSE)
 
 dist_zmacsdata_DATA =					\
-	lib/zmacs/default-bindings.el			\
+	lib/zmacs/default-bindings-el.lua		\
 	lib/zmacs/callbacks.lua				\
 	lib/zmacs/keymaps.lua				\
-	lib/zmacs/eval.lua					\
-	lib/zmacs/main.lua					\
+	lib/zmacs/eval.lua				\
+	lib/zmacs/main.lua				\
 	lib/zmacs/tbl_vars.lua				\
-	lib/zmacs/zlisp.lua					\
+	lib/zmacs/zlisp.lua				\
 	$(dist_zmacscmds_DATA)				\
 	$(NOTHING_ELSE)
 
 zmacs_zmacs_DEPS =					\
 	Makefile					\
-	lib/zmacs/zmacs.in					\
+	lib/zmacs/zmacs.in				\
 	$(nodist_zmacsdata_DATA)			\
 	$(dist_zmacsdata_DATA)				\
 	$(NOTHING_ELSE)
@@ -153,6 +153,34 @@ $(srcdir)/lib/zmacs/zmacs.1.in: lib/zmacs/man-extras lib/zmacs/help2man-wrapper 
 	      --include '$(srcdir)/lib/zmacs/man-extras'	\
 	      '$(srcdir)/lib/zmacs/help2man-wrapper';	\
 	fi
+
+
+
+## --------------------------- ##
+## Interactive help resources. ##
+## --------------------------- ##
+
+# There's no portable way to install and then access from zmacs
+# plain text resources, so we convert them to Lua modules here.
+
+zmacsdocdatadir = $(zmacsdatadir)/doc
+
+dist_zmacsdocdata_DATA =					\
+	lib/zmacs/doc/COPYING.lua				\
+	lib/zmacs/doc/FAQ.lua					\
+	lib/zmacs/doc/NEWS.lua					\
+	$(NOTHING_ELSE)
+
+lib/zmacs/doc:
+	@test -d '$@' || $(MKDIR_P) '$@'
+
+$(dist_zmacsdocdata_DATA): lib/zmacs/doc
+	$(AM_V_GEN){						\
+	  src=`echo '$@' |sed -e 's|^.*/||' -e 's|\.lua$$||'`;	\
+	  echo 'return [==[';					\
+	  cat "$(srcdir)/$$src";				\
+	  echo ']==]';						\
+	} > '$@'
 
 
 
@@ -229,6 +257,7 @@ install-zmacs-hook:
 
 EXTRA_DIST +=						\
 	doc/dotzmacs.sample				\
+	lib/zmacs/commands.lua				\
 	lib/zmacs/help2man-wrapper			\
 	lib/zmacs/man-extras				\
 	lib/zmacs/mkdotzmacs.lua			\
@@ -247,10 +276,8 @@ CLEANFILES +=						\
 	doc/zmacs.1					\
 	$(NOTHING_ELSE)
 
-DISTCLEANFILES +=					\
-	lib/zmacs/commands.lua				\
-	$(NOTHING_ELSE)
-
 MAINTAINERCLEANFILES +=					\
+	$(srcdir)/lib/zmacs/commands.lua		\
 	$(srcdir)/lib/zmacs/zmacs.1.in			\
+	$(dist_zmacsdocdata_DATA)			\
 	$(NOTHING_ELSE)

@@ -124,3 +124,38 @@
       end
     end
     return ok"))
+
+(local find_or_create_buffer_from_module (name)
+  "local bp = find_buffer (name)
+   if bp then
+     switch_to_buffer (bp)
+   else
+     bp = create_auto_buffer (name)
+     switch_to_buffer (bp)
+     insert_string (require ('zmacs.doc.' .. name))
+   end
+   cur_bp.readonly = true
+  goto_offset (1)")
+
+
+(defun describe-copying ()
+  "Display info on how you may redistribute copies of GNU Zmacs."
+  (interactive)
+  (lambda ()
+    "find_or_create_buffer_from_module ('COPYING')"))
+
+
+(defun describe-no-warranty ()
+  "Display info on all the kinds of warranty Zmacs does NOT have."
+  (interactive)
+  (lambda ()
+    "find_or_create_buffer_from_module ('COPYING')
+    lisp.execute_function ('search-forward', ' Disclaimer of Warranty.')
+    beginning_of_line ()"))
+
+
+(defun view-emacs-FAQ ()
+  "Display the Zmacs Frequently Asked Questions (FAQ) file."
+  (interactive)
+  (lambda ()
+    "find_or_create_buffer_from_module ('FAQ')"))

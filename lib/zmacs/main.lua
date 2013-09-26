@@ -24,12 +24,13 @@ prog = require "zile.version"
 
 splash_str = "Welcome to " .. prog.program .. [[.
 
+Get help        C-h  (Hold down CTRL and press h)
 Undo changes	C-x u        Exit ]] .. prog.Name .. [[	C-x C-c
 (`C-' means use the CTRL key.  `M-' means hold the Meta (or Alt) key.
 If you have no Meta key, you may type ESC followed by the character.)
 Combinations like `C-x u' mean first press `C-x', then `u'.
 
-Keys not working properly?  See file://]] .. PATH_DOCDIR .. [[/FAQ
+Keys not working properly?   See the FAQ   C-h C-f
 
 ]] .. prog.version .. [[
 
