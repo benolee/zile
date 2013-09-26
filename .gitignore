@@ -6,7 +6,6 @@
 .gitmodules
 .sc-start*
 .version
-/COPYING
 /ChangeLog
 /GNUmakefile
 /HACKING
