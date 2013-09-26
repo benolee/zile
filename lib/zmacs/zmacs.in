@@ -1,84 +1,45 @@
-#!/bin/sh
-A=--[[ exec @LUA@ "$0" "$@"  # -*- mode: lua; -*- ]]A
---
--- Program initialisation
---
--- Copyright (c) 2010-2013 Free Software Foundation, Inc.
---
--- This file is part of GNU Zile.
---
--- This program is free software; you can redistribute it and/or modify it
--- under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 3, or (at your option)
--- any later version.
---
--- This program is distributed in the hope that it will be useful, but
--- WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
--- General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#! /bin/sh
+# @configure_input@
+# Wrapper around a non installed m4 to make it work as an installed one.
+#
+# Copyright (C) 2013 Free Software Foundation, Inc.
+#
+# This file is part of GNU Zile.
+#
+# GNU Zile is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# GNU Zile is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Written by Gary V. Vaughan <gary@gnu.org>
 
--- Remove current directory from package search path
-package.path = package.path:gsub (";%./%?.lua;", ";")
-package.path = package.path:gsub ("^%./%?.lua;", "")
-package.path = package.path:gsub (";%./%?.lua$", "")
+# Be Bourne compatible
+if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
+  emulate sh
+  NULLCMD=:
+  # Zsh 3.x and 4.x performs word splitting on ${1+"$@"}, which
+  # is contrary to our usage.  Disable this feature.
+  alias -g '${1+"$@"}'='"$@"'
+  setopt NO_GLOB_SUBST
+else
+  case `(set -o) 2>/dev/null` in *posix*) set -o posix;; esac
+fi
 
-package.path = "@builddir@/?.lua;@pkgdatadir@/?.lua;" .. package.path
+LUA_PATH="\
+@abs_top_builddir@/lib/?.lua;\
+@abs_top_srcdir@/lib/?.lua;\
+${LUA_PATH+$LUA_PATH;}\
+;"
+export LUA_PATH
 
--- Load external modules:
-require "std" -- load std
-require_version ("std", "35") -- check version of std now we have require_version
-require "std.strict" -- optional stdlib module
-posix      = require_version ("posix", "29")
-curses     = require "curses" -- part of luaposix
-rex_gnu    = require_version ("rex_gnu", "2.7.1", nil, "[%S]+%s*([%S]+)")
-require_version ("alien", "0.7.0")
-
--- Load Zile modules:
-require "zile.lib"
-require "zile.astr"
-require "zile.estr"
-require "zile.history"
-require "zile.variables"
-require "zile.bind"
-require "zile.buffer"
-require "zile.completion"
-require "zile.editfns"
-require "zile.funcs"
-require "zile.getkey"
-require "zile.file"
-require "zile.keycode"
-require "zile.killring"
-require "zile.line"
-require "zile.macro"
-require "zile.marker"
-require "zile.minibuf"
-require "zile.redisplay"
-require "zile.registers"
-require "zile.search"
-require "zile.undo"
-require "zile.window"
-
--- Zile terminal handling
-require "zile.term_curses"
-require "zile.term_minibuf"
-require "zile.term_redisplay"
-
--- Zmacs modules:
-require "zmacs.callbacks"
-require "zmacs.commands"
-require "zmacs.keymaps"
-require "zmacs.main"
-require "zmacs.tbl_vars"
-
-
-local function err (err)
-  term_close ()
-  print ("Internal error.  Please report this bug with steps to reproduce the problem")
-  print (debug.traceback(err, 2))
-  os.exit (2)
-end
-
-xpcall (main, err)
+exec "@abs_top_srcdir@/bin/zmacs" \
+      ${1+"$@"}
+exit 1

@@ -14,7 +14,6 @@
 /README-release
 /aclocal.m4
 /autom4te.cache
-/bin/
 /build-aux/
 !/build-aux/git-log-fix
 !/build-aux/sanity-cfg.mk
@@ -29,6 +28,7 @@
 /lib/zmacs/commands.lua
 /lib/zmacs/doc/
 /lib/zmacs/tests/package.m4
+/lib/zmacs/zmacs
 /m4/
 /maint.mk
 /zile*.tar.gz

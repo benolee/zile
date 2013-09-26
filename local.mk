@@ -22,25 +22,12 @@
 ## Environment. ##
 ## ------------ ##
 
-ZILE_PATH = $(abs_srcdir)/lib/?.lua
+ZILE_PATH = $(abs_builddir)/lib/?.lua;$(abs_srcdir)/lib/?.lua
 
 
 ## ------------- ##
 ## Declarations. ##
 ## ------------- ##
-
-
-install_edit = sed					\
-	-e 's|@pkgdatadir[@]|$(datadir)|g'		\
-	-e 's|@pkgdocdir[@]|$(docdir)|g'		\
-	-e 's|@LUA[@]|$(LUA)|g'				\
-	$(NOTHING_ELSE)
-
-inplace_edit = sed					\
-	-e 's|@pkgdatadir[@]|$(abs_top_srcdir)/lib|g'	\
-	-e 's|@pkgdocdir[@]|$(abs_top_srcdir)|g'	\
-	-e 's|@LUA[@]|$(LUA)|g'				\
-	$(NOTHING_ELSE)
 
 include lib/zile/zile.mk
 include lib/zmacs/zmacs.mk

@@ -18,31 +18,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## ------------ ##
-## Environment. ##
-## ------------ ##
-
-ZMACS_PATH = $(abs_buiddir)/lib/?.lua;$(abs_srcdir)/lib/?.lua
-
-
 ## ------------- ##
 ## Declarations. ##
 ## ------------- ##
 
 zmacsdatadir = $(datadir)/zmacs
 zmacscmdsdir = $(zmacsdatadir)/commands
-
-zmacs_install_edit =					\
-	$(install_edit)					\
-	-e 's|@zmacsdatadir[@]|$(datadir)|g'		\
-	-e 's|@builddir[@]/?.lua;||'			\
-	$(NOTHING_ELSE)
-
-zmacs_inplace_edit =						\
-	$(inplace_edit)						\
-	-e 's|@zmacsdatadir[@]|$(abs_srcdir)/lib/zmacs|g'	\
-	-e 's|@builddir[@]|$(abs_builddir)/lib|g'		\
-	$(NOTHING_ELSE)
 
 
 ## ------ ##
@@ -51,7 +32,7 @@ zmacs_inplace_edit =						\
 
 doc_DATA += doc/dotzmacs.sample
 
-bin_SCRIPTS += bin/zmacs
+dist_bin_SCRIPTS += bin/zmacs
 
 man_MANS += doc/zmacs.1
 
@@ -110,35 +91,19 @@ zm__v_ZLC_1 =
 lib/zmacs/commands.lua: $(dist_zmacscmds_DATA)
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
-	$(ZM_V_ZLC)LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)' \
+	$(ZM_V_ZLC)LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'		\
 	  $(LUA) $(srcdir)/lib/zmacs/zlc $(dist_zmacscmds_DATA) > $@
 
 RM = rm
-
-bin/zmacs: $(zmacs_zmacs_DEPS)
-	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
-	test -d "$$d" || $(MKDIR_P) "$$d"
-	@rm -f $@ $@.tmp
-	$(AM_V_GEN)$(zmacs_inplace_edit) '$(srcdir)/lib/zmacs/zmacs.in' >'$@.tmp'
-	$(AM_V_at)mv $@.tmp $@
-	$(AM_V_at)chmod +x $@
-	$(AM_V_at)$@ --version >/dev/null || $(RM) $@
 
 doc/dotzmacs.sample: lib/zmacs/tbl_vars.lua lib/zmacs/mkdotzmacs.lua
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 	$(AM_V_GEN)PACKAGE='$(PACKAGE)'				\
-	LUA_PATH='$(ZMACS_PATH);$(ZILE_PATH);$(LUA_PATH)'	\
+	LUA_PATH='$(ZILE_PATH);$(LUA_PATH)'			\
 	  $(LUA) $(srcdir)/lib/zmacs/mkdotzmacs.lua > '$@'
 
-doc/zmacs.1: $(srcdir)/lib/zmacs/zmacs.1.in Makefile config.status
-	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
-	test -d "$$d" || $(MKDIR_P) "$$d"
-	$(AM_V_at)rm -f $@ $@.tmp
-	$(AM_V_GEN)$(zmacs_install_edit) '$(srcdir)/lib/zmacs/zmacs.1.in' >'$@.tmp'
-	$(AM_V_at)mv '$@.tmp' '$@'
-
-$(srcdir)/lib/zmacs/zmacs.1.in: lib/zmacs/man-extras lib/zmacs/help2man-wrapper configure.ac
+doc/zmacs.1: lib/zmacs/man-extras lib/zmacs/help2man-wrapper configure.ac
 	@d=`echo '$@' |sed 's|/[^/]*$$||'`;			\
 	test -d "$$d" || $(MKDIR_P) "$$d"
 ## Exit gracefully if zmacs.1.in is not writeable, such as during distcheck!
@@ -237,18 +202,6 @@ clean-local:
 	$(CD_TESTDIR); \
 	test -f "$$abs_srcdir/$(TESTSUITE)" && \
 	  '$(SHELL)' "$$abs_srcdir/$(TESTSUITE)" --clean || :
-
-
-## ------------- ##
-## Installation. ##
-## ------------- ##
-
-install_exec_hooks += install-zmacs-hook
-install-zmacs-hook:
-	@$(zmacs_install_edit) $(srcdir)/lib/zmacs/zmacs.in >'$@.tmp'
-	@echo $(INSTALL_SCRIPT) bin/zmacs $(DESTDIR)$(bindir)/zmacs
-	@$(INSTALL_SCRIPT) $@.tmp $(DESTDIR)$(bindir)/zmacs
-	@rm -f $@.tmp
 
 
 ## ------------- ##
