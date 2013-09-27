@@ -159,3 +159,10 @@
   (interactive)
   (lambda ()
     "find_or_create_buffer_from_module ('FAQ')"))
+
+
+(defun view-emacs-news ()
+  "Display info on recent changes to Zmacs."
+  (interactive)
+  (lambda ()
+    "find_or_create_buffer_from_module ('NEWS')"))
