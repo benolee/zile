@@ -3,7 +3,7 @@ GNU Zile
 
 GNU Zile is free software, licensed under the GNU GPL.
 
-Copyright (c) 1997-2012 Free Software Foundation, Inc.
+Copyright (c) 1997-2013 Free Software Foundation, Inc.
 
 **Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
@@ -18,33 +18,46 @@ _This file is marked up in [MultiMarkdown][] syntax_.
 Contents
 ========
 
-1. [INTRODUCTION][]
-   * [Source Layout][]
-   * [Web Pages][]
-   * [Mailing Lists][]
-2. [OBTAINING THE LATEST SOURCES][]
-   * [Official Release][]
-   * [Development Sources][]
-3. [REPORTING BUGS][]
+1. [INTRODUCTION]
+   * [Source Layout]
+   * [Web Pages]
+   * [Mailing Lists]
+2. [OBTAINING THE LATEST SOURCES]
+   * [Official Release]
+   * [Development Sources]
+3. [REPORTING BUGS]
 
 ------------------------------------------------------------------------
 
 INTRODUCTION
 ============
 
-GNU Zile (_Zile Is Lossy Emacs_) is a lightweight [Emacs][] clone. Every
-Emacs user should feel at home with Zile. Zile is aimed at small
-footprint systems (a typical binary is about 100Kb) and quick editing
-sessions (it starts up and shuts down instantly).
+GNU Zile (_Zile Implements Lua Editors_) is a text editor development
+kit, so that you can (relatively) quickly develop your own ideal text
+editor without reinventing the wheel for many of the common algorithms
+and structures needed to do so.
 
-Zile is written in **ISO C99** using **POSIX.1-2008** APIs, using
-[libgc][]. It can be built on many other platforms thanks to its use
-of [gnulib][] (version 7.2 or later seems to be required for testing
-with Valgrind, but older versions seem to work fine for normal use).
+It comes with an example implementation of a lightweight [Emacs][]
+clone, called Zmacs. Every Emacs user should feel at home with Zmacs.
+Zmacs is aimed at small footprint systems and quick editing sessions
+(it starts up and shuts down instantly).
+
+Zile and Zmacs are written in Lua 5.2 using POSIX APIs, and hence
+requires a Lua 5.2 runtime and a few additional Lua modules:
+
+ * Lua-stdlib <https://github.com/rrthomas/lua-stdlib>
+ * lrexlib <http://rrthomas.github.com/lrexlib/>
+   (the rex_gnu module must be built)
+ * luaposix <https://github.com/luaposix/luaposix>
+   (the curses module must be built)
+ * alien <http://mascarenhas.github.com/alien/>
+
+For exact version dependencies, see require_version statments in
+`src/zile`. These are most easily installed using [LuaRocks][].
 
   [Emacs]:   http://www.gnu.org/s/emacs
-  [libgc]:   http://www.hpl.hp.com/personal/Hans_Boehm/gc
   [gnulib]:  http://www.gnu.org/s/gnulib
+  [LuaRocks]:  http://www.luarocks.org/
 
 
 Source Layout
@@ -59,17 +72,15 @@ Source Layout
  * See file `THANKS` for a list of important contributors.
 
 The rest of the files in the top-level directory are part of the
-[Autotools]() build system used to compile and install Zile.
+[Autotools]() build system used to compile and install Zile and Zmacs.
 
  * Directory `build-aux` contains helper scripts used to build Zile.
  * Directory `doc` contains files used to create Zile's documentation.
- * Directory `gl` contains Zile-specific patches to standard [gnulib]().
- * Directory `lib` contains [gnulib]() source modules used by Zile.
  * Directory `m4` contains a mixture of [gnulib]() supplied and Zile-
    specific macros for rebuilding the `configure' script.
  * Directory `src` contains the source code used to build Zile.
- * Directory `tests` contains a small suite of tests used by
-   `make check` to sanity check a newly built `src/zile` binary.
+ * Directory `tests` contains a suite of tests used by `make check` to
+   sanity check a newly built `zmacs/zmacs` binary.
 
   [Autotools]: http://sourceware.org/autobook/
 
@@ -91,7 +102,7 @@ An archive of past releases is also archived at:
   > <http://ftp.gnu.org/gnu/zile/>
 
 But please use a mirror for faster downloads and to reduce stress on the
-main gnu machine. The following link will automatically redirect to a
+main GNU machine. The following link will automatically redirect to a
 nearest mirror:
 
   > <http://ftpmirror.gnu.org/zile/>
@@ -154,19 +165,13 @@ then run this command to import it:
 and then rerun the `gpg --verify' command.
 
 Generic instructions for how to build GNU Zile from a release tarball
-are contained in the file `INSTALL`. Additionally, If you wish to use a
-non-standard curses library name, this can be specified using
-`CURSES_LIB` and `CPPFLAGS`. For example, to use the X version of
-[PDcurses][]:
-
-    CPPFLAGS=/usr/local/include/xcurses CURSES_LIB=-lXCurses ./configure
+are contained in the file `INSTALL`.
 
 If you are missing any of the prerequisite libraries needed to
 successfully build GNU Zile, the `configure` script will abort itself
 and tell you right away.
 
   [GnuPG]:    http://www.gnupg.org/
-  [PDcurses]: http://pdcurses.sf.ne
 
 
 Development Sources
@@ -189,7 +194,7 @@ If you are behind a firewall that blocks the git protocol, you can force
 git to transparently rewrite all savannah references to use http:
 
     git config --global url.http://git.sv.gnu.org/r/.insteadof \
-	git://git.sv.gnu.org/
+        git://git.sv.gnu.org/
 
 When you are building GNU Zile from a git checkout, you first need to
 run the `bootstrap` script to generate various files that are shipped in

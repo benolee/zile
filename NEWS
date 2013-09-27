@@ -1,147 +1,92 @@
-GNU Zile NEWS                                         -*- outline -*-
+GNU Zile NEWS                                    -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
 
-
-* Noteworthy changes in release 2.4.9 (2012-10-01) [stable]
-
-** Bug fixes
-
-  Fix crash on out-of-range goto-char.
-
-  Set mark on insert-file.
-
-  Minor documentation fixes.
-
-  Build system cleanups.
-
-
-* Noteworthy changes in release 2.4.8 (2012-07-13) [stable]
-
-** New features
-
-  Improve feedback during large pastes.
-
-  Various minor code improvements.
-
-** Build-related
-
-  Fix a bug in parallel builds.
-
-  Update gnulib to fix building with glibc 2.16.
-
-  Various minor fixes and improvements.
-
-  Use more GCC attributes.
-
-
-* Noteworthy changes in release 2.4.7 (2012-03-20) [stable]
-
-** Bug fixes
-
-  Fix a potential crash and cosmetic bug in global-set-key when used
-  interactively.
-
-** Build-related
-
-  Add lots more tests.
-
-
-* Noteworthy changes in release 2.4.6 (2012-02-18) [stable]
-
-** Bug fixes
-
-   Fix a crash in non-incremental search the first time it is used
-   interactively.
-
-
-* Noteworthy changes in release 2.4.5 (2012-02-08) [stable]
-
-** Bug fixes
-
-  Fix an egregious bug resulting in a crash whenever a non-existent
-  file was edited.
-
-  Fix other potential crash bugs in the low-level text-handling
-  routine estr_replace.
-
-
-* Noteworthy changes in release 2.4.4 (2012-02-03) [stable]
-
-** New features
-
-  find-file and find-file-read-only now work non-interactively.
-
-** Build-related
-
-  Minor build system fixes (thanks to Nelson Beebe for one).
-
 ** Miscellaneous
 
-  Some code clean-up.
+ - Zile has a new backronym: Zile Implements Lua Editors.
 
-  Slight speed improvement to general editing operations.
+   The Zile project is being rewritten as a toolkit for developing
+   text editors in Lua.
+
+ - Now that the Lua implementation has feature parity with the older
+   C implementation, the C implementation is being moth-balled.  All
+   future releases will be made from the Lua implementation.
+
+ - The release numbers will be single integers for consistency with
+   the other Lua projects I maintain (not coincidentally, all are
+   dependencies of GNU Zile).  The final C Zile releases were 2.4.x,
+   and the first Lua Zile release was version 3.
+
+** Incompatible changes
+
+  - Now that GNU Zile is the text editor support infrastructure, the
+    editor formerly known as Zile has been renamed to Zmacs, a light-
+    weight micro-Emacs that has feature parity with the legacy C Zile
+    implementation.  There is no 'zile' executable any more, it has
+    been superseded by 'zmacs'.
+
+** New features
+
+*** Build-related
+
+  - Now fully relocatable, with all resources found using the
+    package.path directories. This means the distributions work out of
+    box (./lib/zmacs/zmacs) without running configure or make.  It also
+    means the lua source rock installs directly by copying files into
+    the rocks tree.
+
+*** Zmacs
+
+  - Support for FAQ, COPYING and NEWS browsing in editor with \C-h\C-f,
+    \C-h\C-c and \C-h\C-n (or F1 prefix equivalents).
 
 
-* Noteworthy changes in release 2.4.3 (2011-12-20) [stable]
+* Noteworthy changes in release 3 (2013-09-25) [alpha]
 
 ** Bug fixes
 
-  Fix a crash on certain terminals.
-
-  Fix a recently-introduced display bug in isearch.
+  Arrow keys work properly when resuming from M-x debug.
 
 
-* Noteworthy changes in release 2.4.2 (2011-10-05) [stable]
+* Noteworthy changes in release 2.5.0.50 (2011-09-20) [alpha]
 
 ** Bug fixes
 
-  Fix some serious display performance bugs introduced in 2.4.0.60.
+  Many bugs have been fixed.
+
+** Build-related
+
+  Many bugs have been fixed. Building against the required Lua
+  libraries has been simplified; the required libraries can now all be
+  installed as LuaRocks.
+
+  Since C development has now been moved to the 2.4 series, the Lua
+  series is now numbered 2.5.x.
+
+
+* Noteworthy changes in release 2.4.0.50 (2011-05-04) [alpha]
+
+** Bug fixes
+
+  Many bugs have been fixed.
+
+** Build-related
+
+  The build system is now non-recursive (thanks to Gary Vaughan).
+
+
+* Noteworthy changes in release 2.4.2 (2011-10-03) [stable]
+
+** Bug fixes
+
+  Fix a basic performance bug introduced in 2.4.0.60.
 
 ** Build-related
 
   Don't enable Valgrind by default, and explain that correct
   suppressions are needed to use it successfully.
 
-
-* Noteworthy changes in release 2.4.1 (2011-09-20) [stable]
-
-  This is the first release in a new stable series.
-
-** Bug fixes
-
-  Fix a long-standing bug in uniarg handling in macros.
-
-  Fix display of percentage position in buffer.
-
-  Fix display of search string in query-replace.
-
-  Fix poor performance of fill-paragraph.
-
-  Fix handling of Backspace/^H by looking at termcap kbs setting.
-
-** Build-related
-
-  Several fixes and improvements were made to the build system.
-
-* Noteworthy changes in release 2.4.0.60 (2011-08-19) [beta]
-
-  This release is a major update, upping the dependencies from C89 to
-  C99, from POSIX-1.2001 to POSIX-1.2008 (though in fact Zile will
-  still build on many other POSIX and non-POSIX systems thanks to
-  gnulib), and adding a dependency on libgc. Together these changes
-  have allowed the removal of hundreds of lines of code and the
-  elimination of whole classes of bug (in particular, classic
-  memory-management bugs); overall, combined with continued
-  simplification, Zile 2.4.0.60 is well over 1,000 lines of code, or
-  10%, shorter than the previous stable release, 2.3.24.
-
-  Several old bugs have been fixed, a few more esoteric features
-  removed, and Emacs-compliance has been improved. However, the major
-  rewrite has almost certainly introduced new bugs which have not yet
-  been found and fixed, hence the alpha status of this release.
-  Distribution packagers are encouraged to try packaging this version
-  to find any problems with the updated build system and dependencies.
 
 * Noteworthy changes in release 2.3.24 (2011-04-29) [stable]
 
@@ -166,6 +111,16 @@ GNU Zile NEWS                                         -*- outline -*-
 
   As usual, various bits of code cleanup and simplification.
 
+
+* Noteworthy changes in release 2.4.0alpha1 (2011-03-25) [alpha]
+
+** Major changes
+
+  This release is completely rewritten in Lua. No doubt it introduces
+  lots of bugs, but it is intended to be functionally identical to the
+  C version.
+
+
 * Noteworthy changes in release 2.3.23 (2011-03-14) [stable]
 
 ** Bug fixes
@@ -178,10 +133,12 @@ GNU Zile NEWS                                         -*- outline -*-
   Turn on more compiler and build system, and run-time checks (thanks,
   gnulib!).
 
+
 * Noteworthy changes in release 2.3.22 (2011-03-03)
 
 This release fixes a bug in forward regex isearch introduced recently,
 and makes the build system use silent rules by default.
+
 
 Release 2.3.21
 

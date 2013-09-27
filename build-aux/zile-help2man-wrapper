@@ -1,9 +1,0 @@
-#! /bin/sh
-# Wrap Zile for help2man
-# Add two spaces before options so they will be processed properly.
-
-if test "$1" = "--help"; then
-  src/zile $1 | sed 's/^\([-+F]\)/  \1/'
-else
-  src/zile $1
-fi
