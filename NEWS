@@ -4,10 +4,18 @@ GNU Zile NEWS                                    -*- outline -*-
 
 ** New features
 
+*** Build-related
+
+  - Now fully relocatable, with all resources found using the
+    package.path directories. This means the distributions work out of
+    box (./lib/zmacs/zmacs) without running configure or make.  It also
+    means the lua source rock installs directly by copying files into
+    the rocks tree.
+
 *** Zmacs
 
-  - Support for FAQ, COPYING and NEWS browsing in editor with
-    \C-h\C-f, \C-h\C-c and \C-h\C-n (or F1 prefix equivalents).
+  - Support for FAQ, COPYING and NEWS browsing in editor with \C-h\C-f,
+    \C-h\C-c and \C-h\C-n (or F1 prefix equivalents).
 
 
 * Noteworthy changes in release 3 (2013-09-25) [alpha]
