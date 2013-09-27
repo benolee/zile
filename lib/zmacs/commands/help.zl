@@ -135,6 +135,7 @@
      insert_string (require ('zmacs.doc.' .. name))
    end
    cur_bp.readonly = true
+   cur_bp.modified = false
   goto_offset (1)")
 
 
